@@ -3,8 +3,10 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-import userRouter from "./routes/userRoutes"; // router dosyasını import et
-import authRouter from "./routes/authRoutes"; // router dosyasını import et
+import userRouter from "./routes/userRoutes";
+import authRouter from "./routes/authRoutes";
+import photoRouter from "./routes/photoRoutes";
+
 
 dotenv.config();
 
@@ -13,13 +15,13 @@ const app: Application = express();
 // Middleware
 app.use(express.json());
 app.use(cors({
-    origin: "*" // tüm domainlere izin verir, güvenli değil ama test için yeterli
+    origin: "*"
   }));
 app.use(cookieParser());
 
+// Routes
 app.use("/api/v1", userRouter); 
-app.use("/api/auth", authRouter);
-
-
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1", photoRouter);
 
 export default app;

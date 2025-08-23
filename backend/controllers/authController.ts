@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { CookieOptions, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import RefreshToken from "../models/refreshToken";
 import User from "../models/User";
@@ -16,24 +16,30 @@ const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
 // Cookie settings
-const refreshTokenCookieConfig = {
+const refreshTokenCookieConfig :CookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "strict" as const,
   maxAge: 7 * 24 * 60 * 60 * 1000 
 };
 
+const clearRefreshTokenCookieConfig: CookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+}
+
 // Login endpoint
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
-    const user = await User.findOne({ email: req.body.email, password: req.body.password });
+    const user = await User.findOne({ email: req.body.email});
     if (!user) {
       res.status(401).json({ message: "Invalid credentials" });
       return;
     }
 
     // Access token
-    const accessToken = jwt.sign( { userId: user._id }, ACCESS_TOKEN_SECRET as string, { expiresIn: "15m" });
+    const accessToken = jwt.sign( { userId: user._id }, ACCESS_TOKEN_SECRET as string, { expiresIn: "1m" });
     // Refresh token
     const refreshToken = jwt.sign({ userId: user._id }, REFRESH_TOKEN_SECRET as string, { expiresIn: "30s" });
 
@@ -45,7 +51,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
-    // add to cookie
+    // Add to cookie
     res.cookie("refreshToken", refreshToken, refreshTokenCookieConfig);
 
     // Send access token via JSON
@@ -107,5 +113,26 @@ export const signup = async (req: Request, res: Response) => {
     res.status(201).json({ msg: "User created", userId: newUser._id });
   } catch (err) {
     res.status(500).json({ msg: "Server error" });
+  }
+};
+
+export const logout = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const refreshToken = req.cookies?.refreshToken;
+    if (!refreshToken) {
+      res.status(400).json({ message: "No refresh token provided" });
+      return;
+    }
+
+    // delete token from db
+    await RefreshToken.deleteOne({ token: refreshToken });
+
+    // delete from cookie
+    res.clearCookie("refreshToken", clearRefreshTokenCookieConfig);
+
+    res.json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
