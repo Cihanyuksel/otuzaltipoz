@@ -15,6 +15,13 @@ interface JwtPayload {
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
+export interface IGetUserAuthInfoRequest extends Request {
+  user?: {
+      id: string;
+      username?: string;
+  }
+}
+
 // Cookie settings
 const refreshTokenCookieConfig :CookieOptions = {
   httpOnly: true,
@@ -30,18 +37,26 @@ const clearRefreshTokenCookieConfig: CookieOptions = {
 }
 
 // Login endpoint
-export const login = async (req: Request, res: Response): Promise<void> => {
+const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = await User.findOne({ email: req.body.email});
     if (!user) {
       res.status(401).json({ message: "Invalid credentials" });
       return;
     }
+    const userData = {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.role
+    }
+    const accessToken = jwt.sign( { userId: user._id, role: user.role }, ACCESS_TOKEN_SECRET as string, { expiresIn: "30m" });
+    const refreshToken = jwt.sign({ userId: user._id }, REFRESH_TOKEN_SECRET as string, { expiresIn: "8h" });
 
-    // Access token
-    const accessToken = jwt.sign( { userId: user._id }, ACCESS_TOKEN_SECRET as string, { expiresIn: "1m" });
-    // Refresh token
-    const refreshToken = jwt.sign({ userId: user._id }, REFRESH_TOKEN_SECRET as string, { expiresIn: "30s" });
+    if (!user.is_active) {
+      user.is_active = true;
+      await user.save();
+  }
 
     // Save to DB
     await RefreshToken.create({
@@ -55,7 +70,14 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     res.cookie("refreshToken", refreshToken, refreshTokenCookieConfig);
 
     // Send access token via JSON
-    res.json({ accessToken });
+    res.json({
+      success: true,
+      message: "Login successful",
+      data: {
+        user: userData,
+        accessToken
+      }
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -63,7 +85,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 };
 
 // Refresh endpoint
-export const refresh = async (req: Request, res: Response): Promise<Response> => {
+const refresh = async (req: Request, res: Response): Promise<Response> => {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) return res.status(401).json({ msg: "No token provided" });
 
@@ -72,14 +94,15 @@ export const refresh = async (req: Request, res: Response): Promise<Response> =>
 
   try {
     const payload = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET!) as JwtPayload;
+    console.log(payload)
     const user = await User.findById(payload.userId);
 
     if (!user) return res.status(404).json({ msg: "User not found" });
 
-    const newAccessToken = jwt.sign({ userId: user._id }, ACCESS_TOKEN_SECRET!, { expiresIn: "15m" });
+    const newAccessToken = jwt.sign({ userId: user._id }, ACCESS_TOKEN_SECRET!, { expiresIn: "30m" });
 
     // Create a new refresh token and update the cookie
-    const newRefreshToken = jwt.sign( { userId: user._id }, REFRESH_TOKEN_SECRET!, { expiresIn: "7d" });
+    const newRefreshToken = jwt.sign( { userId: user._id }, REFRESH_TOKEN_SECRET!, { expiresIn: "8s" });
 
     await RefreshToken.findByIdAndUpdate(storedToken._id, { token: newRefreshToken });
 
@@ -93,7 +116,7 @@ export const refresh = async (req: Request, res: Response): Promise<Response> =>
 
 
 // signup user
-export const signup = async (req: Request, res: Response) => {
+const signup = async (req: Request, res: Response) => {
   try {
     const { email, password, full_name } = req.body;
 
@@ -116,7 +139,8 @@ export const signup = async (req: Request, res: Response) => {
   }
 };
 
-export const logout = async (req: Request, res: Response): Promise<void> => {
+// logout user
+const logout = async (req: Request, res: Response): Promise<void> => {
   try {
     const refreshToken = req.cookies?.refreshToken;
     if (!refreshToken) {
@@ -124,10 +148,17 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // delete token from db
-    await RefreshToken.deleteOne({ token: refreshToken });
+    const storedToken = await RefreshToken.findOne({ token: refreshToken });
+    if (storedToken) {
+      const user = await User.findById(storedToken.userId);
+      if (user) {
+        user.is_active = false;
+        await user.save();
+      }
 
-    // delete from cookie
+      await RefreshToken.deleteOne({ token: refreshToken });
+    }
+
     res.clearCookie("refreshToken", clearRefreshTokenCookieConfig);
 
     res.json({ message: "Logged out successfully" });
@@ -136,3 +167,10 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export {
+  login,
+  logout,
+  signup,
+  refresh
+}

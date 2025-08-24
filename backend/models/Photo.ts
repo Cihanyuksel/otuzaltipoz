@@ -6,7 +6,7 @@ interface IPhoto {
   title: string;
   description?: string;
   created_at: Date;
-  tags?: string[]; // Array of tag names
+  tags?: string[];
 }
 
 const photoSchema = new Schema<IPhoto>({

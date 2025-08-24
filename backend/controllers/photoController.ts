@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import Photos from "../models/Photos";
+import Photo from "../models/Photo";
 import cloudinary from "../config/cloudinary";
 
 // Get all photos
 const getAllPhotos = async (req: Request, res: Response) => {
     try {
-        const photos = await Photos.find();
+        const photos = await Photo.find();
         res.status(200).json({status: true, data: photos});
     } catch (error: any) {
         res.status(500).json({message: "Photos not found", error: error.message})
@@ -15,7 +15,7 @@ const getAllPhotos = async (req: Request, res: Response) => {
 // Get photo by ID
 const getPhoto = async (req: Request, res: Response) => {
     try {
-        const photo = await Photos.findById(req.params.id);
+        const photo = await Photo.findById(req.params.id);
         if(!photo) return res.status(500).json({message: "Photo not found."});
         res.status(200).json({status: true, data: photo})
     } catch (error: any) {
@@ -32,7 +32,7 @@ const uploadPhoto = async (req: Request, res: Response) => {
       async (error, uploaded) => {
         if (error) return res.status(500).json({ message: "Upload hatası", error });
 
-        const photo = await Photos.create({
+        const photo = await Photo.create({
           user_id: req.body.user_id,
           photo_url: uploaded?.secure_url,
           title: req.body.title,
@@ -55,7 +55,7 @@ const uploadPhoto = async (req: Request, res: Response) => {
 // Updated User 
 const updatePhoto = async (req: Request, res: Response) => {
     try {
-      const updatedPhoto = await Photos.findByIdAndUpdate(req.params.id, req.body, {
+      const updatedPhoto = await Photo.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true,
       });
@@ -69,7 +69,7 @@ const updatePhoto = async (req: Request, res: Response) => {
 // Delete Photo
 const deletePhoto = async (req: Request, res: Response) => {
   try {
-    const deletedPhoto = await Photos.findById(req.params.id);
+    const deletedPhoto = await Photo.findById(req.params.id);
     if (!deletedPhoto) return res.status(404).json({ message: "Photo not found" });
 
     const urlParts = deletedPhoto.photo_url.split("/");
@@ -79,7 +79,7 @@ const deletePhoto = async (req: Request, res: Response) => {
 
     await cloudinary.uploader.destroy(public_id);
 
-    await Photos.findByIdAndDelete(req.params.id);
+    await Photo.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       success: true,

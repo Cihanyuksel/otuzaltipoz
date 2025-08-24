@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import userRouter from "./routes/userRoutes";
 import authRouter from "./routes/authRoutes";
 import photoRouter from "./routes/photoRoutes";
-
+import commentRouter from "./routes/commentRoutes";
 
 dotenv.config();
 
@@ -23,5 +23,7 @@ app.use(cookieParser());
 app.use("/api/v1", userRouter); 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1", photoRouter);
+app.use("/api/v1", commentRouter)
+
 
 export default app;
