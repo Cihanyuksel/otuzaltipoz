@@ -23,7 +23,13 @@ const getPhoto = async (req: Request, res: Response) => {
         }
 }
 
-const uploadPhoto = async (req: Request, res: Response) => {
+export interface IGetUserAuthInfoRequest extends Request {
+  user?: {
+    id: string;
+    username?: string;
+  }
+}
+const uploadPhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
   try {
     if (!req.file) return res.status(400).json({ message: "Fotoğraf gerekli" });
 
@@ -33,7 +39,7 @@ const uploadPhoto = async (req: Request, res: Response) => {
         if (error) return res.status(500).json({ message: "Upload hatası", error });
 
         const photo = await Photo.create({
-          user_id: req.body.user_id,
+          user_id: req.user,
           photo_url: uploaded?.secure_url,
           title: req.body.title,
           description: req.body.description,

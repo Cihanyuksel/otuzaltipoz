@@ -50,9 +50,9 @@ UserSchema.methods.comparePassword = async function (
     return await bcrpyte.compare(candidatePassword, this.password);
 };
 
-UserSchema.post("findOneAndDelete", async function (doc) {
-    if (doc) {
-      await Photo.deleteMany({ user: doc._id });
+UserSchema.post("findOneAndDelete", async function (deletedUser) {
+    if (deletedUser) {
+      await Photo.deleteMany({ user_id: deletedUser._id });
     }
   });
 

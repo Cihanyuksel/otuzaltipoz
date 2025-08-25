@@ -7,6 +7,8 @@ interface JwtPayload {
 }
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+  console.log("AUTHMIDDLEWARE RUNNING"); 
+
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
