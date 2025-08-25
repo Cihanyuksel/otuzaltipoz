@@ -4,6 +4,7 @@ import RefreshToken from "../models/refreshToken";
 import User from "../models/User";
 import bcrypt from 'bcrypt';
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 
 
 dotenv.config(); 

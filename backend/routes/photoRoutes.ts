@@ -8,7 +8,7 @@ const router = Router();
 router.get("/photos", getAllPhotos);
 router.get("/photos/:id", getPhoto);
 router.post("/upload", authenticate, upload.single("photo"),  uploadPhoto);
-router.delete("/photos/:id", deletePhoto);
-router.put("/photos/:id", updatePhoto);
+router.delete("/photos/:id", authenticate, deletePhoto);
+router.put("/photos/:id", authenticate, updatePhoto);
 
 export default router;

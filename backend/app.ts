@@ -7,6 +7,7 @@ import userRouter from "./routes/userRoutes";
 import authRouter from "./routes/authRoutes";
 import photoRouter from "./routes/photoRoutes";
 import commentRouter from "./routes/commentRoutes";
+import likeRouter from "./routes/likeRoutes";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use("/api/v1", userRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1", photoRouter);
 app.use("/api/v1", commentRouter)
+app.use("/api/v1", likeRouter)
 
 
 export default app;

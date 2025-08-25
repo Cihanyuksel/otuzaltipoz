@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Photo from "../models/Photo";
 import cloudinary from "../config/cloudinary";
+import { IGetUserAuthInfoRequest } from "./authController";
 
 // Get all photos
 const getAllPhotos = async (req: Request, res: Response) => {
@@ -23,23 +24,18 @@ const getPhoto = async (req: Request, res: Response) => {
         }
 }
 
-export interface IGetUserAuthInfoRequest extends Request {
-  user?: {
-    id: string;
-    username?: string;
-  }
-}
+
 const uploadPhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
   try {
     if (!req.file) return res.status(400).json({ message: "Fotoğraf gerekli" });
 
     const result = await cloudinary.uploader.upload_stream(
-      { folder: "photos_app" }, // Cloudinary klasörü
+      { folder: "photos_app" }, 
       async (error, uploaded) => {
         if (error) return res.status(500).json({ message: "Upload hatası", error });
 
         const photo = await Photo.create({
-          user_id: req.user,
+          user_id: req.user!.id,
           photo_url: uploaded?.secure_url,
           title: req.body.title,
           description: req.body.description,

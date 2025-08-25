@@ -1,13 +1,7 @@
 import { Request, Response } from "express";
 import Comment from "../models/Comment";
+import { IGetUserAuthInfoRequest } from "./authController";
 
-
-export interface IGetUserAuthInfoRequest extends Request {
-    user?: {
-        id: string;
-        username?: string;
-    }
-  }
 
 const addComment = async (req: IGetUserAuthInfoRequest, res: Response) => {
     try {
@@ -16,7 +10,7 @@ const addComment = async (req: IGetUserAuthInfoRequest, res: Response) => {
         const comment = await Comment.create({
             text: text,
             photo: photoId,
-            user: req.user!.id
+            user: req.user?.id
         })
         res.status(201).json(comment)
     } 
@@ -42,7 +36,6 @@ const deleteComment = async (req: IGetUserAuthInfoRequest, res: Response) => {
   
       if (!comment) return res.status(404).json({ message: "Comment not found" });
   
-      // sadece kendi yorumunu silebilsin
       if (comment.user.toString() !== req.user!.id) {
         return res.status(403).json({ message: "Not authorized" });
       }
