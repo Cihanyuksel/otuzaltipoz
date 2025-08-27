@@ -24,10 +24,10 @@ const getPhoto = async (req: Request, res: Response) => {
         }
 }
 
-
+// Upload Photo
 const uploadPhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
   try {
-    if (!req.file) return res.status(400).json({ message: "Fotoğraf gerekli" });
+    if (!req.file) return res.status(400).json({ message: "Photo required" });
 
     const result = await cloudinary.uploader.upload_stream(
       { folder: "photos_app" }, 
@@ -91,7 +91,6 @@ const deletePhoto = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: "Could not delete photo", error: error.message });
   }
 };
-
 
 export {
     getAllPhotos,
