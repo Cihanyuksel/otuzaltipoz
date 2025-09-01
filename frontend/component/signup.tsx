@@ -47,13 +47,13 @@ export default function SignupForm() {
         password: data.password,
       },
       {
-        onSuccess: () => {
-          setSuccessMessage('Signup successful!');
+        onSuccess: (successMessage) => {
+          setSuccessMessage(successMessage.message);
           setErrorMessage('');
           setTimeout(() => router.push('/login'), 3000);
         },
         onError: (err: any) => {
-          setErrorMessage(err.message || 'Signup failed');
+          setErrorMessage(err.message);
           setSuccessMessage('');
         },
       }
@@ -62,11 +62,9 @@ export default function SignupForm() {
 
   return (
     <form onSubmit={handleSubmit(onsubmit)} className="flex flex-col gap-4 w-full">
-      {successMessage && (
-        <div className="bg-green-100 text-green-800 p-2 rounded-md">{successMessage}</div>
-      )}
       {errorMessage && <div className="bg-red-100 text-red-800 p-2 rounded-md">{errorMessage}</div>}
-
+      {successMessage && <div className="bg-green-100 text-green-800 p-2 rounded-md">{successMessage}</div>}
+      
       <input {...register('username')} placeholder="Username" className="border p-2 rounded-md" />
       {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
 
@@ -76,12 +74,7 @@ export default function SignupForm() {
       <input {...register('email')} placeholder="Email" className="border p-2 rounded-md" />
       {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
 
-      <input
-        type="password"
-        {...register('password')}
-        placeholder="Password"
-        className="border p-2 rounded-md"
-      />
+      <input type="password" {...register('password')} placeholder="Password" className="border p-2 rounded-md" />
       {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
 
       <input
@@ -90,9 +83,7 @@ export default function SignupForm() {
         placeholder="Confirm Password"
         className="border p-2 rounded-md"
       />
-      {errors.passwordCheck && (
-        <p className="text-red-500 text-sm">{errors.passwordCheck.message}</p>
-      )}
+      {errors.passwordCheck && <p className="text-red-500 text-sm">{errors.passwordCheck.message}</p>}
 
       <button
         type="submit"

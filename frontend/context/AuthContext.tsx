@@ -2,15 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useLogin, useLogout, useSignup, useRefresh } from '../hooks/useAuthApi';
-import type { AuthResponse } from '../services/authService';
-
-type User = {
-  id: string;
-  username: string;
-  fullname?: string;
-  email: string;
-  role?: string;
-};
+import { AuthResponse, User } from '../types/auth';
 
 type AuthContextType = {
   user: User | null;
@@ -19,7 +11,7 @@ type AuthContextType = {
   login: ReturnType<typeof useLogin>;
   signup: ReturnType<typeof useSignup>;
   logout: ReturnType<typeof useLogout>;
-  setAuth: (data: AuthResponse | null) => void;
+  setAuth: (data: AuthResponse['data'] | null) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,10 +26,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signup = useSignup();
   const logout = useLogout();
 
-  const setAuth = (data: AuthResponse | null) => {
-    if (data) {
-      setUser(data.user);
-      setAccessToken(data.accessToken);
+  const setAuth = (authData: AuthResponse['data'] | null) => {
+    console.log(authData)
+    if (authData) {
+      setUser(authData.user);
+      setAccessToken(authData.accessToken);
     } else {
       setUser(null);
       setAccessToken(null);

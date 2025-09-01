@@ -1,7 +1,15 @@
-import LoginForm from "../../../component/login";
-import ProtectedRoute from "../../../component/protected-route";
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import LoginForm from '../../../component/login';
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const cookieStore = await cookies();
+
+  const refreshToken = cookieStore.get('refreshToken')?.value;
+  if (refreshToken) {
+    redirect('/');
+  }
+
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
@@ -11,12 +19,8 @@ export default function LoginPage() {
       }}
     >
       <div className="bg-[#f5f0e9] p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h1 className="text-3xl font-bold text-[#ef7464] mb-6 text-center">
-          Giriş Yap
-        </h1>
-        <ProtectedRoute guestOnly>
-          <LoginForm />
-        </ProtectedRoute>
+        <h1 className="text-3xl font-bold text-[#ef7464] mb-6 text-center">Giriş Yap</h1>
+        <LoginForm />
       </div>
     </div>
   );

@@ -1,8 +1,15 @@
-"use client";
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-import SignupForm from "../../../component/register";
+import SignupForm from '../../../component/signup';
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const cookieStore = await cookies();
+  
+    const refreshToken = cookieStore.get('refreshToken')?.value;
+    if (refreshToken) {
+      redirect('/');
+    }
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
@@ -12,10 +19,8 @@ export default function RegisterPage() {
       }}
     >
       <div className="bg-[#f5f0e9] p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h1 className="text-3xl font-bold text-[#ef7464] mb-6 text-center">
-          Sign Up
-        </h1>
-       <SignupForm />
+        <h1 className="text-3xl font-bold text-[#ef7464] mb-6 text-center">Sign Up</h1>
+          <SignupForm />
       </div>
     </div>
   );

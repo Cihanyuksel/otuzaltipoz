@@ -82,7 +82,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
     // Send access token via JSON
     res.json({
       success: true,
-      message: "Login successful",
+      message: "✅ Başarıyla giriş yaptınız. Yönlendiriliyorsunuz…",
       data: {
         user: userData,
         accessToken
@@ -165,7 +165,6 @@ const signup = async (req: Request, res: Response) => {
       password,
       full_name,
       role: "user",
-      is_active: true,
     });
 
     res.status(201).json({

@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 
@@ -15,7 +15,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function LoginForm() {
-  const { login, user, setAuth } = useAuth();
+  const { login, setAuth, loading, user } = useAuth();
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -28,20 +28,28 @@ export default function LoginForm() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = (data: FormData) => {
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    try {
-      const result = await login.mutateAsync(data);
-
-      setAuth(result.data);
-
-      setSuccessMessage('Giriş başarılı! Yönlendiriliyorsunuz...');
-      setTimeout(() => router.push('/'), 1500);
-    } catch (err: any) {
-      setErrorMessage(err.message || 'Email veya şifre yanlış.');
-    }
+    login.mutate(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: (result) => {
+          setAuth(result.data);
+          setSuccessMessage(result.message || 'Giriş başarılı! Yönlendiriliyorsunuz...');
+          setErrorMessage('');
+          
+        },
+        onError: (err: any) => {
+          setErrorMessage(err.message || 'Email veya şifre yanlış.');
+          setSuccessMessage('');
+        },
+      }
+    );
   };
 
   return (
@@ -56,9 +64,7 @@ export default function LoginForm() {
               placeholder="ornek@email.com"
               className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-[#ef7464]"
             />
-            {errors.email && (
-              <p className="text-red-500">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="text-red-500">{errors.email.message}</p>}
           </div>
 
           <div>
@@ -69,25 +75,16 @@ export default function LoginForm() {
               placeholder="********"
               className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-[#ef7464]"
             />
-            {errors.password && (
-              <p className="text-red-500">{errors.password.message}</p>
-            )}
+            {errors.password && <p className="text-red-500">{errors.password.message}</p>}
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-[#ef7464] text-white py-2 rounded-lg hover:bg-[#f56b5c]"
-          >
+          <button type="submit" className="w-full bg-[#ef7464] text-white py-2 rounded-lg hover:bg-[#f56b5c]">
             Giriş Yap
           </button>
         </form>
 
-        {errorMessage && (
-          <p className="text-red-500 mt-2 text-center">{errorMessage}</p>
-        )}
-        {successMessage && (
-          <p className="text-green-600 mt-2 text-center">{successMessage}</p>
-        )}
+        {errorMessage && <p className="text-red-500 mt-2 text-center">{errorMessage}</p>}
+        {successMessage && <p className="text-green-600 mt-2 text-center">{successMessage}</p>}
       </div>
     </div>
   );

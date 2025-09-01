@@ -1,7 +1,5 @@
-"use client";
-
-import ProtectedRoute from "../component/protected-route";
-import { useAuth } from "../context/AuthContext";
+'use client';
+import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
   const { user } = useAuth();
@@ -13,18 +11,25 @@ export default function Home() {
       {user ? (
         <div className="bg-gray-100 p-4 rounded-lg shadow">
           <h2 className="text-xl font-semibold">Kullanıcı Bilgileri:</h2>
-          <p><strong>ID:</strong> {user.id}</p>
-          <p><strong>Username:</strong> {user.username}</p>
-          <p><strong>Full Name:</strong> {user.fullname}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>Role:</strong> {user.role}</p>
+          <p>
+            <strong>ID:</strong> {user.id}
+          </p>
+          <p>
+            <strong>Username:</strong> {user.username}
+          </p>
+          <p>
+            <strong>Full Name:</strong> {user.fullname}
+          </p>
+          <p>
+            <strong>Email:</strong> {user.email}
+          </p>
+          <p>
+            <strong>Role:</strong> {user.role}
+          </p>
         </div>
       ) : (
         <p className="text-red-500">Giriş yapılmadı.</p>
       )}
-  <ProtectedRoute requireAuth>
-    Protected Section
-  </ProtectedRoute>
     </div>
   );
 }
