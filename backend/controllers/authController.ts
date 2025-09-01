@@ -42,15 +42,24 @@ const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = await User.findOne({ email: req.body.email});
     if (!user) {
-      res.status(401).json({ message: "Invalid credentials" });
+      res.status(401).json({ message: "Email veya şifre hatalı. Lütfen tekrar deneyin." });
       return;
     }
+
     const userData = {
       id: user._id,
       username: user.username,
       email: user.email,
       role: user.role
     }
+     // Şifre kontrolü
+     const isMatch = await user.comparePassword(req.body.password.trim());
+     if (!isMatch) {
+       res.status(401).json({ message: "Email veya şifre hatalı. Lütfen tekrar deneyin." });
+       return;
+     }
+
+
     const accessToken = jwt.sign( { userId: user._id, role: user.role }, ACCESS_TOKEN_SECRET as string, { expiresIn: "30m" });
     const refreshToken = jwt.sign({ userId: user._id }, REFRESH_TOKEN_SECRET as string, { expiresIn: "8h" });
 
@@ -95,21 +104,40 @@ const refresh = async (req: Request, res: Response): Promise<Response> => {
 
   try {
     const payload = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET!) as JwtPayload;
-    console.log(payload)
     const user = await User.findById(payload.userId);
 
     if (!user) return res.status(404).json({ msg: "User not found" });
 
-    const newAccessToken = jwt.sign({ userId: user._id }, ACCESS_TOKEN_SECRET!, { expiresIn: "30m" });
+    // Yeni access token
+    const newAccessToken = jwt.sign(
+      { userId: user._id },
+      ACCESS_TOKEN_SECRET!,
+      { expiresIn: "2h" }
+    );
 
-    // Create a new refresh token and update the cookie
-    const newRefreshToken = jwt.sign( { userId: user._id }, REFRESH_TOKEN_SECRET!, { expiresIn: "8s" });
+    // Yeni refresh token
+    const newRefreshToken = jwt.sign(
+      { userId: user._id },
+      REFRESH_TOKEN_SECRET!,
+      { expiresIn: "8h" }
+    );
 
     await RefreshToken.findByIdAndUpdate(storedToken._id, { token: newRefreshToken });
 
+    // Cookie güncelle
     res.cookie("refreshToken", newRefreshToken, refreshTokenCookieConfig);
 
-    return res.json({ accessToken: newAccessToken });
+    // **AccessToken ve user bilgisi birlikte dönüyor**
+    return res.json({
+      accessToken: newAccessToken,
+      user: {
+        id: user._id,
+        username: user.username,
+        fullname: user.full_name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
     return res.status(403).json({ msg: "Token expired or invalid" });
   }
@@ -119,26 +147,38 @@ const refresh = async (req: Request, res: Response): Promise<Response> => {
 // signup user
 const signup = async (req: Request, res: Response) => {
   try {
-    const { email, password, full_name } = req.body;
+    const { email, username, password, full_name } = req.body;
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ msg: "User already exists" });
+    // Email kontrolü
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) 
+      return res.status(400).json({ success: false, message: "Bu email zaten kullanılıyor." });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Username kontrolü
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) 
+      return res.status(400).json({ success: false, message: "Bu kullanıcı adı zaten alınmış." });
 
     const newUser = await User.create({
+      username,
       email,
-      password: hashedPassword,
+      password,
       full_name,
       role: "user",
       is_active: true,
     });
 
-    res.status(201).json({ msg: "User created", userId: newUser._id });
+    res.status(201).json({
+      success: true,
+      message: "Kayıt başarılı! Hoşgeldin 😊",
+      user: { id: newUser._id, fullname: newUser.full_name, email: newUser.email }
+    });
   } catch (err) {
-    res.status(500).json({ msg: "Server error" });
+    console.error(err);
+    res.status(500).json({ success: false, message: "Sunucu hatası" });
   }
 };
+
 
 // logout user
 const logout = async (req: Request, res: Response): Promise<void> => {

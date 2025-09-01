@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
-import bcrpyte from 'bcrypt';
+import bcrypt from 'bcrypt';
 import Photo from "./Photo";
 
 
@@ -37,8 +37,8 @@ UserSchema.pre('save', async function (next) {
     if(!this.isModified('password')) return next();
 
     try {
-        const salt = await bcrpyte.genSalt(12);
-        this.password = await bcrpyte.hash(this.password, salt)
+        const salt = await bcrypt.genSalt(12);
+        this.password = await bcrypt.hash(this.password, salt)
     } catch (error: any) {
         next(error)
     }
@@ -47,7 +47,7 @@ UserSchema.pre('save', async function (next) {
 UserSchema.methods.comparePassword = async function (
     candidatePassword: string
   ): Promise<boolean> {
-    return await bcrpyte.compare(candidatePassword, this.password);
+    return await bcrypt.compare(candidatePassword, this.password);
 };
 
 UserSchema.post("findOneAndDelete", async function (deletedUser) {

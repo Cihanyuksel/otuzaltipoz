@@ -23,6 +23,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
       return res.status(401).json({ message: "Invalid token" });
     }
 
+    //REFACTOR YAPILACAK
     (req as any).user = user;
 
     next(); 
