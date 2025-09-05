@@ -4,6 +4,8 @@ export type User = {
   fullname?: string;
   email: string;
   role?: string;
+  profile_img_url: string;
+  is_active: boolean
 };
 
 export interface SignupRequest {

@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = useLogout();
 
   const setAuth = (authData: AuthResponse['data'] | null) => {
-    console.log(authData)
     if (authData) {
       setUser(authData.user);
       setAccessToken(authData.accessToken);
@@ -36,12 +35,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setAccessToken(null);
     }
   };
-
   useEffect(() => {
     if (refreshData) {
       setAuth(refreshData);
     }
   }, [refreshData]);
+
+  console.log(refreshData)
 
   return (
     <AuthContext.Provider

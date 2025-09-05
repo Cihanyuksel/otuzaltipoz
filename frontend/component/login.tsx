@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 
@@ -15,7 +15,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function LoginForm() {
-  const { login, setAuth, loading, user } = useAuth();
+  const { login, setAuth} = useAuth();
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export default function LoginForm() {
           setAuth(result.data);
           setSuccessMessage(result.message || 'Giriş başarılı! Yönlendiriliyorsunuz...');
           setErrorMessage('');
-          
+          router.push('/');          
         },
         onError: (err: any) => {
           setErrorMessage(err.message || 'Email veya şifre yanlış.');
@@ -78,7 +78,7 @@ export default function LoginForm() {
             {errors.password && <p className="text-red-500">{errors.password.message}</p>}
           </div>
 
-          <button type="submit" className="w-full bg-[#ef7464] text-white py-2 rounded-lg hover:bg-[#f56b5c]">
+          <button type="submit" className="w-full bg-[#ef7464] text-white py-2 rounded-lg hover:bg-[#f56b5c] cursor-pointer">
             Giriş Yap
           </button>
         </form>

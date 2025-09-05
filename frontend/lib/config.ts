@@ -7,9 +7,25 @@ export type AuthPaths = {
   REFRESH: string;
 };
 
+interface PhotosPaths {
+  GETALL_PHOTOS: string;
+  GET_PHOTOS: (id: number | string) => string;
+  ADD_PHOTO: string;
+  DELETE_PHOTO: (id: number | string) => string;
+  UPDATE_PHOTO: (id: number | string) => string;
+}
+
 export const AUTH_PATHS: AuthPaths = {
   LOGIN: '/auth/login',
   LOGOUT: '/auth/logout',
   SIGNUP: '/auth/signup',
   REFRESH: '/auth/refresh',
+};
+
+export const PHOTO_PATHS: PhotosPaths = {
+  GETALL_PHOTOS: '/photos',
+  GET_PHOTOS: (id) => `/photos/${id}`,
+  ADD_PHOTO: '/photos/upload',
+  DELETE_PHOTO: (id) => `/photos/${id}`,
+  UPDATE_PHOTO: (id) => `/photos/${id}`
 };

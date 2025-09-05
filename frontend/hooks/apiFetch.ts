@@ -2,7 +2,7 @@ import { API_BASE_URL } from '../lib/config';
 
 export interface ApiOptions extends RequestInit {}
 
-export const apiFetch = async (path: string, options: ApiOptions = {}) => {
+export const apiFetch = async <T = any>(path: string, options: ApiOptions = {}): Promise<T> => {
   const res = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers: {
@@ -18,5 +18,5 @@ export const apiFetch = async (path: string, options: ApiOptions = {}) => {
     throw new Error(data.message || 'API request failed');
   }
 
-  return data;
+  return data as T;
 };

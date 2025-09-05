@@ -1,7 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { authService } from '../services/authService';
+import { AuthResponse } from '../types/auth';
 
-const useSignup = () => useMutation({ mutationFn: authService.signup });
+const useSignup = () =>
+  useMutation<AuthResponse, any, FormData>({
+    mutationFn: (formData: FormData) => authService.signup(formData),
+  });
 const useLogin = () => useMutation({ mutationFn: authService.login });
 const useLogout = () => useMutation({ mutationFn: authService.logout });
 const useRefresh = () =>
