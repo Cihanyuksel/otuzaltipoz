@@ -1,7 +1,7 @@
 import Image from 'next/image';
-import SignupForm from '../../../component/signup';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import SignupForm from '@/components/auth/signup';
 
 export default async function RegisterPage() {
   const cookieStore = await cookies();

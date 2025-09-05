@@ -1,8 +1,8 @@
 'use client';
 
+import { useLogin, useLogout, useRefresh, useSignup } from '@/hooks/useAuthApi';
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { useLogin, useLogout, useSignup, useRefresh } from '../hooks/useAuthApi';
-import { AuthResponse, User } from '../types/auth';
+import { AuthResponse, User } from 'types/auth';
 
 type AuthContextType = {
   user: User | null;
@@ -35,13 +35,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setAccessToken(null);
     }
   };
+
   useEffect(() => {
     if (refreshData) {
       setAuth(refreshData);
     }
   }, [refreshData]);
-
-  console.log(refreshData)
 
   return (
     <AuthContext.Provider

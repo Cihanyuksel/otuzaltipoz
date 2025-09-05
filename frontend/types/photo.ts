@@ -1,4 +1,5 @@
 type PhotoDocument = {
+  status: true;
   _id: string;
   user_id: {
     _id: string;
@@ -15,3 +16,4 @@ type PhotoDocument = {
   __v: number;
   likes?: number;
 };
+

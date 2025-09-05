@@ -2,12 +2,10 @@ import { CookieOptions, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import RefreshToken from "../models/refreshToken";
 import User from "../models/User";
-import bcrypt from 'bcrypt';
 import dotenv from "dotenv";
-import mongoose from "mongoose";
+import cloudinary from "../config/cloudinary";
 
-
-dotenv.config(); 
+dotenv.config();
 
 interface JwtPayload {
   userId: string;
@@ -18,31 +16,33 @@ const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
 export interface IGetUserAuthInfoRequest extends Request {
   user?: {
-      id: string;
-      username?: string;
-  }
+    id: string;
+    username?: string;
+  };
 }
 
 // Cookie settings
-const refreshTokenCookieConfig :CookieOptions = {
+const refreshTokenCookieConfig: CookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "strict" as const,
-  maxAge: 7 * 24 * 60 * 60 * 1000 
+  maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
 const clearRefreshTokenCookieConfig: CookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "strict",
-}
+};
 
 // Login endpoint
 const login = async (req: Request, res: Response): Promise<void> => {
   try {
-    const user = await User.findOne({ email: req.body.email});
+    const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      res.status(401).json({ message: "Email veya şifre hatalı. Lütfen tekrar deneyin." });
+      res
+        .status(401)
+        .json({ message: "Email veya şifre hatalı. Lütfen tekrar deneyin." });
       return;
     }
 
@@ -50,23 +50,34 @@ const login = async (req: Request, res: Response): Promise<void> => {
       id: user._id,
       username: user.username,
       email: user.email,
-      role: user.role
+      role: user.role,
+      profile_img_url: user.profile_img_url,
+      isActive: user.is_active
+    };
+    // Password Check
+    const isMatch = await user.comparePassword(req.body.password.trim());
+    if (!isMatch) {
+      res
+        .status(401)
+        .json({ message: "Email veya şifre hatalı. Lütfen tekrar deneyin." });
+      return;
     }
-     // Şifre kontrolü
-     const isMatch = await user.comparePassword(req.body.password.trim());
-     if (!isMatch) {
-       res.status(401).json({ message: "Email veya şifre hatalı. Lütfen tekrar deneyin." });
-       return;
-     }
 
-
-    const accessToken = jwt.sign( { userId: user._id, role: user.role }, ACCESS_TOKEN_SECRET as string, { expiresIn: "30m" });
-    const refreshToken = jwt.sign({ userId: user._id }, REFRESH_TOKEN_SECRET as string, { expiresIn: "8h" });
+    const accessToken = jwt.sign(
+      { userId: user._id, role: user.role },
+      ACCESS_TOKEN_SECRET as string,
+      { expiresIn: "30m" }
+    );
+    const refreshToken = jwt.sign(
+      { userId: user._id },
+      REFRESH_TOKEN_SECRET as string,
+      { expiresIn: "8h" }
+    );
 
     if (!user.is_active) {
       user.is_active = true;
       await user.save();
-  }
+    }
 
     // Save to DB
     await RefreshToken.create({
@@ -85,8 +96,8 @@ const login = async (req: Request, res: Response): Promise<void> => {
       message: "✅ Başarıyla giriş yaptınız. Yönlendiriliyorsunuz…",
       data: {
         user: userData,
-        accessToken
-      }
+        accessToken,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -97,13 +108,17 @@ const login = async (req: Request, res: Response): Promise<void> => {
 // Refresh endpoint
 const refresh = async (req: Request, res: Response): Promise<Response> => {
   const refreshToken = req.cookies.refreshToken;
-  if (!refreshToken) return res.status(401).json({ msg: "No token provided" });
+  if (!refreshToken) return res.status(401).json({ message: "No token provided" });
 
   const storedToken = await RefreshToken.findOne({ token: refreshToken });
-  if (!storedToken) return res.status(401).json({ msg: "Invalid refresh token" });
+  if (!storedToken)
+    return res.status(401).json({ message: "Invalid refresh token" });
 
   try {
-    const payload = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET!) as JwtPayload;
+    const payload = jwt.verify(
+      refreshToken,
+      REFRESH_TOKEN_SECRET!
+    ) as JwtPayload;
     const user = await User.findById(payload.userId);
 
     if (!user) return res.status(404).json({ msg: "User not found" });
@@ -122,12 +137,14 @@ const refresh = async (req: Request, res: Response): Promise<Response> => {
       { expiresIn: "8h" }
     );
 
-    await RefreshToken.findByIdAndUpdate(storedToken._id, { token: newRefreshToken });
+    await RefreshToken.findByIdAndUpdate(storedToken._id, {
+      token: newRefreshToken,
+    });
 
     // Cookie güncelle
     res.cookie("refreshToken", newRefreshToken, refreshTokenCookieConfig);
 
-    // **AccessToken ve user bilgisi birlikte dönüyor**
+    //AccessToken ve user bilgisi 
     return res.json({
       accessToken: newAccessToken,
       user: {
@@ -136,6 +153,8 @@ const refresh = async (req: Request, res: Response): Promise<Response> => {
         fullname: user.full_name,
         email: user.email,
         role: user.role,
+        profile_img_url: user.profile_img_url,
+        is_active: user.is_active
       },
     });
   } catch (err) {
@@ -143,41 +162,68 @@ const refresh = async (req: Request, res: Response): Promise<Response> => {
   }
 };
 
-
 // signup user
 const signup = async (req: Request, res: Response) => {
   try {
     const { email, username, password, full_name } = req.body;
-
-    // Email kontrolü
     const existingEmail = await User.findOne({ email });
-    if (existingEmail) 
-      return res.status(400).json({ success: false, message: "Bu email zaten kullanılıyor." });
+    if (existingEmail)
+      return res
+        .status(400)
+        .json({ success: false, message: "Bu email zaten kullanılıyor." });
 
-    // Username kontrolü
     const existingUsername = await User.findOne({ username });
-    if (existingUsername) 
-      return res.status(400).json({ success: false, message: "Bu kullanıcı adı zaten alınmış." });
+    if (existingUsername)
+      return res
+        .status(400)
+        .json({ success: false, message: "Bu kullanıcı adı zaten alınmış." });
+
+    let profile_img_url: string | undefined;
+
+    if (req.file?.buffer) {
+      const uploadResult: any = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "photos_app" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.file!.buffer);
+      });
+      console.log(uploadResult, "upload RESULTTTTTT");
+      profile_img_url = uploadResult.secure_url;
+    }
+    
+    console.log(req.file)
 
     const newUser = await User.create({
       username,
       email,
       password,
       full_name,
-      role: "user",
+      role: 'user',
+      profile_img_url,
     });
+
 
     res.status(201).json({
       success: true,
       message: "Kayıt başarılı! Hoşgeldin 😊",
-      user: { id: newUser._id, fullname: newUser.full_name, email: newUser.email }
+      user: {
+        id: newUser._id,
+        fullname: newUser.full_name,
+        email: newUser.email,
+        profile_img_url: newUser.profile_img_url,
+        is_active: newUser.is_active,
+        role: newUser.role
+      },
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Sunucu hatası" });
   }
 };
-
 
 // logout user
 const logout = async (req: Request, res: Response): Promise<void> => {
@@ -201,16 +247,29 @@ const logout = async (req: Request, res: Response): Promise<void> => {
 
     res.clearCookie("refreshToken", clearRefreshTokenCookieConfig);
 
-    res.json({ message: "Logged out successfully" });
+    res.json({ success: true, message: "Logged out successfully" });
   } catch (error) {
     console.error("Logout error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export {
-  login,
-  logout,
-  signup,
-  refresh
-}
+export { login, logout, signup, refresh };
+
+
+/*
+if (req.file?.buffer) {
+      const uploadResult: any = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "photos_app" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.file!.buffer);
+      });
+
+      profile_img_url = uploadResult.secure_url;
+    }
+*/

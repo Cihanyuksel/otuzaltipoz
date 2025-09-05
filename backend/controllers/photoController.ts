@@ -5,35 +5,62 @@ import { IGetUserAuthInfoRequest } from "./authController";
 
 // Get all photos
 const getAllPhotos = async (req: Request, res: Response) => {
-    try {
-        const photos = await Photo.find();
-        res.status(200).json({status: true, data: photos});
-    } catch (error: any) {
-        res.status(500).json({message: "Photos not found", error: error.message})
-    }
-}
+  try {
+    const limit = parseInt(req.query.limit as string) || 15;
+    const offset = parseInt(req.query.offset as string) || 0;
+
+    const total = await Photo.countDocuments();
+
+    const data = await Photo.find()
+      .skip(offset)
+      .limit(limit)
+      .populate("user_id", "username email profile_img_url created_at");
+
+    res.status(200).json({ total, status: true, data });
+  } catch (error: any) {
+    res.status(500).json({ message: "Photos not found", error: error.message });
+  }
+};
+
 
 // Get photo by ID
 const getPhoto = async (req: Request, res: Response) => {
-    try {
-        const photo = await Photo.findById(req.params.id);
-        if(!photo) return res.status(500).json({message: "Photo not found."});
-        res.status(200).json({status: true, data: photo})
-    } catch (error: any) {
-            res.status(500).json({status: false, message: "Photo not found", error: error.message})
-        }
-}
+  try {
+    const photo = await Photo.findById(req.params.id).populate(
+      "user_id",
+      "username email profile_img_url created_at"
+    ); 
+    
+    if (!photo) return res.status(404).json({ message: "Photo not found." });
+
+    const photoObj = photo.toObject();
+    const { user_id, ...rest } = photoObj;
+
+    const photoWithUser = {
+      ...rest,
+      user: user_id, 
+    };
+
+    res.status(200).json({ status: true, data: photoWithUser });
+  } catch (error: any) {
+    res.status(500).json({
+      status: false,
+      message: "Photo not found",
+      error: error.message,
+    });
+  }
+};
 
 // Upload Photo
 const uploadPhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
   try {
     if (!req.file) return res.status(400).json({ message: "Photo required" });
 
-    const result = await cloudinary.uploader.upload_stream(
-      { folder: "photos_app" }, 
+    const result = cloudinary.uploader.upload_stream(
+      { folder: "photos_app" },
       async (error, uploaded) => {
-        if (error) return res.status(500).json({ message: "Upload hatası", error });
-
+        if (error)
+          return res.status(500).json({ message: "Upload Error", error });
         const photo = await Photo.create({
           user_id: req.user!.id,
           photo_url: uploaded?.secure_url,
@@ -42,37 +69,46 @@ const uploadPhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
           tags: req.body.tags ? req.body.tags.split(",") : [],
         });
 
+        console.log(photo);
         res.status(201).json({ success: true, photo });
       }
     );
 
     if (req.file?.buffer) result.end(req.file.buffer);
-
   } catch (err) {
     res.status(500).json({ message: "Sunucu hatası", error: err });
   }
 };
 
-
-// Updated User 
+// Updated Photoxx
 const updatePhoto = async (req: Request, res: Response) => {
-    try {
-      const updatedPhoto = await Photo.findByIdAndUpdate(req.params.id, req.body, {
+  try {
+    const updatedPhoto = await Photo.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
         new: true,
         runValidators: true,
-      });
-      if (!updatedPhoto) return res.status(404).json({ status: false, message: "Photo not found" });
-      res.status(200).json(updatedPhoto);
-    } catch (error: any) {
-      res.status(400).json({ message: "Photo not updated", error: error.message });
-    }
+      }
+    );
+    if (!updatedPhoto)
+      return res
+        .status(404)
+        .json({ status: false, message: "Photo not found" });
+    res.status(200).json(updatedPhoto);
+  } catch (error: any) {
+    res
+      .status(400)
+      .json({ message: "Photo not updated", error: error.message });
+  }
 };
 
 // Delete Photo
 const deletePhoto = async (req: Request, res: Response) => {
   try {
     const deletedPhoto = await Photo.findById(req.params.id);
-    if (!deletedPhoto) return res.status(404).json({ message: "Photo not found" });
+    if (!deletedPhoto)
+      return res.status(404).json({ message: "Photo not found" });
 
     const urlParts = deletedPhoto.photo_url.split("/");
     const fileNameWithExt = urlParts[urlParts.length - 1];
@@ -88,14 +124,12 @@ const deletePhoto = async (req: Request, res: Response) => {
       message: "Photo deleted from Cloudinary and DB",
     });
   } catch (error: any) {
-    res.status(500).json({ success: false, message: "Could not delete photo", error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Could not delete photo",
+      error: error.message,
+    });
   }
 };
 
-export {
-    getAllPhotos,
-    getPhoto,
-    uploadPhoto,
-    updatePhoto,
-    deletePhoto
-}
+export { getAllPhotos, getPhoto, uploadPhoto, updatePhoto, deletePhoto };

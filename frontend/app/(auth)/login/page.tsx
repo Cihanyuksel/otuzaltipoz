@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
-import LoginForm from '../../../component/login';
+import LoginForm from '@/components/auth/login';
 
 export default async function LoginPage() {
   const cookieStore = await cookies();
