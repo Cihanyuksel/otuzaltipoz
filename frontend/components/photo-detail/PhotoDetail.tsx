@@ -5,6 +5,7 @@ import { CommentSection, PhotoImage, PhotoInfo, RatingSection, UploaderInfo } fr
 import { useGetPhoto } from '@/hooks/usePhotoApi';
 import { useAuth } from '@/context/AuthContext';
 import { useParams } from 'next/navigation';
+import Loader from '../common/loader';
 
 const PhotoDetail = () => {
   const user = useAuth();
@@ -13,21 +14,19 @@ const PhotoDetail = () => {
   const photoId = params.id as string;
   const { data: photo, isLoading, isError } = useGetPhoto(photoId);
 
-  if (isLoading) return <p>Yükleniyor...</p>;
+  if (isLoading) return <span><Loader/></span>;
   if (isError || !photo) return <p>Fotoğraf bulunamadı</p>;
-
-  console.log(photo, "PHOTOOOOOO")
 
   return (
     <section
-      className="flex justify-center py-8 bg-neutral-100 text-gray-800 min-h-screen"
+      className="flex justify-center py-8 bg-neutral-100 text-gray-800 min-h-screen px-4 md:px-0"
       style={{ fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif' }}
     >
-      <div className="w-full max-w-5xl px-4">
+      <div className="w-full max-w-5xl">
         <div className="bg-white shadow-sm">
           <PhotoImage photoUrl={photo.photo_url} title={photo.title} />
           <div className="p-6 w-full">
-            <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
               <div className="md:col-span-2">
                 <PhotoInfo title={photo.title} description={photo.description} tags={photo.tags} />
                 <UploaderInfo user={photo.user} />

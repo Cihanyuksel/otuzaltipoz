@@ -23,13 +23,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${plusJakarta.variable} ${notoSans.variable} antialiased`}>
-        <Providers>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </Providers>
-      </body>
-    </html>
+    <body className={`${plusJakarta.variable} ${notoSans.variable} antialiased`}>
+      <Providers>
+        <Header />
+        <main className="pt-24">{children}</main>
+        <Footer />
+      </Providers>
+    </body>
+  </html>
   );
 }

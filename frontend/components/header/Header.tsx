@@ -2,11 +2,13 @@
 import { Logo, UserSection, MobileMenu, NavMenu, SearchBar } from '@/components/header';
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { usePathname } from 'next/navigation';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, logout, loading, setAuth } = useAuth();
+  const pathname = usePathname();
 
   const handleLogout = () => {
     logout.mutate(undefined, {
@@ -39,12 +41,12 @@ export default function Header() {
   };
 
   return (
-      <header className="bg-[#f5f1ea] text-gray-800 shadow-md px-6 py-4 flex justify-between items-center relative z-50">
-        <Logo />
-        <NavMenu />
-        <SearchBar />
-        <UserSection {...userProps} />
-        <MobileMenu {...mobileMenuProps} />
-      </header>
+    <header className="fixed top-0 px-4 w-full bg-[#f5f1ea] text-gray-800 flex justify-between items-center z-50 shadow-xl ">
+      <Logo />
+      <NavMenu />
+      {pathname === '/photos' && <SearchBar />}
+      <UserSection {...userProps} />
+      <MobileMenu {...mobileMenuProps} />
+    </header>
   );
 }

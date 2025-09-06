@@ -6,7 +6,7 @@ export default function HeaderSearchBar() {
       <input
         type="text"
         placeholder="Fotoğraf ara..."
-        className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#ef7464]"
+        className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-[#d3deda]"
       />
     </div>
   );
