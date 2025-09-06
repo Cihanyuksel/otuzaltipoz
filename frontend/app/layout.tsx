@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans, Noto_Sans } from 'next/font/google';
 import './globals.css';
-import Header from '@/components/common/header';
 import Footer from '@/components/common/footer';
-import Providers from '@/components/providers';
+import Providers from '@/components/common/providers';
+import Header from '@/components/header/Header';
 
 const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-plus-jakarta' });
 const notoSans = Noto_Sans({ subsets: ['latin'], variable: '--font-noto-sans' });

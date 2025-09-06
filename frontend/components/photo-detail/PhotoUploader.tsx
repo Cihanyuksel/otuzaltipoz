@@ -8,10 +8,8 @@ export interface IUploaderInfo {
   profile_img_url?: string; 
   created_at: string; 
 }
-
   
 export default function UploaderInfo({ user }: { user: IUploaderInfo }) {
-  console.log("USERRRRRRRRRRRRR", user)
   return (
     <div className="mt-6 flex items-center gap-3">
       <div className="relative h-12 w-12 rounded-full overflow-hidden">
@@ -20,6 +18,7 @@ export default function UploaderInfo({ user }: { user: IUploaderInfo }) {
           alt={user.username}
           fill
           className="object-cover object-center"
+          sizes="(max-width: 768px) 40px, 60px"
         />
       </div>
       <div>

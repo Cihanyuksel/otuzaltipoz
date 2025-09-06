@@ -1,12 +1,12 @@
 import React from 'react';
 import Image from 'next/image';
 
-export default function CommentSection({ userPhoto }: { userPhoto: string }) {
+export default function CommentSection({ userPhoto }: { userPhoto: string | undefined}) {
   return (
     <div className="mt-8 border-t border-gray-200 pt-6">
       <div className="flex items-start  gap-4">
         <Image
-          src={userPhoto}
+          src={userPhoto || './no_profile.png'}
           alt="Kullanıcı Profil Resmi"
           width={40}
           height={40}

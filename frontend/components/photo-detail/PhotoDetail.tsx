@@ -1,18 +1,13 @@
 'use client';
 //components
-import CommentSection from '@/components/photo-detail/comment-seciton';
-import PhotoImage from '@/components/photo-detail/photo-image';
-import PhotoInfo from '@/components/photo-detail/photo-info';
-import RatingSection from '@/components/photo-detail/rating-section';
-import UploaderInfo from '@/components/photo-detail/uploader-info';
-import { useAuth } from '@/context/AuthContext';
+import { CommentSection, PhotoImage, PhotoInfo, RatingSection, UploaderInfo } from '@/components/photo-detail';
 //others
 import { useGetPhoto } from '@/hooks/usePhotoApi';
+import { useAuth } from '@/context/AuthContext';
 import { useParams } from 'next/navigation';
 
 const PhotoDetail = () => {
-
-  const user = useAuth()
+  const user = useAuth();
 
   const params = useParams();
   const photoId = params.id as string;
@@ -21,9 +16,11 @@ const PhotoDetail = () => {
   if (isLoading) return <p>Yükleniyor...</p>;
   if (isError || !photo) return <p>Fotoğraf bulunamadı</p>;
 
+  console.log(photo, "PHOTOOOOOO")
+
   return (
     <section
-      className="flex justify-center py-8 bg-gray-50 text-gray-800 min-h-screen"
+      className="flex justify-center py-8 bg-neutral-100 text-gray-800 min-h-screen"
       style={{ fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif' }}
     >
       <div className="w-full max-w-5xl px-4">

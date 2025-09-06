@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef, useState } from 'react';
 import { FiCheck } from 'react-icons/fi';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -11,7 +13,7 @@ export default function RatingSection() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (starRef.current && !starRef.current.contains(event.target as Node)) {
-        setRating(0); // dış tıklama
+        setRating(0);
       }
     };
     window.addEventListener('click', handleClickOutside);
@@ -21,7 +23,7 @@ export default function RatingSection() {
   const handleSubmit = () => {
     console.log('Rating sent to backend:', rating);
     setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 1500); // 1.5s sonra kaybolur
+    setTimeout(() => setShowMessage(false), 1500); 
   };
 
   return (
@@ -44,6 +46,7 @@ export default function RatingSection() {
 
       {/* Star Rating Input */}
       <div ref={starRef} className="mt-2 flex flex-row-reverse items-center justify-end w-full flex-shrink-0">
+        
         <div className="relative flex items-center">
           {rating > 0 && (
             <motion.button
@@ -68,14 +71,13 @@ export default function RatingSection() {
               />
             </motion.button>
           )}
-
           <AnimatePresence>
             {showMessage && (
               <motion.div
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
-                className="absolute left-1/2 top-full mt-1 -translate-x-1/2 rounded bg-green-100 px-2 py-1 text-sm text-green-800 shadow"
+                className="absolute left-1/2 top-full mt-1 -translate-x-1/2 rounded bg-green-100 px-2 py-1 text-sm text-green-800 shadow whitespace-nowrap"
               >
                 Oy verildi!
               </motion.div>
@@ -83,29 +85,32 @@ export default function RatingSection() {
           </AnimatePresence>
         </div>
 
-        <div className="star-rating flex flex-row-reverse">
-          {[5, 4, 3, 2, 1].map((n) => (
-            <label key={n} className="cursor-pointer">
-              <input type="radio" name="rating" value={n} onChange={() => setRating(n)} className="hidden" />
-              <motion.div
-                whileHover={{ scale: 1.15 }} // Üzerine gelince biraz daha büyür
-                whileTap={{ scale: 0.85 }} // Tıklayınca daha belirgin şekilde küçülür
-                animate={{ scale: n === rating ? 1.2 : 1 }} // Seçilen yıldıza özel bir "pop" efekti
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              >
-                {n <= rating ? (
-                  <IoIosStar color="gold" size={30} /> // Seçilen yıldızın içi dolu olur
-                ) : (
-                  <IoIosStarOutline color="gray" size={30} /> // Diğer yıldızların içi boş kalır
-                )}
-              </motion.div>
-            </label>
-          ))}
+        {/* Stars */}
+        <div className="flex flex-row-reverse items-center gap-2">
+            <p className="text-sm text-gray-600">{rating}</p>
+            <div className="star-rating flex flex-row-reverse">
+            {[5, 4, 3, 2, 1].map((n) => (
+                <label key={n} className="cursor-pointer">
+                <input type="radio" name="rating" value={n} onChange={() => setRating(n)} className="hidden" />
+                <motion.div
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.85 }}
+                    animate={{ scale: n === rating ? 1.2 : 1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                >
+                    {n <= rating ? (
+                    <IoIosStar color="gold" size={30} />
+                    ) : (
+                    <IoIosStarOutline color="gray" size={30} />
+                    )}
+                </motion.div>
+                </label>
+            ))}
+            </div>
         </div>
 
-        <p>{rating}</p>
-        <p className="mr-2 flex-shrink-0 text-sm font-medium text-gray-600">Rate this photo</p>
+        <p className="mr-4 flex-shrink-0 text-sm font-medium text-gray-600">Rate this photo</p>
       </div>
     </div>
-  );
+  )
 }

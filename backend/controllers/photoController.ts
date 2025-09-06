@@ -11,10 +11,16 @@ const getAllPhotos = async (req: Request, res: Response) => {
 
     const total = await Photo.countDocuments();
 
-    const data = await Photo.find()
+    const photos = await Photo.find()
       .skip(offset)
       .limit(limit)
-      .populate("user_id", "username email profile_img_url created_at");
+      .populate("user_id", "username email profile_img_url created_at")
+      .lean();
+
+    const data = photos.map(({ user_id, ...rest }) => ({
+      ...rest,
+      user: user_id,
+    }));
 
     res.status(200).json({ total, status: true, data });
   } catch (error: any) {
@@ -22,15 +28,14 @@ const getAllPhotos = async (req: Request, res: Response) => {
   }
 };
 
-
 // Get photo by ID
 const getPhoto = async (req: Request, res: Response) => {
   try {
     const photo = await Photo.findById(req.params.id).populate(
       "user_id",
       "username email profile_img_url created_at"
-    ); 
-    
+    );
+
     if (!photo) return res.status(404).json({ message: "Photo not found." });
 
     const photoObj = photo.toObject();
@@ -38,7 +43,7 @@ const getPhoto = async (req: Request, res: Response) => {
 
     const photoWithUser = {
       ...rest,
-      user: user_id, 
+      user: user_id,
     };
 
     res.status(200).json({ status: true, data: photoWithUser });

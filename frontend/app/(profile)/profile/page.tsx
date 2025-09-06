@@ -1,11 +1,9 @@
 import React from 'react'
 
-function page() {
+export default function Profile() {
   return (
     <div>
-        Favorites
+        My Profile
     </div>
   )
 }
-
-export default page
