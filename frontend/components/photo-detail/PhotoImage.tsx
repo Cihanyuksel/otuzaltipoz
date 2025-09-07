@@ -12,12 +12,12 @@ export default function PhotoImage({ photoUrl, title }: IPhotoImage) {
   const PHOTO_NOT_FOUND = "/image-not-found.png";
 
   return (
-    <div className="relative w-full h-[500px]">
+    <div className="relative w-full h-[400px] md:h-[600px] lg:h-[750px]">
       <Image
         src={src || PHOTO_NOT_FOUND}
         alt={title}
         fill
-        className="object-cover object-center rounded-md"
+        className="object-cover object-center"
         priority
         onError={() => setSrc(PHOTO_NOT_FOUND)}
       />

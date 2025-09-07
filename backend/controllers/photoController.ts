@@ -12,6 +12,7 @@ const getAllPhotos = async (req: Request, res: Response) => {
     const total = await Photo.countDocuments();
 
     const photos = await Photo.find()
+      .sort({created_at: -1})
       .skip(offset)
       .limit(limit)
       .populate("user_id", "username email profile_img_url created_at")

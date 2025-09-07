@@ -6,7 +6,7 @@ export default function CommentSection({ userPhoto }: { userPhoto: string | unde
     <div className="mt-8 border-t border-gray-200 pt-6">
       <div className="flex items-start  gap-4">
         <Image
-          src={userPhoto || './no_profile.png'}
+          src={userPhoto || '/no_profile.png'}
           alt="Kullanıcı Profil Resmi"
           width={40}
           height={40}

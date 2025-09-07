@@ -4,6 +4,7 @@ import { User } from 'types/auth';
 import MobileSearchBar from './MobileSearchBar';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { IoCloseOutline } from 'react-icons/io5';
+import { usePathname } from 'next/navigation';
 
 interface IMobileMenu {
   setMenuOpen: Dispatch<SetStateAction<boolean>>;
@@ -14,6 +15,9 @@ interface IMobileMenu {
 }
 
 export default function MobileMenu({ menuOpen, setMenuOpen, loading, user }: IMobileMenu) {
+
+  const pathname = usePathname();
+
   const navLinks = [
     { name: 'Ana Sayfa', href: '/' },
     { name: 'Fotoğraflar', href: '/photos' },
@@ -45,7 +49,7 @@ export default function MobileMenu({ menuOpen, setMenuOpen, loading, user }: IMo
         }`}
       >
         <ul className="bg-[#f5f1ea] flex flex-col items-center py-4 space-y-4 shadow-lg">
-          <MobileSearchBar />
+          {pathname === '/photos' && <MobileSearchBar />}
           {navLinks.map((link) => (
             <li key={link.name} className="w-full px-4">
               <Link

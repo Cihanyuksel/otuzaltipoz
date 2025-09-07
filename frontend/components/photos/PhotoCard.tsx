@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { FaHeart, FaStar, FaStarHalfAlt, FaRegStar, FaRegHeart } from 'react-icons/fa';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import Link from 'next/link';
 import { formatDate } from 'lib/formatDate';
 
@@ -33,9 +33,9 @@ const PhotoCard: React.FC<IPhotoCard> = ({
 }) => {
   const [likes, setLikes] = useState<number>(initialLikes);
   const [userRating, setUserRating] = useState<number>(0);
-  
+
   return (
-    <div className="rounded-lg overflow-hidden shadow-lg border border-gray-200 bg-white hover:shadow-xl transition-shadow duration-300">
+    <div className="rounded overflow-hidden shadow-lg border border-gray-200 bg-white hover:shadow-xl transition-shadow duration-300">
       {/* Image */}
       <div onClick={onPhotoClick} className="block cursor-pointer">
         <div className="relative w-full h-64 sm:h-72 md:h-80">
@@ -50,23 +50,24 @@ const PhotoCard: React.FC<IPhotoCard> = ({
       </div>
 
       {/* Card Body */}
-      <div className="p-3 flex flex-col gap-1">
+      <div className="p-3 flex flex-col gap-1 bg-[#f5f1ea]">
         <div className="flex items-center justify-between gap-2 mt-1">
-          <Link href={`/photos/${photoId}`} className="flex-1">
+          <Link href={`/photos/${photoId}`} className="flex-1 min-w-0">
             <div>
               <h2 className="text-sm font-semibold truncate">{title}</h2>
-              <p className='truncate'>{description}</p>
+              <p className="truncate">{description}</p>
             </div>
           </Link>
-          
+
           <Link href={`/biri/${uploader}`} className="flex items-center gap-x-5 p-1 rounded-xl">
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col items-end">
+              {' '}
               <p className="text-xs text-gray-800 truncate leading-6">
                 Uploaded by: <strong>{uploader}</strong>
               </p>
               <p className="text-xs text-gray-500">{formatDate(created_at)}</p>
             </div>
-            <div className="flex items-center w-full">
+            <div className="flex items-center">
               <Image
                 src={profileImgUrl ? profileImgUrl : '/no_profile.png'}
                 alt={`${uploader} profil`}
@@ -82,7 +83,7 @@ const PhotoCard: React.FC<IPhotoCard> = ({
       {/* Footer */}
       <div className="flex justify-between items-center mt-2 p-3">
         <span className="text-gray-500 text-sm font-bold">Average Rating: {averageRating.toFixed(1)}</span>
-        
+
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -96,7 +97,7 @@ const PhotoCard: React.FC<IPhotoCard> = ({
           ) : (
             <FaRegHeart className="text-gray-400 hover:text-[#ef7464d1]" />
           )}
-          <span >{likes}</span>
+          <span>{likes}</span>
         </button>
       </div>
     </div>

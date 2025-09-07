@@ -36,7 +36,7 @@ export default function SignupForm() {
   const [isSelected, setIsSelected] = useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]; // files null ise undefined olur
+    const file = e.target.files?.[0];
     if (file) {
       setFileName(file.name);
       setIsSelected(true);

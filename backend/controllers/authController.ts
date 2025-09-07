@@ -26,7 +26,7 @@ const refreshTokenCookieConfig: CookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "strict" as const,
-  maxAge: 7 * 24 * 60 * 60 * 1000,
+  maxAge: 2 * 24 * 60 * 60 * 1000
 };
 
 const clearRefreshTokenCookieConfig: CookieOptions = {
@@ -71,7 +71,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
     const refreshToken = jwt.sign(
       { userId: user._id },
       REFRESH_TOKEN_SECRET as string,
-      { expiresIn: "8h" }
+      { expiresIn: "2d" }
     );
 
     if (!user.is_active) {

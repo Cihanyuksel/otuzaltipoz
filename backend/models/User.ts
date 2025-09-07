@@ -51,9 +51,14 @@ UserSchema.methods.comparePassword = async function (
 
 UserSchema.post("findOneAndDelete", async function (deletedUser) {
     if (deletedUser) {
-      await Photo.deleteMany({ user_id: deletedUser._id });
+        try {
+            const result = await Photo.deleteMany({ user_id: deletedUser._id });
+            console.log(`${result.deletedCount} adet fotoğraf başarıyla silindi.`);
+        } catch (error) {
+            console.error("Fotoğrafları silerken bir hata oluştu:", error);
+        }
     }
-  });
+});
 
 const User: Model<IUser> = mongoose.model<IUser>("User", UserSchema);
 

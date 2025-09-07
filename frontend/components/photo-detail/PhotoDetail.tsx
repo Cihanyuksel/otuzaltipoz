@@ -19,7 +19,7 @@ const PhotoDetail = () => {
 
   return (
     <section
-      className="flex justify-center py-8 bg-neutral-100 text-gray-800 min-h-screen px-4 md:px-0"
+      className="h-full flex justify-center py-4 bg-neutral-100 text-gray-800 min-h-screen px-4 md:px-0"
       style={{ fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif' }}
     >
       <div className="w-full max-w-5xl">

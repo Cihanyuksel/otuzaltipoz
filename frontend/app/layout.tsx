@@ -26,7 +26,7 @@ export default function RootLayout({
     <body className={`${plusJakarta.variable} ${notoSans.variable} antialiased`}>
       <Providers>
         <Header />
-        <main className="pt-24">{children}</main>
+        <main className="pt-20">{children}</main>
         <Footer />
       </Providers>
     </body>

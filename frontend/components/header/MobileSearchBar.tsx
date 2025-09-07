@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function MobileSearchBar() {
   return (
     <div className="w-full px-4">

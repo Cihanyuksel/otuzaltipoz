@@ -13,7 +13,13 @@ export default function Photos() {
   const { data: response, isLoading, isError, error } = useGetAllPhoto();
   const photos = response?.data || [];
 
-  if (isLoading) return <div> <Loader/></div>;
+  if (isLoading)
+    return (
+      <div>
+        {' '}
+        <Loader />
+      </div>
+    );
   if (isError) return <div>Error: {error?.message}</div>;
 
   const openModal = (index: number) => {
@@ -39,6 +45,7 @@ export default function Photos() {
       });
     }
   };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4">
       {photos.map((photo: Photo, index: number) => (
@@ -48,20 +55,16 @@ export default function Photos() {
           title={photo.title}
           description={photo.description}
           imageUrl={photo.photo_url}
-          uploader={photo.user.username}
+          uploader={photo.user?.username}
           averageRating={averageRating}
           tags={photo.tags || []}
           initialLikes={photo.likes || 0}
-          profileImgUrl={photo.user.profile_img_url}
-          created_at={photo.user.created_at}
+          profileImgUrl={photo.user?.profile_img_url}
+          created_at={photo.user?.created_at}
           onPhotoClick={() => openModal(index)}
         />
       ))}
-        <PhotoModal 
-          photos={photos}
-          currentIndex={currentIndex} 
-          onClose={closeModal} 
-          onNavigate={navigatePhotos} />
+      <PhotoModal photos={photos} currentIndex={currentIndex} onClose={closeModal} onNavigate={navigatePhotos} />
     </div>
   );
 }
