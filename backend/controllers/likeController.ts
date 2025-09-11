@@ -1,84 +1,64 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import Like from "../models/Likes";
 import { IGetUserAuthInfoRequest } from "./authController";
-import mongoose from "mongoose";
 
-interface IUserPopulated {
-  _id: string;
-  username: string;
-}
-
-interface ILikePopulated {
-  _id: string;
-  photo_id: string;
-  user_id: IUserPopulated;
-  created_at: Date;
-}
-
-const likePhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
+const getPhotoLikes = async (req: IGetUserAuthInfoRequest, res: Response) => {
   try {
- 
     const { photoId } = req.params;
-    const userId = req.user!.id; 
-    
-    const existingLike = await Like.findOne({ user_id: userId, photo_id: photoId });
-    if (existingLike) {
-      return res.status(400).json({ message: "You already liked this photo." });
-    }
+    const userId = req.user?.id;
 
-    const like = new Like({ user_id: userId, photo_id: photoId });
-    await like.save();
+    // Fotoğrafı beğenen tüm 'Like' belgelerini bul ve 'user_id' referansını 'User' modeliyle doldur.
+    const likes = await Like.find({ photo_id: photoId })
+      .populate({
+        path: 'user_id',
+        select: 'username profile_img_url',
+      });
 
-    return res.status(201).json({ message: "Photo liked.", like });
+    const likeCount = likes.length;
+
+    // Beğenen kullanıcıların listesini oluştur
+    const usersWhoLiked = likes.map(like => like.user_id);
+
+    // Kendi beğenip beğenmediğini kontrol et
+    const isLikedByMe = likes.some(like => like.user_id.equals(userId));
+
+    return res.status(200).json({ photoId, likeCount, isLikedByMe, usersWhoLiked });
+
   } catch (error) {
-    return res.status(500).json({ message: "Failed to like the photo.", error });
+    console.error(error);
+    return res.status(500).json({ message: "Failed to retrieve like count.", error });
   }
 };
 
-const unlikePhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
+const toggleLike = async (req: IGetUserAuthInfoRequest, res: Response) => {
   try {
     const { photoId } = req.params;
     const userId = req.user!.id;
+    
+    let isLikedByMe = false;
+    let likeCount = await Like.countDocuments({ photo_id: photoId });
 
-    const like = await Like.findOneAndDelete({ user_id: userId, photo_id: photoId });
+    const existingLike = await Like.findOne({ user_id: userId, photo_id: photoId });
 
-    if (!like) {
-      return res.status(404).json({ message: "Like not found." });
+    if (existingLike) {
+      await Like.findOneAndDelete({ user_id: userId, photo_id: photoId });
+      isLikedByMe = false;
+      likeCount--;
+      return res.status(200).json({ message: "Like removed successfully.", isLikedByMe, likeCount });
+    } else {
+      const newLike = new Like({ user_id: userId, photo_id: photoId });
+      await newLike.save();
+      isLikedByMe = true;
+      likeCount++;
+      return res.status(201).json({ message: "Photo liked successfully.", like: newLike, isLikedByMe, likeCount });
     }
-
-    return res.status(200).json({ message: "Like removed." });
   } catch (error) {
-    return res.status(500).json({ message: "Failed to remove like.", error });
+    console.error(error);
+    return res.status(500).json({ message: "Failed to toggle like.", error });
   }
 };
 
-const getPhotoLikes = async (req: Request, res: Response) => {
-  try {
-    const { photoId } = req.params;
-
-    const likeCount = await Like.countDocuments({ photo_id: photoId });
-
-    const likes = await Like.find({ photo_id: photoId })
-      .populate<{ user_id: IUserPopulated }>("user_id", "username")
-      .lean<ILikePopulated[]>();
-
-    const likedUsers = likes.map(like => {
-      const user = like.user_id as unknown as { _id: string; username: string };
-      return {
-        userId: user._id,
-        username: user.username
-      };
-    });
-    
-    return res.status(200).json({ photoId, likeCount, likes: likedUsers });
-  } catch (error) {
-    return res.status(500).json({ message: "Failed to retrieve like count.", error });
-  }
-};  
-
-
 export {
-  likePhoto,
-  unlikePhoto,
+  toggleLike,
   getPhotoLikes
 }

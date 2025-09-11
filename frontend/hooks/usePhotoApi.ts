@@ -1,6 +1,9 @@
+// src/hooks/usePhotoApi.ts
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { photoService } from '../services/photoService';
 import { Photo } from 'types/photo';
+
 type PhotoResponse = {
   success: boolean;
   photo: {
@@ -14,15 +17,16 @@ type PhotoResponse = {
     __v: number;
   };
 };
+
 export const useGetAllPhoto = () =>
   useQuery({
-    queryKey: ['photos', 'all'],
+    queryKey: ['photos'],
     queryFn: photoService.getAllPhoto,
     staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
   });
 
-export const useGetPhoto = (id: string | number) =>
+export const useGetPhoto = (id: string) =>
   useQuery<Photo>({
     queryKey: ['photos', id],
     queryFn: () => photoService.getPhoto(id),
@@ -31,13 +35,13 @@ export const useGetPhoto = (id: string | number) =>
     refetchOnWindowFocus: false,
   });
 
-  export const useAddPhoto = (accessToken: string) => {
-    const queryClient = useQueryClient();
-  
-    return useMutation<PhotoResponse, any, FormData>({
-      mutationFn: (formData: FormData) => photoService.addPhoto(formData, accessToken),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['photos', 'all'] });
-      },
-    });
-  };
+export const useAddPhoto = (accessToken: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<PhotoResponse, any, FormData>({
+    mutationFn: (formData: FormData) => photoService.addPhoto(formData, accessToken),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['photos'] });
+    },
+  });
+};

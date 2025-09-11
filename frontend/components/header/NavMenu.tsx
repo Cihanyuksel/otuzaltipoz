@@ -10,7 +10,6 @@ export default function HeaderNavbar() {
     { name: 'Anasayfa', href: '/' },
     { name: 'Fotoğraflar', href: '/photos' },
     { name: 'Hakkımızda', href: '/about' },
-    { name: 'İletişim', href: '/contact' },
   ];
 
   return (

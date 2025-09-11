@@ -1,15 +1,12 @@
-import Link from "next/link";
-import Image from "next/image";
-import { MdKeyboardArrowDown } from "react-icons/md";
-import { motion } from "framer-motion";
-import { Dispatch, SetStateAction } from "react";
-import { User } from "types/auth";
-import {
-  MdPerson,
-  MdPhoto,
-  MdMessage,
-  MdNotifications,
-} from "react-icons/md";
+'use client';
+
+import Link from 'next/link';
+import Image from 'next/image';
+import { MdKeyboardArrowDown } from 'react-icons/md';
+import { motion } from 'framer-motion';
+import { Dispatch, SetStateAction } from 'react';
+import { User } from 'types/auth';
+import { MdPerson, MdPhoto, MdMessage, MdNotifications } from 'react-icons/md';
 
 interface IUserSection {
   setDropdownOpen: Dispatch<SetStateAction<boolean>>;
@@ -18,6 +15,7 @@ interface IUserSection {
   loading: boolean;
   dropdownOpen: boolean;
   handleLogout: () => void;
+  isLogoutPending: boolean; 
 }
 
 function UserSection({
@@ -27,7 +25,10 @@ function UserSection({
   loading,
   dropdownOpen,
   handleLogout,
+  isLogoutPending, 
 }: IUserSection) {
+
+  console.log("USER SECTION,", user)
   return (
     <div>
       {!loading &&
@@ -114,9 +115,12 @@ function UserSection({
                   <li className="border-t border-gray-200 mt-1 pt-1">
                     <button
                       onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer"
+                      // isLogoutPending true ise butonu devre dışı bırakıyoruz
+                      disabled={isLogoutPending}
+                      className="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Çıkış Yap
+                      {/* Yüklenme durumunda metni değiştiriyoruz */}
+                      {isLogoutPending ? 'Çıkış Yapılıyor...' : 'Çıkış Yap'}
                     </button>
                   </li>
                 </ul>

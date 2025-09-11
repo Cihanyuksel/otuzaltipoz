@@ -26,7 +26,7 @@ const refreshTokenCookieConfig: CookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "strict" as const,
-  maxAge: 2 * 24 * 60 * 60 * 1000
+  maxAge: 2 * 24 * 60 * 60 * 1000 
 };
 
 const clearRefreshTokenCookieConfig: CookieOptions = {
@@ -191,12 +191,9 @@ const signup = async (req: Request, res: Response) => {
         );
         stream.end(req.file!.buffer);
       });
-      console.log(uploadResult, "upload RESULTTTTTT");
       profile_img_url = uploadResult.secure_url;
     }
     
-    console.log(req.file)
-
     const newUser = await User.create({
       username,
       email,

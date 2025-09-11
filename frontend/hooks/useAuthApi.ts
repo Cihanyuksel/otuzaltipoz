@@ -2,12 +2,24 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { authService } from '../services/authService';
 import { AuthResponse } from '../types/auth';
 
+type SetAuthFn = (authData: AuthResponse['data'] | null) => void;
+
 const useSignup = () =>
   useMutation<AuthResponse, any, FormData>({
     mutationFn: (formData: FormData) => authService.signup(formData),
   });
+
 const useLogin = () => useMutation({ mutationFn: authService.login });
-const useLogout = () => useMutation({ mutationFn: authService.logout });
+
+const useLogout = (fn: SetAuthFn) => {
+  return useMutation({ 
+    mutationFn: () => authService.logout(),
+    onSuccess: () => {
+      fn(null);
+    }
+  });
+};
+
 const useRefresh = () =>
   useQuery({
     queryKey: ['auth', 'refresh'],

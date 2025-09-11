@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import Photo from "../models/Photo";
 import cloudinary from "../config/cloudinary";
 import { IGetUserAuthInfoRequest } from "./authController";
+import Like from "../models/Likes";
 
 // Get all photos
-const getAllPhotos = async (req: Request, res: Response) => {
+const getAllPhotos = async (req: IGetUserAuthInfoRequest, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 15;
     const offset = parseInt(req.query.offset as string) || 0;
@@ -12,15 +13,28 @@ const getAllPhotos = async (req: Request, res: Response) => {
     const total = await Photo.countDocuments();
 
     const photos = await Photo.find()
-      .sort({created_at: -1})
+      .sort({ created_at: -1 })
       .skip(offset)
       .limit(limit)
       .populate("user_id", "username email profile_img_url created_at")
       .lean();
 
-    const data = photos.map(({ user_id, ...rest }) => ({
-      ...rest,
-      user: user_id,
+    const loggedInUserId = req.user?.id;
+
+    const data = await Promise.all(photos.map(async (photo) => {
+      const likeCount = await Like.countDocuments({ photo_id: photo._id });
+      const isLikedByMe = loggedInUserId ? 
+        await Like.exists({ user_id: loggedInUserId, photo_id: photo._id }) : 
+        false;
+
+      const { user_id, ...rest } = photo;
+      
+      return {
+        ...rest,
+        user: user_id,
+        likeCount,
+        isLikedByMe: !!isLikedByMe,
+      };
     }));
 
     res.status(200).json({ total, status: true, data });
@@ -30,22 +44,30 @@ const getAllPhotos = async (req: Request, res: Response) => {
 };
 
 // Get photo by ID
-const getPhoto = async (req: Request, res: Response) => {
+const getPhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
   try {
-    const photo = await Photo.findById(req.params.id).populate(
-      "user_id",
-      "username email profile_img_url created_at"
-    );
+    const photo = await Photo.findById(req.params.id)
+      .populate("user_id", "username email profile_img_url created_at")
+      .lean();
 
     if (!photo) return res.status(404).json({ message: "Photo not found." });
 
-    const photoObj = photo.toObject();
-    const { user_id, ...rest } = photoObj;
+    const loggedInUserId = req.user?.id;
+
+    const likeCount = await Like.countDocuments({ photo_id: photo._id });
+    const isLikedByMe = loggedInUserId ? 
+      await Like.exists({ user_id: loggedInUserId, photo_id: photo._id }) : 
+      false;
+
+    const { user_id, ...rest } = photo;
 
     const photoWithUser = {
       ...rest,
       user: user_id,
+      likeCount,
+      isLikedByMe: !!isLikedByMe,
     };
+
 
     res.status(200).json({ status: true, data: photoWithUser });
   } catch (error: any) {
@@ -75,7 +97,6 @@ const uploadPhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
           tags: req.body.tags ? req.body.tags.split(",") : [],
         });
 
-        console.log(photo);
         res.status(201).json({ success: true, photo });
       }
     );

@@ -19,12 +19,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-
   const { data: refreshData, isLoading } = useRefresh();
-
-  const login = useLogin();
-  const signup = useSignup();
-  const logout = useLogout();
 
   const setAuth = (authData: AuthResponse['data'] | null) => {
     if (authData) {
@@ -41,6 +36,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setAuth(refreshData);
     }
   }, [refreshData]);
+
+  const login = useLogin();
+  const signup = useSignup();
+  const logout = useLogout(setAuth);
 
   return (
     <AuthContext.Provider

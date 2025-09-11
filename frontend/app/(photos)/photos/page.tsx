@@ -8,41 +8,22 @@ import { Photo } from 'types/photo';
 
 export default function Photos() {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
-  const averageRating = 5;
-
   const { data: response, isLoading, isError, error } = useGetAllPhoto();
   const photos = response?.data || [];
 
-  if (isLoading)
-    return (
-      <div>
-        {' '}
-        <Loader />
-      </div>
-    );
+  if (isLoading) return <Loader />;
   if (isError) return <div>Error: {error?.message}</div>;
 
-  const openModal = (index: number) => {
-    setCurrentIndex(index);
-  };
-
-  const closeModal = () => {
-    setCurrentIndex(null);
-  };
+  const openModal = (index: number) => setCurrentIndex(index);
+  const closeModal = () => setCurrentIndex(null);
 
   const navigatePhotos = (direction: 'prev' | 'next') => {
     if (currentIndex === null) return;
 
     if (direction === 'next') {
-      setCurrentIndex((prevIndex) => {
-        if (prevIndex === null) return 0;
-        return (prevIndex + 1) % photos.length;
-      });
+      setCurrentIndex((prevIndex) => (prevIndex! + 1) % photos.length);
     } else {
-      setCurrentIndex((prevIndex) => {
-        if (prevIndex === null) return photos.length - 1;
-        return (prevIndex - 1 + photos.length) % photos.length;
-      });
+      setCurrentIndex((prevIndex) => (prevIndex! - 1 + photos.length) % photos.length);
     }
   };
 
@@ -56,11 +37,10 @@ export default function Photos() {
           description={photo.description}
           imageUrl={photo.photo_url}
           uploader={photo.user?.username}
-          averageRating={averageRating}
-          tags={photo.tags || []}
-          initialLikes={photo.likes || 0}
           profileImgUrl={photo.user?.profile_img_url}
-          created_at={photo.user?.created_at}
+          created_at={photo.created_at}
+          averageRating={5}
+          tags={photo.tags || []}
           onPhotoClick={() => openModal(index)}
         />
       ))}

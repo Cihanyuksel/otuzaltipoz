@@ -1,4 +1,5 @@
 'use client';
+
 import { Logo, UserSection, MobileMenu, NavMenu, SearchBar } from '@/components/header';
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
@@ -10,13 +11,18 @@ export default function Header() {
   const { user, logout, loading, setAuth } = useAuth();
   const pathname = usePathname();
 
+  const isLogoutPending = logout.isPending;
+
   const handleLogout = () => {
     logout.mutate(undefined, {
       onSuccess: () => {
         setAuth(null);
       },
-      onError: (err) => console.log(err),
+      onError: (error) => {
+        console.error(error);
+      },
     });
+    setDropdownOpen(false)
   };
 
   const handleDropdown = () => {
@@ -30,6 +36,7 @@ export default function Header() {
     setDropdownOpen,
     handleDropdown,
     handleLogout,
+    isLogoutPending,
   };
 
   const mobileMenuProps = {
@@ -41,7 +48,7 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 px-4 w-full bg-[#f5f1ea] text-gray-800 flex justify-between items-center z-50 shadow-xl ">
+    <header className="fixed top-0 px-4 w-full bg-[#f5f1ea] text-gray-800 flex justify-between items-center z-50 shadow-xl">
       <Logo />
       <NavMenu />
       {pathname === '/photos' && <SearchBar />}
