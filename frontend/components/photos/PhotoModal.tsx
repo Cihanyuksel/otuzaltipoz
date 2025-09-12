@@ -21,7 +21,7 @@ interface IPhotoModal {
 const PhotoModal: React.FC<IPhotoModal> = ({ photos, currentIndex, onClose, onNavigate }) => {
   const isModalOpen = currentIndex !== null;
   const currentPhoto = isModalOpen ? photos[currentIndex] : null;
-
+  
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'ArrowRight') {
       onNavigate('next');
