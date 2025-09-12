@@ -9,10 +9,16 @@ const getAllPhotos = async (req: IGetUserAuthInfoRequest, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 15;
     const offset = parseInt(req.query.offset as string) || 0;
+    const search = (req.query.search as string)?.trim();
 
-    const total = await Photo.countDocuments();
+    const query: any = {};
+    if (search && search.length > 0) {
+      query.title = { $regex: search, $options: "i" };
+    }
 
-    const photos = await Photo.find()
+    const total = await Photo.countDocuments(query);
+
+    const photos = await Photo.find(query)
       .sort({ created_at: -1 })
       .skip(offset)
       .limit(limit)
@@ -21,21 +27,23 @@ const getAllPhotos = async (req: IGetUserAuthInfoRequest, res: Response) => {
 
     const loggedInUserId = req.user?.id;
 
-    const data = await Promise.all(photos.map(async (photo) => {
-      const likeCount = await Like.countDocuments({ photo_id: photo._id });
-      const isLikedByMe = loggedInUserId ? 
-        await Like.exists({ user_id: loggedInUserId, photo_id: photo._id }) : 
-        false;
+    const data = await Promise.all(
+      photos.map(async (photo) => {
+        const likeCount = await Like.countDocuments({ photo_id: photo._id });
+        const isLikedByMe = loggedInUserId
+          ? await Like.exists({ user_id: loggedInUserId, photo_id: photo._id })
+          : false;
 
-      const { user_id, ...rest } = photo;
-      
-      return {
-        ...rest,
-        user: user_id,
-        likeCount,
-        isLikedByMe: !!isLikedByMe,
-      };
-    }));
+        const { user_id, ...rest } = photo;
+
+        return {
+          ...rest,
+          user: user_id,
+          likeCount,
+          isLikedByMe: !!isLikedByMe,
+        };
+      })
+    );
 
     res.status(200).json({ total, status: true, data });
   } catch (error: any) {
@@ -55,9 +63,9 @@ const getPhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
     const loggedInUserId = req.user?.id;
 
     const likeCount = await Like.countDocuments({ photo_id: photo._id });
-    const isLikedByMe = loggedInUserId ? 
-      await Like.exists({ user_id: loggedInUserId, photo_id: photo._id }) : 
-      false;
+    const isLikedByMe = loggedInUserId
+      ? await Like.exists({ user_id: loggedInUserId, photo_id: photo._id })
+      : false;
 
     const { user_id, ...rest } = photo;
 
@@ -67,7 +75,6 @@ const getPhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
       likeCount,
       isLikedByMe: !!isLikedByMe,
     };
-
 
     res.status(200).json({ status: true, data: photoWithUser });
   } catch (error: any) {

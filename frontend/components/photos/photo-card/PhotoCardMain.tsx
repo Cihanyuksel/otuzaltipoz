@@ -31,7 +31,7 @@ const PhotoCardMain: React.FC<IPhotoCard> = ({
 }) => {
   return (
     <div className="rounded overflow-hidden shadow-lg border border-gray-200 bg-white hover:shadow-xl transition-shadow duration-300">
-      <PhotoCardImage imageUrl={imageUrl} onPhotoClick={onPhotoClick} title={title}  />
+      <PhotoCardImage imageUrl={imageUrl} onPhotoClick={onPhotoClick} title={title} />
       <PhotoCardInfo
         description={description}
         uploader={uploader}

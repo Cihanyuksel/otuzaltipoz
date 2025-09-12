@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans, Noto_Sans } from 'next/font/google';
 import './globals.css';
-import Footer from '@/components/common/footer';
 import Providers from '@/components/common/providers';
 import Header from '@/components/header/Header';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,14 +22,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en">
       <body className={`${plusJakarta.variable} ${notoSans.variable} antialiased`}>
         <Providers>
-          <Header />
-          <main className="pt-20">{children}</main>
-          <ToastContainer position="top-right" autoClose={3000} aria-label="notification" />
+            <Header />
+            <main className="pt-20">{children}</main>
+            <ToastContainer position="top-right" autoClose={3000} aria-label="notification" />
         </Providers>
       </body>
     </html>

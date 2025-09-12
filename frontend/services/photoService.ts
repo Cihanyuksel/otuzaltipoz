@@ -3,9 +3,13 @@ import { apiFetch } from '../hooks/apiFetch';
 import { API_BASE_URL, PHOTO_PATHS } from '../lib/config';
 
 export const photoService = {
-  getAllPhoto: async (): Promise<ApiResponse<Photo[]>> => {
+  getAllPhoto: async (searchQuery?: string): Promise<ApiResponse<Photo[]>> => {
     try {
-      const response = await apiFetch<ApiResponse<Photo[]>>(PHOTO_PATHS.GETALL_PHOTOS, {});
+      let path = PHOTO_PATHS.GETALL_PHOTOS;
+      if (searchQuery) {
+        path += `?search=${searchQuery}`;
+      }
+      const response = await apiFetch<ApiResponse<Photo[]>>(path, {});
       return response;
     } catch (error) {
       console.error('Error fetching photos:', error);

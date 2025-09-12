@@ -22,7 +22,7 @@ export default function HeaderNavbar() {
               <li key={link.name}>
                 <Link
                   href={link.href}
-                  className={`relative  hover:text-gray-500 transition-colors duration-300
+                  className={`relative  hover:text-gray-400 transition-colors duration-300 cursor-pointer p-1
                     ${isActive ? 'font-semibold' : ''}
                   `}
                 >

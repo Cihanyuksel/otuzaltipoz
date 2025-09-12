@@ -15,8 +15,7 @@ interface LikesModalProps {
 }
 
 export default function LikesModal({ photoId, isOpen, onClose, buttonRef }: LikesModalProps) {
-
-    const {accessToken} = useAuth()
+  const { accessToken } = useAuth();
 
   const { data } = useGetLikes(photoId, accessToken);
   const usersWhoLiked = data?.usersWhoLiked || [];
@@ -31,7 +30,13 @@ export default function LikesModal({ photoId, isOpen, onClose, buttonRef }: Like
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div className="absolute bottom-full mb-2 right-0 z-50 transform translate-x-1/2" variants={modalVariants} initial="initial" animate="animate" exit="exit">
+        <motion.div
+          className="absolute bottom-full mb-2 right-0 z-50 transform translate-x-1/2"
+          variants={modalVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+        >
           <div className="bg-white rounded-lg p-4 shadow-xl w-96 max-h-[250px] overflow-y-auto relative border border-gray-200">
             <h4 className="text-sm font-bold mb-2 pr-6">Beğenen Kullanıcılar ({likeCount})</h4>
             <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-800">

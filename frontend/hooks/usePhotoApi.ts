@@ -18,10 +18,10 @@ type PhotoResponse = {
   };
 };
 
-export const useGetAllPhoto = () =>
+export const useGetAllPhoto = (searchQuery?: string) =>
   useQuery({
-    queryKey: ['photos'],
-    queryFn: photoService.getAllPhoto,
+    queryKey: ['photos', { searchQuery }], 
+    queryFn: () => photoService.getAllPhoto(searchQuery),
     staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
   });

@@ -2,8 +2,8 @@
 import Loader from '@/components/common/loader';
 import PhotoModal from '@/components/photos/PhotoModal';
 import PhotoCardMain from './photo-card/PhotoCardMain';
-import { Photo } from 'types/photo';
 import { useState } from 'react';
+import { Photo } from 'types/photo';
 
 interface PhotoListProps {
   photos: Photo[];

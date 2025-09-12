@@ -1,8 +1,8 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import LikeButton from './LikeButton';
 import LikesModal from './LikeModal';
-import { useAuth } from '@/context/AuthContext';
 
 interface ILikeSection {
   photoId: string;
@@ -13,11 +13,11 @@ function LikeSection({ averageRating, photoId }: ILikeSection) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const likeButtonRef = useRef<HTMLButtonElement>(null);
 
-  const { accessToken } = useAuth()
+  const { accessToken } = useAuth();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (likeButtonRef.current && !likeButtonRef.current.contains(event.target as Node)) {
