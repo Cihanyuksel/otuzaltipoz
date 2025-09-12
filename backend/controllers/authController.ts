@@ -1,9 +1,15 @@
-import { CookieOptions, Request, Response } from "express";
+import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import RefreshToken from "../models/refreshToken";
 import User from "../models/User";
 import dotenv from "dotenv";
 import cloudinary from "../config/cloudinary";
+import {
+  authConfig,
+  clearRefreshTokenCookieConfig,
+  refreshTokenCookieConfig,
+} from "../config/authConfig";
+import { generateAccessToken, generateRefreshToken } from "../utils/token";
 
 dotenv.config();
 
@@ -11,29 +17,12 @@ interface JwtPayload {
   userId: string;
 }
 
-const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
-
 export interface IGetUserAuthInfoRequest extends Request {
   user?: {
     id: string;
     username?: string;
   };
 }
-
-// Cookie settings
-const refreshTokenCookieConfig: CookieOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict" as const,
-  maxAge: 2 * 24 * 60 * 60 * 1000 
-};
-
-const clearRefreshTokenCookieConfig: CookieOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
-};
 
 // Login endpoint
 const login = async (req: Request, res: Response): Promise<void> => {
@@ -52,8 +41,9 @@ const login = async (req: Request, res: Response): Promise<void> => {
       email: user.email,
       role: user.role,
       profile_img_url: user.profile_img_url,
-      isActive: user.is_active
+      isActive: user.is_active,
     };
+    
     // Password Check
     const isMatch = await user.comparePassword(req.body.password.trim());
     if (!isMatch) {
@@ -63,16 +53,11 @@ const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const accessToken = jwt.sign(
-      { userId: user._id, role: user.role },
-      ACCESS_TOKEN_SECRET as string,
-      { expiresIn: "30m" }
-    );
-    const refreshToken = jwt.sign(
-      { userId: user._id },
-      REFRESH_TOKEN_SECRET as string,
-      { expiresIn: "2d" }
-    );
+    const accessToken = generateAccessToken({
+      _id: user._id as string,
+      role: user.role,
+    });
+    const refreshToken = generateRefreshToken({ _id: user._id as string });
 
     if (!user.is_active) {
       user.is_active = true;
@@ -108,7 +93,8 @@ const login = async (req: Request, res: Response): Promise<void> => {
 // Refresh endpoint
 const refresh = async (req: Request, res: Response): Promise<Response> => {
   const refreshToken = req.cookies.refreshToken;
-  if (!refreshToken) return res.status(401).json({ message: "No token provided" });
+  if (!refreshToken)
+    return res.status(401).json({ message: "No token provided" });
 
   const storedToken = await RefreshToken.findOne({ token: refreshToken });
   if (!storedToken)
@@ -117,25 +103,14 @@ const refresh = async (req: Request, res: Response): Promise<Response> => {
   try {
     const payload = jwt.verify(
       refreshToken,
-      REFRESH_TOKEN_SECRET!
+      authConfig.refreshToken.secret
     ) as JwtPayload;
     const user = await User.findById(payload.userId);
 
     if (!user) return res.status(404).json({ msg: "User not found" });
 
-    // Yeni access token
-    const newAccessToken = jwt.sign(
-      { userId: user._id },
-      ACCESS_TOKEN_SECRET!,
-      { expiresIn: "2h" }
-    );
-
-    // Yeni refresh token
-    const newRefreshToken = jwt.sign(
-      { userId: user._id },
-      REFRESH_TOKEN_SECRET!,
-      { expiresIn: "8h" }
-    );
+    const newAccessToken = generateAccessToken({ _id: user._id as string });
+    const newRefreshToken = generateRefreshToken({ _id: user._id as string });
 
     await RefreshToken.findByIdAndUpdate(storedToken._id, {
       token: newRefreshToken,
@@ -144,7 +119,7 @@ const refresh = async (req: Request, res: Response): Promise<Response> => {
     // Cookie güncelle
     res.cookie("refreshToken", newRefreshToken, refreshTokenCookieConfig);
 
-    //AccessToken ve user bilgisi 
+    //AccessToken ve user bilgisi
     return res.json({
       accessToken: newAccessToken,
       user: {
@@ -154,7 +129,7 @@ const refresh = async (req: Request, res: Response): Promise<Response> => {
         email: user.email,
         role: user.role,
         profile_img_url: user.profile_img_url,
-        is_active: user.is_active
+        is_active: user.is_active,
       },
     });
   } catch (err) {
@@ -193,16 +168,15 @@ const signup = async (req: Request, res: Response) => {
       });
       profile_img_url = uploadResult.secure_url;
     }
-    
+
     const newUser = await User.create({
       username,
       email,
       password,
       full_name,
-      role: 'user',
+      role: "user",
       profile_img_url,
     });
-
 
     res.status(201).json({
       success: true,
@@ -213,7 +187,7 @@ const signup = async (req: Request, res: Response) => {
         email: newUser.email,
         profile_img_url: newUser.profile_img_url,
         is_active: newUser.is_active,
-        role: newUser.role
+        role: newUser.role,
       },
     });
   } catch (err) {
@@ -252,7 +226,6 @@ const logout = async (req: Request, res: Response): Promise<void> => {
 };
 
 export { login, logout, signup, refresh };
-
 
 /*
 if (req.file?.buffer) {

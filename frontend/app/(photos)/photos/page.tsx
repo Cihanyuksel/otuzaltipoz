@@ -10,7 +10,7 @@ export default function Photos() {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const { data: response, isLoading, isError, error } = useGetAllPhoto();
   const photos = response?.data || [];
-
+  
   if (isLoading) return <Loader />;
   if (isError) return <div>Error: {error?.message}</div>;
 
