@@ -15,7 +15,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function LoginForm() {
-  const { login, setAuth} = useAuth();
+  const { login, setAuth } = useAuth();
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export default function LoginForm() {
           setAuth(result.data);
           setSuccessMessage(result.message || 'Giriş başarılı! Yönlendiriliyorsunuz...');
           setErrorMessage('');
-          router.push('/');          
+          router.push('/');
         },
         onError: (err: any) => {
           setErrorMessage(err.message || 'Email veya şifre yanlış.');

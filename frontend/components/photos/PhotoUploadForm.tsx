@@ -1,12 +1,15 @@
 'use client';
+//nextjs and react
+import { useState } from 'react';
+//third-party
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, FieldError } from 'react-hook-form';
-import { CiCloudOn } from 'react-icons/ci';
+import { CiCloudOn as CloudIcon } from 'react-icons/ci';
 import * as z from 'zod';
-import { useState } from 'react';
+//project-files
 import { useAuth } from '@/context/AuthContext';
 import { useAddPhoto } from '@/hooks/usePhotoApi';
-import Loader from '../common/loader';
+import Loader from '@/components/common/loader';
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
@@ -129,7 +132,7 @@ export default function PhotoUploadForm() {
           </div>
           <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#a6b8b1] bg-[#f5f1ea] px-6 py-10 text-center">
             <span className="material-symbols-outlined text-5xl text-gray-400">
-              <CiCloudOn />
+              <CloudIcon />
             </span>
             <p className="mt-4 text-lg font-semibold text-[#1b140e]">Drag and drop or click to upload</p>
             <p className="mt-1 text-sm text-gray-500">

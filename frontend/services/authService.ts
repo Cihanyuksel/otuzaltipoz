@@ -1,26 +1,21 @@
-import { apiFetch } from '../hooks/apiFetch';
+import { apiFetch } from '@/hooks/apiFetch';
 import { API_BASE_URL, AUTH_PATHS } from '../lib/config';
-import {
-  AuthResponse,
-  LoginRequest,
-  MessageResponse,
-} from '../types/auth';
+import { AuthResponse, LoginRequest, MessageResponse } from '../types/auth';
 
 export const authService = {
-
   signup: async (formData: FormData): Promise<AuthResponse> => {
-    const res = await fetch(`${API_BASE_URL}${AUTH_PATHS.SIGNUP}`  , {
+    const res = await fetch(`${API_BASE_URL}${AUTH_PATHS.SIGNUP}`, {
       method: 'POST',
-      body: formData, 
+      body: formData,
       credentials: 'include',
     });
-  
+
     const data = await res.json();
-  
+
     if (!res.ok) {
       throw new Error(data.message || 'API request failed');
     }
-  
+
     return data;
   },
 

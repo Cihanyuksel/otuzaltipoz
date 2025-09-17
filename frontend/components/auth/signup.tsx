@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { FaCheck } from 'react-icons/fa';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye as ShowIcon, FaEyeSlash as HideIcon } from 'react-icons/fa';
 import { useAuth } from '@/context/AuthContext';
 
 const schema = z
@@ -94,18 +94,9 @@ export default function SignupForm() {
       {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
 
       <div className="relative">
-        <input
-          type={showPassword ? 'text' : 'password'}
-          {...register('password')}
-          placeholder="Şifre"
-          className="border p-2 rounded-md w-full"
-        />
-        <button
-          type="button"
-          onClick={() => setShowPassword((prev) => !prev)}
-          className={`absolute right-2 top-3 cursor-pointer`}
-        >
-          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        <input type={showPassword ? 'text' : 'password'} {...register('password')} placeholder="Şifre" className="border p-2 rounded-md w-full" />
+        <button type="button" onClick={() => setShowPassword((prev) => !prev)} className={`absolute right-2 top-3 cursor-pointer`}>
+          {showPassword ? <ShowIcon /> : <HideIcon />}
         </button>
       </div>
       {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
@@ -130,18 +121,13 @@ export default function SignupForm() {
               <FaCheck /> Seçildi
             </span>
           ) : (
-            <span className="bg-[#ef7464] text-white px-3 py-1 rounded-lg text-sm hover:bg-[#ef7464db] transition duration-200">
-              Dosya Seç
-            </span>
+            <span className="bg-[#ef7464] text-white px-3 py-1 rounded-lg text-sm hover:bg-[#ef7464db] transition duration-200">Dosya Seç</span>
           )}
           <input type="file" accept="image/*" {...register('profile_img')} className="hidden" onChange={handleChange} />
         </label>
       </div>
 
-      <button
-        type="submit"
-        className="bg-[#ef7464] text-white py-2 rounded-md hover:bg-[#f56b5c] transition mt-2 cursor-pointer"
-      >
+      <button type="submit" className="bg-[#ef7464] text-white py-2 rounded-md hover:bg-[#f56b5c] transition mt-2 cursor-pointer">
         Kayıt Ol
       </button>
     </form>

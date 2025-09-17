@@ -13,6 +13,8 @@ interface PhotosPaths {
   ADD_PHOTO: string;
   DELETE_PHOTO: (id: number | string) => string;
   UPDATE_PHOTO: (id: number | string) => string;
+  GET_PHOTOS_BY_USER_ID: (id: number | string) => string;
+  GET_LIKED_PHOTOS: (id: number | string) => string;
 }
 
 export const AUTH_PATHS: AuthPaths = {
@@ -27,5 +29,7 @@ export const PHOTO_PATHS: PhotosPaths = {
   GET_PHOTOS: (id) => `/photos/${id}`,
   ADD_PHOTO: '/photos/upload',
   DELETE_PHOTO: (id) => `/photos/${id}`,
-  UPDATE_PHOTO: (id) => `/photos/${id}`
+  UPDATE_PHOTO: (id) => `/photos/${id}`,
+  GET_PHOTOS_BY_USER_ID: (id) => `/photos/user/${id}`,
+  GET_LIKED_PHOTOS: (id) => `/photos/liked/${id}`,
 };

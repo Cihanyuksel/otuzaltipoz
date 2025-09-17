@@ -12,11 +12,11 @@ interface PhotoListProps {
   error?: any;
 }
 
-export default function PhotoList({ photos, isLoading, isError, error }: PhotoListProps) {
+export default function PhotoList({ photos, isLoading, error }: PhotoListProps) {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
   if (isLoading) return <Loader />;
-  if (isError) return <div>Error: {error?.message}</div>;
+  if (error) return <div>Error: {error?.message}</div>;
 
   const openModal = (index: number) => setCurrentIndex(index);
   const closeModal = () => setCurrentIndex(null);
@@ -46,6 +46,7 @@ export default function PhotoList({ photos, isLoading, isError, error }: PhotoLi
           averageRating={5}
           tags={photo.tags || []}
           onPhotoClick={() => openModal(index)}
+          uploaderId={photo.user?._id}
         />
       ))}
       <PhotoModal photos={photos} currentIndex={currentIndex} onClose={closeModal} onNavigate={navigatePhotos} />

@@ -1,8 +1,23 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { authService } from '../services/authService';
-import { AuthResponse } from '../types/auth';
+import { userService } from '../services/userService';
+import { AuthResponse, User } from '../types/auth';
 
 type SetAuthFn = (authData: AuthResponse['data'] | null) => void;
+
+const useUser = (userId: string | null) => {
+  return useQuery<User | null>({
+    queryKey: ['user', userId],
+    queryFn: () => {
+      if (!userId) {
+        return null;
+      }
+      return userService.getUser(userId);
+    },
+    enabled: !!userId,
+    staleTime: 5 * 60 * 1000,
+  });
+};
 
 const useSignup = () =>
   useMutation<AuthResponse, any, FormData>({
@@ -12,20 +27,20 @@ const useSignup = () =>
 const useLogin = () => useMutation({ mutationFn: authService.login });
 
 const useLogout = (fn: SetAuthFn) => {
-  return useMutation({ 
+  return useMutation({
     mutationFn: () => authService.logout(),
     onSuccess: () => {
       fn(null);
-    }
+    },
   });
 };
 
-const useRefresh = () =>
+/*const useRefresh = () =>
   useQuery({
     queryKey: ['auth', 'refresh'],
     queryFn: authService.refresh,
     retry: false,
     refetchOnWindowFocus: false,
-  });
+  }); */
 
-export { useSignup, useLogin, useLogout, useRefresh };
+export { useSignup, useLogin, useLogout, useUser };

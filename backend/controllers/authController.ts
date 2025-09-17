@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import RefreshToken from "../models/refreshToken";
 import User from "../models/User";
@@ -10,11 +10,15 @@ import {
   refreshTokenCookieConfig,
 } from "../config/authConfig";
 import { generateAccessToken, generateRefreshToken } from "../utils/token";
+import { generateDeviceId } from "../utils/deviceId";
+import { AppError } from "../utils/AppError";
 
 dotenv.config();
 
 interface JwtPayload {
   userId: string;
+  exp: number;
+  iat: number;
 }
 
 export interface IGetUserAuthInfoRequest extends Request {
@@ -25,57 +29,54 @@ export interface IGetUserAuthInfoRequest extends Request {
 }
 
 // Login endpoint
-const login = async (req: Request, res: Response): Promise<void> => {
+const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      res
-        .status(401)
-        .json({ message: "Email veya şifre hatalı. Lütfen tekrar deneyin." });
-      return;
+      return next(new AppError("Email veya şifre hatalı. Lütfen tekrar deneyin.", 401));
+    }
+
+    const isMatch = await user.comparePassword(req.body.password.trim());
+    if (!isMatch) {
+      return next(new AppError("Email veya şifre hatalı. Lütfen tekrar deneyin.", 401));
     }
 
     const userData = {
       id: user._id,
       username: user.username,
+      fullname: user.full_name,
       email: user.email,
       role: user.role,
       profile_img_url: user.profile_img_url,
       isActive: user.is_active,
     };
-    
-    // Password Check
-    const isMatch = await user.comparePassword(req.body.password.trim());
-    if (!isMatch) {
-      res
-        .status(401)
-        .json({ message: "Email veya şifre hatalı. Lütfen tekrar deneyin." });
-      return;
-    }
 
     const accessToken = generateAccessToken({
       _id: user._id as string,
       role: user.role,
     });
     const refreshToken = generateRefreshToken({ _id: user._id as string });
+    const deviceId = generateDeviceId(req);
 
     if (!user.is_active) {
       user.is_active = true;
       await user.save();
     }
 
-    // Save to DB
-    await RefreshToken.create({
-      userId: user._id,
-      token: refreshToken,
-      device: req.headers["user-agent"] || "unknown",
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    });
+    await RefreshToken.findOneAndUpdate(
+      { userId: user._id, deviceId },
+      {
+        token: refreshToken,
+        device: req.headers["user-agent"] || "unknown",
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        createdAt: new Date(),
+        lastUsedAt: new Date(),
+      },
+      { upsert: true, new: true }
+    );
 
-    // Add to cookie
     res.cookie("refreshToken", refreshToken, refreshTokenCookieConfig);
 
-    // Send access token via JSON
     res.json({
       success: true,
       message: "✅ Başarıyla giriş yaptınız. Yönlendiriliyorsunuz…",
@@ -84,43 +85,58 @@ const login = async (req: Request, res: Response): Promise<void> => {
         accessToken,
       },
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+  } catch (error: any) {
+    next(new AppError(error.message || "Server error", 500));
   }
 };
 
-// Refresh endpoint
-const refresh = async (req: Request, res: Response): Promise<Response> => {
+//refresh endpoint
+const refresh = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const refreshToken = req.cookies.refreshToken;
-  if (!refreshToken)
-    return res.status(401).json({ message: "No token provided" });
+  if (!refreshToken) {
+    return next(new AppError("No token provided", 401));
+  }
 
-  const storedToken = await RefreshToken.findOne({ token: refreshToken });
-  if (!storedToken)
-    return res.status(401).json({ message: "Invalid refresh token" });
+  const deviceId = generateDeviceId(req);
+  if (!deviceId) {
+    return next(new AppError("Device ID is missing", 401));
+  }
 
   try {
-    const payload = jwt.verify(
-      refreshToken,
-      authConfig.refreshToken.secret
-    ) as JwtPayload;
-    const user = await User.findById(payload.userId);
+    const payload = jwt.verify(refreshToken, authConfig.refreshToken.secret) as JwtPayload;
 
-    if (!user) return res.status(404).json({ msg: "User not found" });
+    const storedToken = await RefreshToken.findOne({
+      token: refreshToken,
+      userId: payload.userId,
+      deviceId: deviceId,
+    });
+
+    if (!storedToken) {
+      await RefreshToken.deleteMany({ userId: payload.userId });
+      return next(new AppError("Invalid refresh token or session revoked", 403));
+    }
+
+    if (storedToken.expiresAt < new Date()) {
+      await storedToken.deleteOne();
+      return next(new AppError("Token expired", 403));
+    }
+
+    const user = await User.findById(payload.userId);
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
 
     const newAccessToken = generateAccessToken({ _id: user._id as string });
     const newRefreshToken = generateRefreshToken({ _id: user._id as string });
 
-    await RefreshToken.findByIdAndUpdate(storedToken._id, {
-      token: newRefreshToken,
-    });
+    storedToken.token = newRefreshToken;
+    storedToken.lastUsedAt = new Date();
+    storedToken.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    await storedToken.save();
 
-    // Cookie güncelle
     res.cookie("refreshToken", newRefreshToken, refreshTokenCookieConfig);
 
-    //AccessToken ve user bilgisi
-    return res.json({
+    res.json({
       accessToken: newAccessToken,
       user: {
         id: user._id,
@@ -132,41 +148,44 @@ const refresh = async (req: Request, res: Response): Promise<Response> => {
         is_active: user.is_active,
       },
     });
-  } catch (err) {
-    return res.status(403).json({ msg: "Token expired or invalid" });
+  } catch (err: any) {
+    next(new AppError(err.message || "Token expired or invalid", 403));
   }
 };
 
 // signup user
-const signup = async (req: Request, res: Response) => {
+const signup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { email, username, password, full_name } = req.body;
+
     const existingEmail = await User.findOne({ email });
-    if (existingEmail)
-      return res
-        .status(400)
-        .json({ success: false, message: "Bu email zaten kullanılıyor." });
+    if (existingEmail) {
+      return next(new AppError("Bu email zaten kullanılıyor.", 400));
+    }
 
     const existingUsername = await User.findOne({ username });
-    if (existingUsername)
-      return res
-        .status(400)
-        .json({ success: false, message: "Bu kullanıcı adı zaten alınmış." });
+    if (existingUsername) {
+      return next(new AppError("Bu kullanıcı adı zaten alınmış.", 400));
+    }
 
     let profile_img_url: string | undefined;
 
     if (req.file?.buffer) {
-      const uploadResult: any = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "photos_app" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        stream.end(req.file!.buffer);
-      });
-      profile_img_url = uploadResult.secure_url;
+      try {
+        const uploadResult: any = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "photos_app" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          );
+          stream.end(req.file!.buffer);
+        });
+        profile_img_url = uploadResult.secure_url;
+      } catch (cloudErr: any) {
+        return next(new AppError("Profil resmi yüklenirken bir hata oluştu.", 500));
+      }
     }
 
     const newUser = await User.create({
@@ -190,19 +209,18 @@ const signup = async (req: Request, res: Response) => {
         role: newUser.role,
       },
     });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Sunucu hatası" });
+  } catch (err: any) {
+    console.error("Signup error:", err);
+    next(new AppError(err.message || "Sunucu hatası", 500));
   }
 };
 
 // logout user
-const logout = async (req: Request, res: Response): Promise<void> => {
+const logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const refreshToken = req.cookies?.refreshToken;
     if (!refreshToken) {
-      res.status(400).json({ message: "No refresh token provided" });
-      return;
+      return next(new AppError("No refresh token provided", 400));
     }
 
     const storedToken = await RefreshToken.findOne({ token: refreshToken });
@@ -219,9 +237,9 @@ const logout = async (req: Request, res: Response): Promise<void> => {
     res.clearCookie("refreshToken", clearRefreshTokenCookieConfig);
 
     res.json({ success: true, message: "Logged out successfully" });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Logout error:", error);
-    res.status(500).json({ message: "Server error" });
+    next(new AppError(error.message || "Server error", 500));
   }
 };
 

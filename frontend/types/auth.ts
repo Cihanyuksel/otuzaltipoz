@@ -1,10 +1,10 @@
 export type User = {
   id: string;
   username: string;
-  fullname?: string;
+  full_name?: string;
   email: string;
   role?: string;
-  profile_img_url: string;
+  profile_img_url?: string;
   is_active: boolean
 };
 

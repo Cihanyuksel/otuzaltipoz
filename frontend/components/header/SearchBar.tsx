@@ -1,5 +1,5 @@
 'use client';
-import { MdSearch } from 'react-icons/md';
+import { MdSearch as SearchIcon } from 'react-icons/md';
 import { useSearch } from '@/context/SearchContext';
 
 export default function HeaderSearchBar() {
@@ -15,7 +15,7 @@ export default function HeaderSearchBar() {
         onChange={(e) => setSearchValue(e.target.value)}
       />
       <div className="absolute inset-y-0 right-0 p-3 flex items-center pointer-events-none bg-[#d3deda]">
-        <MdSearch className="h-5 w-5 text-white" />
+        <SearchIcon className="h-5 w-5 text-white" />
       </div>
     </div>
   );

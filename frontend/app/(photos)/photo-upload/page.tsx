@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import PhotoUploadForm from '@/components/photos/PhotoUploadForm';
+import { Suspense } from 'react';
+import Loader from '@/components/common/loader';
 
 const PhotoUploadPage = async () => {
   const cookieStore = await cookies();
@@ -11,7 +13,9 @@ const PhotoUploadPage = async () => {
   }
 
   return (
-    <PhotoUploadForm/>
+    <Suspense fallback={<Loader />}>
+      <PhotoUploadForm />
+    </Suspense>
   );
 };
 

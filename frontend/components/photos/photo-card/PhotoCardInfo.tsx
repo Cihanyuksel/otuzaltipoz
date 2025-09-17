@@ -9,9 +9,10 @@ interface IPhotoCardInfo {
   uploader: string;
   profileImgUrl?: string;
   created_at: string;
+  uploaderId: string;
 }
 
-function PhotoCardInfo({ description, created_at, uploader, profileImgUrl, photoId, title }: IPhotoCardInfo) {
+function PhotoCardInfo({ description, created_at, uploader, profileImgUrl, photoId, title, uploaderId }: IPhotoCardInfo) {
   return (
     <div className="p-3 flex flex-col gap-1 bg-[#f5f1ea]">
       <div className="flex items-center justify-between gap-2 mt-1">
@@ -22,7 +23,7 @@ function PhotoCardInfo({ description, created_at, uploader, profileImgUrl, photo
           </div>
         </Link>
 
-        <Link href={`/biri/${uploader}`} className="flex items-center gap-x-5 p-1 rounded-xl">
+        <Link href={`/biri/${uploaderId}`} className="flex items-center gap-x-5 p-1 rounded-xl">
           <div className="flex flex-col items-end">
             <p className="text-xs text-gray-800 truncate leading-6">
               Uploaded by: <strong>{uploader}</strong>

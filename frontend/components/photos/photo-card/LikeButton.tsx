@@ -1,58 +1,65 @@
 'use client';
-import { forwardRef } from 'react';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';
-import { useGetLikes, useToggleLike } from '@/hooks/useLikeApi';
-import { useAuth } from '@/context/AuthContext';
+//nextjs and rect
+import { forwardRef, memo } from 'react';
+//third-party
+import { FaHeart as HeartFilledIcon, FaRegHeart as HeartOutlineIcon } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+//project-files
+import { useAuth } from '@/context/AuthContext';
+import { usePhotos } from '@/context/PhotoContext';
 
 interface LikeButtonProps {
   photoId: string;
+  likeCount: number;
+  isLikedByMe: boolean;
   onOpenModal: () => void;
 }
 
-const LikeButton = forwardRef<HTMLButtonElement, LikeButtonProps>(({ photoId, onOpenModal }, ref) => {
-  const { accessToken } = useAuth();
-  const { mutateAsync, isPending } = useToggleLike();
-  const { data, isLoading } = useGetLikes(photoId, accessToken);
+const LikeButton = memo(
+  forwardRef<HTMLButtonElement, LikeButtonProps>(({ photoId, likeCount, isLikedByMe, onOpenModal }, ref) => {
+    const { accessToken } = useAuth();
+    const { toggleLike, isLoading } = usePhotos();
 
-  const isLiked = data?.isLikedByMe;
-  const likeCount = data?.likeCount || 0;
+    const handleToggle = async (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-  const handleToggle = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!accessToken) return toast.info('Giriş yapmalısınız.');
-    await mutateAsync({ photoId, accessToken });
-  };
+      if (!accessToken) {
+        return toast.info('Giriş yapmalısınız.');
+      }
 
-  const heartIcon = isLoading ? (
-    <div className="w-4 h-4 bg-gray-200" />
-  ) : isLiked ? (
-    <FaHeart className="text-[#ef7464]" />
-  ) : (
-    <FaRegHeart className="text-gray-400" />
-  );
+      toggleLike(photoId);
+    };
 
-  return (
-    <div className="flex gap-2 border border-gray-200 p-2 rounded-md hover:bg-gray-200 hover:text-white">
-      <button onClick={handleToggle} disabled={isPending || isLoading} className="flex items-center gap-1 text-sm cursor-pointer" ref={ref}>
-        {heartIcon}
-      </button>
-      {likeCount > 0 && (
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onOpenModal();
-          }}
-          className="text-sm font-semibold cursor-pointer text-gray-700 hover:underline"
-        >
-          {likeCount} Beğeni
+    const heartIcon = isLoading ? (
+      <div className="w-4 h-4 bg-gray-200" />
+    ) : isLikedByMe ? (
+      <HeartFilledIcon className="text-[#ef7464]" />
+    ) : (
+      <HeartOutlineIcon className="text-gray-400" />
+    );
+
+    return (
+      <div className="flex gap-2 border border-gray-200 p-2 rounded-md hover:bg-gray-200 hover:text-white">
+        <button onClick={handleToggle} className="flex items-center justify-center gap-1 text-sm cursor-pointer" ref={ref}>
+          {heartIcon}
         </button>
-      )}
-    </div>
-  );
-});
+        {likeCount > 0 && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onOpenModal();
+            }}
+            className="text-sm font-semibold cursor-pointer text-gray-700 hover:underline"
+          >
+            {likeCount} Beğeni
+          </button>
+        )}
+      </div>
+    );
+  })
+);
 
 LikeButton.displayName = 'LikeButton';
 export default LikeButton;

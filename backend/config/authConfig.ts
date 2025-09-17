@@ -3,7 +3,7 @@ import { CookieOptions } from "express";
 
 dotenv.config();
 
-const thirtyMinutesInSeconds = 30 * 60; 
+const oneHourInSeconds = 1 * 60 * 60; 
 const sevenDaysInSeconds = 7 * 24 * 60 * 60; 
 
 if (!process.env.ACCESS_TOKEN_SECRET || !process.env.REFRESH_TOKEN_SECRET) {
@@ -14,7 +14,7 @@ if (!process.env.ACCESS_TOKEN_SECRET || !process.env.REFRESH_TOKEN_SECRET) {
 export const authConfig = {
   accessToken: {
     secret: process.env.ACCESS_TOKEN_SECRET as string,
-    expiresIn: thirtyMinutesInSeconds, 
+    expiresIn: oneHourInSeconds, 
   },
   refreshToken: {
     secret: process.env.REFRESH_TOKEN_SECRET as string,

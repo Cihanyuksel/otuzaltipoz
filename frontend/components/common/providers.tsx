@@ -1,9 +1,10 @@
 'use client';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AuthProvider } from '@/context/AuthContext';
 import { SearchProvider } from '@/context/SearchContext';
+import { PhotosProvider } from '@/context/PhotoContext';
 
 export default function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
@@ -11,7 +12,11 @@ export default function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <SearchProvider>{children}</SearchProvider>
+        <SearchProvider>
+          <PhotosProvider>
+            {children}  
+          </PhotosProvider>
+        </SearchProvider>
       </AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import Footer from "@/components/common/footer";
+import React, { ReactNode } from 'react';
+import Footer from '@/components/common/footer';
 
 interface PhotosLayoutProps {
   children: ReactNode;

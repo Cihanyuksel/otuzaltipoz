@@ -15,10 +15,12 @@ export default async function RegisterPage() {
       <Image
         src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80"
         alt="Background"
-        fill // full parent alanını kaplar
+        fill
         style={{ objectFit: 'cover' }}
-        priority // sayfa açılışında öncelikli yükleme
+        priority
       />
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-[rgba(245,240,233,0.9)] to-[rgba(245,240,233,0.4)]"></div>
+
       <div className="relative z-10 bg-[#f5f0e9] p-8 rounded-2xl shadow-xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-[#ef7464] mb-6 text-center">Kayıt Ol</h1>
         <SignupForm />

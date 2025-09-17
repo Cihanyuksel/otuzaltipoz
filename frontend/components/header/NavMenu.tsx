@@ -1,7 +1,6 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
 
 export default function HeaderNavbar() {
   const pathname = usePathname();
@@ -27,12 +26,7 @@ export default function HeaderNavbar() {
                   `}
                 >
                   {link.name}
-                  {isActive && (
-                    <span
-                      className="absolute -bottom-1 border border-[#d3deda] left-0 w-full"
-                      style={{ backgroundColor: '#d3deda' }}
-                    ></span>
-                  )}
+                  {isActive && <span className="absolute -bottom-1 border border-[#d3deda] left-0 w-full bg-[#d3deda]"></span>}
                 </Link>
               </li>
             );

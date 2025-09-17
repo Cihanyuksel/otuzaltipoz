@@ -1,10 +1,13 @@
+//next.js and react
 import Link from 'next/link';
 import { Dispatch, SetStateAction } from 'react';
-import { User } from 'types/auth';
-import MobileSearchBar from './MobileSearchBar';
-import { RxHamburgerMenu } from 'react-icons/rx';
-import { IoCloseOutline } from 'react-icons/io5';
 import { usePathname } from 'next/navigation';
+import { User } from 'types/auth';
+//third-party
+import { IoCloseOutline as MenuCloseIcon } from 'react-icons/io5';
+import { RxHamburgerMenu as MenuOpenIcon } from 'react-icons/rx';
+//project files
+import MobileSearchBar from './MobileSearchBar';
 
 interface IMobileMenu {
   setMenuOpen: Dispatch<SetStateAction<boolean>>;
@@ -15,28 +18,23 @@ interface IMobileMenu {
 }
 
 export default function MobileMenu({ menuOpen, setMenuOpen, loading, user }: IMobileMenu) {
-
   const pathname = usePathname();
 
   const navLinks = [
     { name: 'Ana Sayfa', href: '/' },
     { name: 'Fotoğraflar', href: '/photos' },
     { name: 'Hakkımızda', href: '/about' },
-    { name: 'İletişim', href: '/contact' },
   ];
 
   return (
     <>
-      <button
-        className="md:hidden text-gray-800 focus:outline-none relative w-8 h-8"
-        onClick={() => setMenuOpen(!menuOpen)}
-      >
-        <RxHamburgerMenu
+      <button className="md:hidden text-gray-800 focus:outline-none relative w-8 h-8" onClick={() => setMenuOpen(!menuOpen)}>
+        <MenuOpenIcon
           className={`absolute inset-0 m-auto text-2xl transition-all duration-300 ease-in-out ${
             menuOpen ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0'
           }`}
         />
-        <IoCloseOutline
+        <MenuCloseIcon
           className={`absolute inset-0 m-auto text-2xl transition-all duration-300 ease-in-out ${
             menuOpen ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90'
           }`}

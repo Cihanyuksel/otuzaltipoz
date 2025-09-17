@@ -4,27 +4,30 @@ import { Logo, UserSection, MobileMenu, NavMenu, SearchBar } from '@/components/
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, logout, loading, setAuth } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
 
   const isLogoutPending = logout.isPending;
 
   const handleLogout = () => {
     logout.mutate(undefined, {
-      onSuccess: () => {
+      onSuccess: async () => {
         setAuth(null);
+        router.push('/');
       },
       onError: (error) => {
         console.error(error);
       },
     });
-    setDropdownOpen(false)
-  };
 
+    setDropdownOpen(false);
+  };
   const handleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };

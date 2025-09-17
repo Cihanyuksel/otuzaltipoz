@@ -1,20 +1,20 @@
 import Image from 'next/image';
-import React from 'react';
+import Link from 'next/link';
 
 export interface IUploaderInfo {
   _id: string;
   username: string;
   email: string;
-  profile_img_url?: string; 
-  created_at: string; 
+  profile_img_url?: string;
+  created_at: string;
 }
-  
+
 export default function UploaderInfo({ user }: { user: IUploaderInfo }) {
   return (
-    <div className="mt-6 flex items-center gap-3">
+    <Link href={`/biri/${user._id}`} className="mt-6 flex items-center gap-3 hover:opacity-80 transition">
       <div className="relative h-12 w-12 rounded-full overflow-hidden">
         <Image
-          src={user.profile_img_url || "/no_profile.png"}
+          src={user.profile_img_url || '/no_profile.png'}
           alt={user.username}
           fill
           className="object-cover object-center"
@@ -23,11 +23,8 @@ export default function UploaderInfo({ user }: { user: IUploaderInfo }) {
       </div>
       <div>
         <p className="font-semibold text-gray-900">{user.username}</p>
-        <p className="text-sm text-gray-500">
-          Uploaded on {new Date(user.created_at).toLocaleDateString()}
-        </p>
+        <p className="text-sm text-gray-500">Uploaded on {new Date(user.created_at).toLocaleDateString()}</p>
       </div>
-    </div>
+    </Link>
   );
 }
-

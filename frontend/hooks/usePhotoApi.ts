@@ -1,8 +1,6 @@
-// src/hooks/usePhotoApi.ts
-
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { photoService } from '../services/photoService';
-import { Photo } from 'types/photo';
+import { Photo, ApiResponse } from 'types/photo';
 
 type PhotoResponse = {
   success: boolean;
@@ -18,9 +16,9 @@ type PhotoResponse = {
   };
 };
 
-export const useGetAllPhoto = (searchQuery?: string) =>
+export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null) =>
   useQuery({
-    queryKey: ['photos', { searchQuery }], 
+    queryKey: ['photos', { searchQuery }],
     queryFn: () => photoService.getAllPhoto(searchQuery),
     staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
@@ -45,3 +43,21 @@ export const useAddPhoto = (accessToken: string) => {
     },
   });
 };
+
+export const useGetUserPhotos = (userId: string, accessToken?: string | null) =>
+  useQuery<ApiResponse<Photo[]>>({
+    queryKey: ['userPhotos', userId],
+    queryFn: () => photoService.getPhotoByUserId(userId, accessToken),
+    enabled: !!userId,
+    staleTime: 1000 * 60,
+    refetchOnWindowFocus: false,
+  });
+
+export const useGetLikedPhotos = (userId: string, accessToken?: string | null) =>
+  useQuery<ApiResponse<Photo[]>>({
+    queryKey: ['likedPhotos', userId],
+    queryFn: () => photoService.getLikedPhotos(userId, accessToken),
+    enabled: !!userId,
+    staleTime: 1000 * 60,
+    refetchOnWindowFocus: false,
+  });

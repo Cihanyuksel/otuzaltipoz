@@ -9,6 +9,7 @@ import photoRouter from "./routes/photoRoutes";
 import commentRouter from "./routes/commentRoutes";
 import likeRouter from "./routes/likeRoutes";
 import ratingRouter from "./routes/ratingRoutes";
+import { globalErrorHandler } from "./middleware/errorHandler";
 
 
 dotenv.config();
@@ -32,6 +33,9 @@ app.use("/api/v1", photoRouter);
 app.use("/api/v1", commentRouter);
 app.use("/api/v1", likeRouter);
 app.use("/api/v1", ratingRouter);
+
+//error handler
+app.use(globalErrorHandler);
 
 
 export default app;

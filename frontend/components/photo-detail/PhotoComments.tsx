@@ -1,7 +1,6 @@
-import React from 'react';
 import Image from 'next/image';
 
-export default function CommentSection({ userPhoto }: { userPhoto: string | undefined}) {
+export default function CommentSection({ userPhoto }: { userPhoto: string | undefined }) {
   return (
     <div className="mt-8 border-t border-gray-200 pt-6">
       <div className="flex items-start  gap-4">
@@ -17,8 +16,7 @@ export default function CommentSection({ userPhoto }: { userPhoto: string | unde
             className="form-textarea w-full p-2 rounded-md border-gray-300 bg-gray-100 text-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
             placeholder="Yorum ekle..."
             rows={3}
-          >
-          </textarea>
+          ></textarea>
           <button className="mt-1 rounded-md bg-blue-400 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-300 transition-colors cursor-pointer">
             Yorum Yap
           </button>

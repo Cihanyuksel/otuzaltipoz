@@ -1,76 +1,68 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import Comment from "../models/Comment";
 import { IGetUserAuthInfoRequest } from "./authController";
+import { AppError } from "../utils/AppError";
 
+// Add comment
+const addComment = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+  try {
+    const { photoId } = req.params;
+    const { text } = req.body;
 
-const addComment = async (req: IGetUserAuthInfoRequest, res: Response) => {
-    try {
-        const {photoId} = req.params;
-        const { text} = req.body;
-        const comment = await Comment.create({
-            text: text,
-            photo: photoId,
-            user: req.user?.id
-        })
-        res.status(201).json(comment)
-    } 
-    
-    catch (err) {
-        res.status(500).json({ message: "Error adding comment", error: err });
-    }
-}
+    const comment = await Comment.create({
+      text,
+      photo: photoId,
+      user: req.user?.id
+    });
 
-const getCommentsByPhoto = async (req: Request, res: Response) => {
-    try {
-      const { photoId } = req.params;
-      const comments = await Comment.find({ photo: photoId }).populate("user", "username");
-      res.json(comments);
-    } catch (err) {
-      res.status(500).json({ message: "Error fetching comments", error: err });
-    }
-  };
-
-const deleteComment = async (req: IGetUserAuthInfoRequest, res: Response) => {
-    try {
-      const comment = await Comment.findById(req.params.id);
-  
-      if (!comment) return res.status(404).json({ message: "Comment not found" });
-  
-      if (comment.user.toString() !== req.user!.id) {
-        return res.status(403).json({ message: "Not authorized" });
-      }
-  
-      await comment.deleteOne();
-      res.json({ message: "Comment deleted" });
-    } catch (err) {
-      res.status(500).json({ message: "Error deleting comment", error: err });
-    }
-  };
-
-  const updateComment = async (req: IGetUserAuthInfoRequest, res: Response) => {
-    try {
-      const { text } = req.body;
-      const comment = await Comment.findById(req.params.id);
-  
-      if (!comment) return res.status(404).json({ message: "Comment not found" });
-  
-      if (comment.user.toString() !== req.user!.id) {
-        return res.status(403).json({ message: "Not authorized" });
-      }
-  
-      comment.text = text;
-      await comment.save();
-  
-      res.json(comment);
-    } catch (err) {
-      res.status(500).json({ message: "Error updating comment", error: err });
-    }
-  };
-
-
-  export {
-    addComment,
-    getCommentsByPhoto,
-    deleteComment,
-    updateComment
+    res.status(201).json(comment);
+  } catch (err: any) {
+    next(new AppError(err.message || "Error adding comment", 500));
   }
+};
+
+// Get comments by photo
+const getCommentsByPhoto = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { photoId } = req.params;
+    const comments = await Comment.find({ photo: photoId }).populate("user", "username");
+    res.json(comments);
+  } catch (err: any) {
+    next(new AppError(err.message || "Error fetching comments", 500));
+  }
+};
+
+// Delete comment
+const deleteComment = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+  try {
+    const comment = await Comment.findById(req.params.id);
+
+    if (!comment) return next(new AppError("Comment not found", 404));
+    if (comment.user.toString() !== req.user!.id) return next(new AppError("Not authorized", 403));
+
+    await comment.deleteOne();
+    res.json({ message: "Comment deleted" });
+  } catch (err: any) {
+    next(new AppError(err.message || "Error deleting comment", 500));
+  }
+};
+
+// Update comment
+const updateComment = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+  try {
+    const { text } = req.body;
+    const comment = await Comment.findById(req.params.id);
+
+    if (!comment) return next(new AppError("Comment not found", 404));
+    if (comment.user.toString() !== req.user!.id) return next(new AppError("Not authorized", 403));
+
+    comment.text = text;
+    await comment.save();
+
+    res.json(comment);
+  } catch (err: any) {
+    next(new AppError(err.message || "Error updating comment", 500));
+  }
+};
+
+export { addComment, getCommentsByPhoto, deleteComment, updateComment };

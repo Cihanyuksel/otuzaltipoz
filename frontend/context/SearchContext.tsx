@@ -1,9 +1,8 @@
-'use client';
 import { createContext, useContext, useState, ReactNode } from 'react';
 
 interface SearchContextType {
-  searchValue: string;
   setSearchValue: (val: string) => void;
+  searchValue: string;
 }
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
@@ -11,11 +10,7 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 export function SearchProvider({ children }: { children: ReactNode }) {
   const [searchValue, setSearchValue] = useState('');
 
-  return (
-    <SearchContext.Provider value={{ searchValue, setSearchValue }}>
-      {children}
-    </SearchContext.Provider>
-  );
+  return <SearchContext.Provider value={{ searchValue, setSearchValue }}>{children}</SearchContext.Provider>;
 }
 
 export const useSearch = () => {

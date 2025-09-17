@@ -1,25 +1,51 @@
 'use client';
-//components
+//nextjs and react
 import { CommentSection, PhotoImage, PhotoInfo, RatingSection, UploaderInfo } from '@/components/photo-detail';
-//others
-import { useGetPhoto } from '@/hooks/usePhotoApi';
-import { useAuth } from '@/context/AuthContext';
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
+//third-party
+import { CiEdit as EditIcon } from 'react-icons/ci';
+import { RiDeleteBin6Line as DeleteIcon } from 'react-icons/ri';
+//project files
+import LoginModal from '../auth/login-modal';
 import Loader from '../common/loader';
+import { useAuth } from '@/context/AuthContext';
+import { useGetPhoto } from '@/hooks/usePhotoApi';
 
 const PhotoDetail = () => {
-  const user = useAuth();
-
+  const { user, accessToken } = useAuth();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  //const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const params = useParams();
+
   const photoId = params.id as string;
   const { data: photo, isLoading, isError } = useGetPhoto(photoId);
 
-  if (isLoading) return <span><Loader/></span>;
+  const handleOpenLoginModal = () => {
+    setIsLoginModalOpen(true);
+  };
+
+  /*const handleOpenEditModal = () => {
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+  }; */
+
+  if (isLoading)
+    return (
+      <span>
+        <Loader />
+      </span>
+    );
   if (isError || !photo) return <p>Fotoğraf bulunamadı</p>;
+
+  const isOwner = user?.id === photo.user._id;
 
   return (
     <section
-      className="h-full flex justify-center py-4 bg-neutral-100 text-gray-800 min-h-screen px-4 md:px-0"
+      className="flex justify-center py-4 bg-neutral-100 text-gray-800 min-h-screen px-4 md:px-0"
       style={{ fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif' }}
     >
       <div className="w-full max-w-5xl">
@@ -31,13 +57,35 @@ const PhotoDetail = () => {
                 <PhotoInfo title={photo.title} description={photo.description} tags={photo.tags} />
                 <UploaderInfo user={photo.user} />
               </div>
-
-              <RatingSection />
+              <div className="flex flex-col justify-end items-end gap-5">
+                {isOwner && (
+                  <div className="mt-8 flex gap-2 justify-end">
+                    <button className="rounded-lg border-gray-200 border h-10 px-6 text-xs md:text-sm font-medium transition-colors hover:bg-gray-100 cursor-pointer flex items-center gap-2">
+                      <EditIcon />
+                      Edit
+                    </button>
+                    <button className="rounded-lg border-gray-200 border h-10 px-6 text-xs md:text-sm font-medium text-red-500 transition-colors hover:bg-gray-100 cursor-pointer flex items-center gap-2">
+                      <DeleteIcon />
+                      Delete
+                    </button>
+                  </div>
+                )}
+                <RatingSection photoId={photo._id} accessToken={accessToken} likeCount={photo.likeCount} onLoginRequired={handleOpenLoginModal} />
+              </div>
             </div>
-            <CommentSection userPhoto={user.user?.profile_img_url} />
+            <CommentSection userPhoto={user?.profile_img_url} />
           </div>
         </div>
       </div>
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
+      {/* EditPhotoModal'ı göster */}
+      {/*photo && (
+        <EditPhotoModal
+          isOpen={isEditModalOpen}
+          onClose={handleCloseEditModal}
+          photoData={photo}
+        />
+      )*/}
     </section>
   );
 };

@@ -1,20 +1,20 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import Photo from "../models/Photo";
 import cloudinary from "../config/cloudinary";
 import { IGetUserAuthInfoRequest } from "./authController";
 import Like from "../models/Likes";
+import mongoose from "mongoose";
+import { AppError } from "../utils/AppError";
 
 // Get all photos
-const getAllPhotos = async (req: IGetUserAuthInfoRequest, res: Response) => {
+const getAllPhotos = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
   try {
     const limit = parseInt(req.query.limit as string) || 15;
     const offset = parseInt(req.query.offset as string) || 0;
     const search = (req.query.search as string)?.trim();
 
     const query: any = {};
-    if (search && search.length > 0) {
-      query.title = { $regex: search, $options: "i" };
-    }
+    if (search && search.length > 0) query.title = { $regex: search, $options: "i" };
 
     const total = await Photo.countDocuments(query);
 
@@ -27,75 +27,76 @@ const getAllPhotos = async (req: IGetUserAuthInfoRequest, res: Response) => {
 
     const loggedInUserId = req.user?.id;
 
-    const data = await Promise.all(
-      photos.map(async (photo) => {
-        const likeCount = await Like.countDocuments({ photo_id: photo._id });
-        const isLikedByMe = loggedInUserId
-          ? await Like.exists({ user_id: loggedInUserId, photo_id: photo._id })
-          : false;
+    const photoIds = photos.map(photo => new mongoose.Types.ObjectId(photo._id));
 
-        const { user_id, ...rest } = photo;
+    let isLikedMap = new Set();
+    if (loggedInUserId) {
+      const userLikes = await Like.find({ 
+        photo_id: { $in: photoIds }, 
+        user_id: new mongoose.Types.ObjectId(loggedInUserId) 
+      }).lean();
+      isLikedMap = new Set(userLikes.map(like => like.photo_id.toString()));
+    }
 
-        return {
-          ...rest,
-          user: user_id,
-          likeCount,
-          isLikedByMe: !!isLikedByMe,
-        };
-      })
-    );
+    const likes = await Like.find({ photo_id: { $in: photoIds } }).lean();
+
+    const likeCounts = likes.reduce((acc: { [key: string]: number }, like) => {
+      const photoIdStr = like.photo_id.toString();
+      acc[photoIdStr] = (acc[photoIdStr] || 0) + 1;
+      return acc;
+    }, {});
+
+    const data = photos.map(photo => {
+      const photoIdStr = photo._id.toString();
+      const { user_id, ...rest } = photo;
+      return {
+        ...rest,
+        user: user_id,
+        likeCount: likeCounts[photoIdStr] || 0,
+        isLikedByMe: isLikedMap.has(photoIdStr),
+      };
+    });
 
     res.status(200).json({ total, status: true, data });
   } catch (error: any) {
-    res.status(500).json({ message: "Photos not found", error: error.message });
+    next(new AppError(error.message || "Photos not found", 500));
   }
 };
 
 // Get photo by ID
-const getPhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
+const getPhoto = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
   try {
     const photo = await Photo.findById(req.params.id)
       .populate("user_id", "username email profile_img_url created_at")
       .lean();
 
-    if (!photo) return res.status(404).json({ message: "Photo not found." });
+    if (!photo) return next(new AppError("Photo not found.", 404));
 
     const loggedInUserId = req.user?.id;
-
     const likeCount = await Like.countDocuments({ photo_id: photo._id });
     const isLikedByMe = loggedInUserId
       ? await Like.exists({ user_id: loggedInUserId, photo_id: photo._id })
       : false;
 
     const { user_id, ...rest } = photo;
-
-    const photoWithUser = {
-      ...rest,
-      user: user_id,
-      likeCount,
-      isLikedByMe: !!isLikedByMe,
-    };
-
-    res.status(200).json({ status: true, data: photoWithUser });
-  } catch (error: any) {
-    res.status(500).json({
-      status: false,
-      message: "Photo not found",
-      error: error.message,
+    res.status(200).json({
+      status: true,
+      data: { ...rest, user: user_id, likeCount, isLikedByMe: !!isLikedByMe },
     });
+  } catch (error: any) {
+    next(new AppError(error.message || "Photo not found", 500));
   }
 };
 
-// Upload Photo
-const uploadPhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
+// Upload photo
+const uploadPhoto = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
   try {
-    if (!req.file) return res.status(400).json({ message: "Photo required" });
+    if (!req.file) return next(new AppError("Photo required", 400));
 
     const result = cloudinary.uploader.upload_stream(
       { folder: "photos_app" },
       async (error, uploaded) => {
-        if (error)
-          return res.status(500).json({ message: "Upload Error", error });
+        if (error) return next(new AppError("Upload Error", 500));
         const photo = await Photo.create({
           user_id: req.user!.id,
           photo_url: uploaded?.secure_url,
@@ -109,40 +110,31 @@ const uploadPhoto = async (req: IGetUserAuthInfoRequest, res: Response) => {
     );
 
     if (req.file?.buffer) result.end(req.file.buffer);
-  } catch (err) {
-    res.status(500).json({ message: "Sunucu hatası", error: err });
+  } catch (err: any) {
+    next(new AppError(err.message || "Sunucu hatası", 500));
   }
 };
 
-// Updated Photoxx
-const updatePhoto = async (req: Request, res: Response) => {
+// Update photo
+const updatePhoto = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const updatedPhoto = await Photo.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-    if (!updatedPhoto)
-      return res
-        .status(404)
-        .json({ status: false, message: "Photo not found" });
+    const updatedPhoto = await Photo.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedPhoto) return next(new AppError("Photo not found", 404));
     res.status(200).json(updatedPhoto);
   } catch (error: any) {
-    res
-      .status(400)
-      .json({ message: "Photo not updated", error: error.message });
+    next(new AppError(error.message || "Photo not updated", 400));
   }
 };
 
-// Delete Photo
-const deletePhoto = async (req: Request, res: Response) => {
+// Delete photo
+const deletePhoto = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const deletedPhoto = await Photo.findById(req.params.id);
-    if (!deletedPhoto)
-      return res.status(404).json({ message: "Photo not found" });
+    if (!deletedPhoto) return next(new AppError("Photo not found", 404));
 
     const urlParts = deletedPhoto.photo_url.split("/");
     const fileNameWithExt = urlParts[urlParts.length - 1];
@@ -150,7 +142,6 @@ const deletePhoto = async (req: Request, res: Response) => {
     const public_id = `${folder}/${fileNameWithExt.split(".")[0]}`;
 
     await cloudinary.uploader.destroy(public_id);
-
     await Photo.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
@@ -158,12 +149,71 @@ const deletePhoto = async (req: Request, res: Response) => {
       message: "Photo deleted from Cloudinary and DB",
     });
   } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: "Could not delete photo",
-      error: error.message,
-    });
+    next(new AppError(error.message || "Could not delete photo", 500));
   }
 };
 
-export { getAllPhotos, getPhoto, uploadPhoto, updatePhoto, deletePhoto };
+// Get photos by user ID
+const getPhotoByUserId = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.params.userId;
+    const photos = await Photo.find({ user_id: userId })
+      .populate("user_id", "username email profile_img_url created_at")
+      .sort({ created_at: -1 })
+      .lean();
+
+    if (!photos) return next(new AppError("Photos not found for this user.", 404));
+
+    const photoIds = photos.map(photo => new mongoose.Types.ObjectId(photo._id));
+    const likes = await Like.find({ photo_id: { $in: photoIds } }).lean();
+
+    const likeCounts = likes.reduce((acc: { [key: string]: number }, like) => {
+      const photoIdStr = like.photo_id.toString();
+      acc[photoIdStr] = (acc[photoIdStr] || 0) + 1;
+      return acc;
+    }, {});
+
+    const data = photos.map(photo => {
+      const photoIdStr = photo._id.toString();
+      const { user_id, ...rest } = photo;
+      return { ...rest, user: user_id, likeCount: likeCounts[photoIdStr] || 0 };
+    });
+
+    res.status(200).json({ status: true, data });
+  } catch (error: any) {
+    next(new AppError(error.message || "An error occurred while fetching photos.", 500));
+  }
+};
+
+// Get liked photos
+const getLikedPhotos = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+  try {
+    const targetUserId = req.params.userId;
+    const likedPhotoIds = await Like.find({ user_id: targetUserId }).select('photo_id').lean();
+    const photoIds = likedPhotoIds.map(doc => doc.photo_id);
+
+    const photos = await Photo.find({ _id: { $in: photoIds } })
+      .populate("user_id", "username fullname profile_img_url")
+      .sort({ created_at: -1 })
+      .lean();
+
+    const likeCounts = await Like.aggregate([
+      { $match: { photo_id: { $in: photoIds } } },
+      { $group: { _id: '$photo_id', count: { $sum: 1 } } }
+    ]);
+
+    const likeCountMap = new Map(likeCounts.map(item => [item._id.toString(), item.count]));
+
+    const data = photos.map(photo => {
+      const { user_id, ...rest } = photo;
+      const photoIdStr = photo._id.toString();
+      return { ...rest, user: user_id, likeCount: likeCountMap.get(photoIdStr) || 0 };
+    });
+
+    res.status(200).json({ status: true, data });
+  } catch (error: any) {
+    next(new AppError(error.message || "Sunucu hatası", 500));
+  }
+};
+
+export { getAllPhotos, getPhoto, uploadPhoto, updatePhoto, deletePhoto, getPhotoByUserId, getLikedPhotos };

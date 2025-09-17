@@ -1,8 +1,10 @@
+import { API_BASE_URL } from "lib/config";
+
 let isRefreshing = false;
 let refreshPromise: Promise<string> | null = null;
 
 export default async function fetchWithAuth (
-  url: string,
+  path: string,
   options: RequestInit = {},
   accessToken: string | null,
   setAccessToken: (token: string | null) => void
@@ -13,8 +15,8 @@ export default async function fetchWithAuth (
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(url, { ...options, headers, credentials: "include" });
-
+  let response = await fetch(`${API_BASE_URL}${path}`, { ...options, headers, credentials: "include" });
+  
   if (response.status === 401) {
     // refresh token
     if (!isRefreshing) {
@@ -33,7 +35,7 @@ export default async function fetchWithAuth (
 
     const newToken = await refreshPromise;
     const retryHeaders = { ...headers, Authorization: `Bearer ${newToken}` };
-    response = await fetch(url, { ...options, headers: retryHeaders, credentials: "include" });
+    response = await fetch(`${API_BASE_URL}${path}`, { ...options, headers: retryHeaders, credentials: "include" });
   }
 
   return response;

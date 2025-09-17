@@ -1,40 +1,32 @@
-import { Response } from "express";
+import { Response, NextFunction } from "express";
 import Like from "../models/Likes";
 import { IGetUserAuthInfoRequest } from "./authController";
+import { AppError } from "../utils/AppError";
 
-const getPhotoLikes = async (req: IGetUserAuthInfoRequest, res: Response) => {
+const getPhotoLikes = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
   try {
     const { photoId } = req.params;
     const userId = req.user?.id;
 
-    // Fotoğrafı beğenen tüm 'Like' belgelerini bul ve 'user_id' referansını 'User' modeliyle doldur.
     const likes = await Like.find({ photo_id: photoId })
-      .populate({
-        path: 'user_id',
-        select: 'username profile_img_url',
-      });
+      .populate({ path: 'user_id', select: 'username profile_img_url' });
 
     const likeCount = likes.length;
-
-    // Beğenen kullanıcıların listesini oluştur
     const usersWhoLiked = likes.map(like => like.user_id);
-
-    // Kendi beğenip beğenmediğini kontrol et
     const isLikedByMe = likes.some(like => like.user_id.equals(userId));
 
-    return res.status(200).json({ photoId, likeCount, isLikedByMe, usersWhoLiked });
-
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Failed to retrieve like count.", error });
+    res.status(200).json({ photoId, likeCount, isLikedByMe, usersWhoLiked });
+  } catch (error: any) {
+    console.error("Get photo likes error:", error);
+    next(new AppError(error.message || "Failed to retrieve like count.", 500));
   }
 };
 
-const toggleLike = async (req: IGetUserAuthInfoRequest, res: Response) => {
+const toggleLike = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
   try {
     const { photoId } = req.params;
     const userId = req.user!.id;
-    
+
     let isLikedByMe = false;
     let likeCount = await Like.countDocuments({ photo_id: photoId });
 
@@ -52,13 +44,10 @@ const toggleLike = async (req: IGetUserAuthInfoRequest, res: Response) => {
       likeCount++;
       return res.status(201).json({ message: "Photo liked successfully.", like: newLike, isLikedByMe, likeCount });
     }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Failed to toggle like.", error });
+  } catch (error: any) {
+    console.error("Toggle like error:", error);
+    next(new AppError(error.message || "Failed to toggle like.", 500));
   }
 };
 
-export {
-  toggleLike,
-  getPhotoLikes
-}
+export { toggleLike, getPhotoLikes };

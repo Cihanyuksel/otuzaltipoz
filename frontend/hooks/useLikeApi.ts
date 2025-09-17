@@ -1,17 +1,18 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { likeService } from '../services/likeService';
 import { toast } from 'react-toastify';
 import { useEffect } from 'react';
 
 interface ToggleLikeVariables {
   photoId: string;
-  accessToken: string;
+  accessToken: string | null;
 }
 
 interface LikeData {
   photoId: string;
   likeCount: number;
   isLikedByMe: boolean;
+  usersWhoLiked?: Array<{ _id: string; username: string; profile_img_url?: string }>;
 }
 
 const useToggleLike = () => {
@@ -21,10 +22,7 @@ const useToggleLike = () => {
     mutationFn: ({ photoId, accessToken }) => likeService.toggleLike(photoId, accessToken),
 
     onMutate: async ({ photoId }) => {
-      // Önceki veriyi sakla
       const previousLikes = queryClient.getQueryData<LikeData>(['likes', photoId]);
-      console.log("PREVIOUS LIKE", previousLikes)
-      // Cache'i iyimser şekilde güncelle
       if (previousLikes) {
         const newData = {
           ...previousLikes,
@@ -33,17 +31,19 @@ const useToggleLike = () => {
         };
         queryClient.setQueryData(['likes', photoId], newData);
       }
-
       return { previousLikes };
     },
 
-    // Sadece API çağrısı bittiğinde cache'i geçersiz kıl
     onSettled: (_data, _error, { photoId }) => {
       queryClient.invalidateQueries({ queryKey: ['likes', photoId] });
     },
 
-    onError: (err, { photoId }, context) => {
-      // Hata durumunda cache'i eski haline getir
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['likedPhotos'] });
+      queryClient.invalidateQueries({ queryKey: ['photos'] });
+    },
+
+    onError: (_err, { photoId }, context) => {
       if (context?.previousLikes) {
         queryClient.setQueryData(['likes', photoId], context.previousLikes);
         toast.error('Beğeni işlemi başarısız oldu.');
@@ -52,50 +52,29 @@ const useToggleLike = () => {
   });
 };
 
-const useGetLikes = (photoId: string, accessToken: string | null, initialData?: LikeData) => {
+const useGetLikes = (photoId: string, accessToken: string | null, options?: Omit<UseQueryOptions<LikeData, Error>, 'queryKey' | 'queryFn'>) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const cacheData = queryClient.getQueryData(['likes', photoId]);
-    console.log(`📦 Cache on mount for ${photoId}:`, cacheData);
+    queryClient.getQueryData(['likes', photoId]);
   }, [photoId, queryClient]);
 
-  return useQuery({
+  return useQuery<LikeData, Error>({
     queryKey: ['likes', photoId],
     queryFn: async () => {
-      console.log(`🌐 FRESH FETCH for photo: ${photoId}`);
-      console.log(`🔑 Using token: ${accessToken?.substring(0, 20)}...`);
-
-      const existingCache = queryClient.getQueryData(['likes', photoId]);
-      console.log('📋 Existing cache before fetch:', existingCache);
-
-      // Token'ın geçerli olup olmadığını test et
       try {
         const result = await likeService.getLikes(photoId, accessToken!);
-        console.log('📊 FRESH API Response:', result);
-
-        // Backend'den gelen response'u detayına bakalım
-        console.log('🔍 Response breakdown:', {
-          photoId: result.photoId,
-          likeCount: result.likeCount,
-          isLikedByMe: result.isLikedByMe,
-          isLikedByMeType: typeof result.isLikedByMe,
-        });
-
         return result;
       } catch (error: any) {
-        console.error('🚨 API Error:', error);
-        console.error('🚨 Error details:', error.response?.data);
+        console.log('🚨 Error details:', error.response?.data);
         throw error;
       }
     },
-    enabled: !!photoId && !!accessToken,
-    staleTime: 1000 * 60, // 1 dakika boyunca veriyi "taze" kabul et
-    gcTime: 1000 * 60 * 60, // 1 saat sonra veriyi cache'ten sil
-    refetchOnWindowFocus: true, // Kullanıcı pencereye döndüğünde veriyi tazele
-    refetchOnMount: 'always', // Bileşen her yüklendiğinde yenileme isteği gönder
+    staleTime: 1000 * 60,
+    gcTime: 1000 * 60 * 60,
     refetchInterval: false,
-    retry: 1, // API hatası durumunda bir kez daha dene
+    retry: 1,
+    ...options,
   });
 };
 
