@@ -27,7 +27,7 @@ export default function RootLayout({
       <body className={`${plusJakarta.variable} ${notoSans.variable} antialiased`}>
         <Providers>
           <Header />
-          <main className="pt-20">{children}</main>
+          <main className="pt-25">{children}</main>
           <ToastContainer position="top-right" autoClose={3000} aria-label="notification" />
         </Providers>
       </body>

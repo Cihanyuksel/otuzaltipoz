@@ -8,6 +8,8 @@ import { CiEdit as EditIcon } from 'react-icons/ci';
 import { RiDeleteBin6Line as DeleteIcon } from 'react-icons/ri';
 //project files
 import LoginModal from '../auth/login-modal';
+import EditPhotoModal from '../photos/EditPhotoModal';
+import DeletePhotoModal from '../photos/DeletePhotoModal';
 import Loader from '../common/loader';
 import { useAuth } from '@/context/AuthContext';
 import { useGetPhoto } from '@/hooks/usePhotoApi';
@@ -15,23 +17,35 @@ import { useGetPhoto } from '@/hooks/usePhotoApi';
 const PhotoDetail = () => {
   const { user, accessToken } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  //const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); 
+  
   const params = useParams();
 
   const photoId = params.id as string;
   const { data: photo, isLoading, isError } = useGetPhoto(photoId);
 
-  const handleOpenLoginModal = () => {
+  const handleOpenLoginModal = () => {  
     setIsLoginModalOpen(true);
   };
 
-  /*const handleOpenEditModal = () => {
+  const handleOpenEditModal = () => {
     setIsEditModalOpen(true);
   };
 
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
-  }; */
+  };
+
+  const handleOpenDeleteModal = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+
+  };
+
 
   if (isLoading)
     return (
@@ -60,13 +74,19 @@ const PhotoDetail = () => {
               <div className="flex flex-col justify-end items-end gap-5">
                 {isOwner && (
                   <div className="mt-8 flex gap-2 justify-end">
-                    <button className="rounded-lg border-gray-200 border h-10 px-6 text-xs md:text-sm font-medium transition-colors hover:bg-gray-100 cursor-pointer flex items-center gap-2">
+                    <button 
+                    onClick={handleOpenEditModal}
+                      className="rounded-lg border-gray-200 border h-10 px-6 text-xs md:text-sm font-medium transition-colors hover:bg-gray-100 cursor-pointer flex items-center gap-2"
+                    >
                       <EditIcon />
-                      Edit
+                      Düzenle
                     </button>
-                    <button className="rounded-lg border-gray-200 border h-10 px-6 text-xs md:text-sm font-medium text-red-500 transition-colors hover:bg-gray-100 cursor-pointer flex items-center gap-2">
+                    <button 
+                      onClick={handleOpenDeleteModal} 
+                      className="rounded-lg border-gray-200 border h-10 px-6 text-xs md:text-sm font-medium text-red-500 transition-colors hover:bg-gray-100 cursor-pointer flex items-center gap-2"
+                    >
                       <DeleteIcon />
-                      Delete
+                      Sil
                     </button>
                   </div>
                 )}
@@ -77,15 +97,24 @@ const PhotoDetail = () => {
           </div>
         </div>
       </div>
+      
       <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
-      {/* EditPhotoModal'ı göster */}
-      {/*photo && (
+      
+      {isEditModalOpen &&  (
         <EditPhotoModal
           isOpen={isEditModalOpen}
           onClose={handleCloseEditModal}
-          photoData={photo}
+          photo={photo}
+          accessToken={accessToken}
         />
-      )*/}
+      )}
+      {isDeleteModalOpen && (
+        <DeletePhotoModal
+          isOpen={isDeleteModalOpen}
+          onClose={handleCloseDeleteModal}
+          photo={photo}
+        />
+      )}
     </section>
   );
 };

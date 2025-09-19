@@ -1,4 +1,4 @@
-import { API_BASE_URL, AUTH_PATHS } from "lib/config";
+import { API_BASE_URL, AUTH_PATHS } from 'lib/config';
 
 type FetchOptions = RequestInit & {
   _isRetry?: boolean;
@@ -76,6 +76,11 @@ export const apiFetch = async <T>(path: string, options: FetchOptions = {}): Pro
   }
 
   if (!response.ok) {
+    if (response.status === 404 && (path.includes('/photos/') || path.includes('/images/')) && (!config.method || config.method === 'GET')) {
+      console.warn(`Resource not found (likely deleted): ${path}`);
+      return { data: null, success: false, message: 'Resource not found' };
+    }
+
     let errorMessage = `HTTP error! status: ${response.status}`;
     try {
       const contentType = response.headers.get('content-type');

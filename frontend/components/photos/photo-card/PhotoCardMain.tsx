@@ -16,7 +16,7 @@ interface IPhotoCard {
   created_at: string;
   onPhotoClick: () => void;
   likes?: number;
-  uploaderId:string;
+  uploaderId: string;
 }
 
 const PhotoCardMain: React.FC<IPhotoCard> = ({
@@ -28,10 +28,10 @@ const PhotoCardMain: React.FC<IPhotoCard> = ({
   profileImgUrl,
   created_at,
   onPhotoClick,
-  uploaderId
+  uploaderId,
 }) => {
   return (
-    <div className="rounded overflow-hidden shadow-lg border border-gray-200 bg-white hover:shadow-xl transition-shadow duration-300">
+    <div className="rounded overflow-hidden shadow-lg border transition-all duration-300 border-gray-200 bg-white hover:scale-105 hover:shadow-2xl">
       <PhotoCardImage imageUrl={imageUrl} onPhotoClick={onPhotoClick} title={title} />
       <PhotoCardInfo
         description={description}
@@ -42,7 +42,7 @@ const PhotoCardMain: React.FC<IPhotoCard> = ({
         title={title}
         uploaderId={uploaderId}
       />
-      <LikeSection photoId={photoId}/>
+      <LikeSection photoId={photoId} />
     </div>
   );
 };

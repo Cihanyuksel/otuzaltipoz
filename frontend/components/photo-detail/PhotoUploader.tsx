@@ -23,7 +23,7 @@ export default function UploaderInfo({ user }: { user: IUploaderInfo }) {
       </div>
       <div>
         <p className="font-semibold text-gray-900">{user.username}</p>
-        <p className="text-sm text-gray-500">Uploaded on {new Date(user.created_at).toLocaleDateString()}</p>
+        <p className="text-sm text-gray-500">Yüklenme Tarihi: {new Date(user.created_at).toLocaleDateString()}</p>
       </div>
     </Link>
   );

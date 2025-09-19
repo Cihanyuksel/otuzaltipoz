@@ -12,16 +12,16 @@ import { useAddPhoto } from '@/hooks/usePhotoApi';
 import Loader from '@/components/common/loader';
 
 const schema = z.object({
-  title: z.string().min(3, 'Title must be at least 3 characters.'),
-  description: z.string().min(10, 'Description must be at least 10 characters.'),
+  title: z.string().min(3, 'Başlık en az 3 karakter olmalıdır.'),
+  description: z.string().min(10, 'Açıklama en az 10 karakter olmalıdır.'),
   tags: z.string().optional(),
-  photo: z.any().refine((files) => files?.length === 1, 'A photo is required.'),
+  photo: z.any().refine((files) => files?.length === 1, 'Bir fotoğraf yüklemeniz gerekmektedir.'),
 });
 
 type FormData = z.infer<typeof schema>;
 
 export default function PhotoUploadForm() {
-  const [fileName, setFileName] = useState('No file selected');
+  const [fileName, setFileName] = useState('Dosya Seçilmedi');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -52,9 +52,9 @@ export default function PhotoUploadForm() {
 
     mutate(formData, {
       onSuccess: () => {
-        setSuccessMessage('Photo uploaded successfully!');
+        setSuccessMessage('Fotoğraf Başarıyla Yüklendi!');
         reset();
-        setFileName('No file selected');
+        setFileName('Dosya Seçilmedi');
       },
       onError: (error) => {
         console.error('Upload failed:', error);
@@ -68,7 +68,7 @@ export default function PhotoUploadForm() {
     if (file) {
       setFileName(file.name);
     } else {
-      setFileName('No file selected');
+      setFileName('Dosya Seçilmedi');
     }
   };
 
@@ -86,8 +86,8 @@ export default function PhotoUploadForm() {
     <div className="flex flex-1 justify-center py-10 px-4 bg-cover bg-center bg-[#f5f1ea]">
       <div className="flex w-full max-w-lg flex-col items-center rounded-xl bg-[#d3deda] p-8 shadow-lg">
         <div className="mb-6 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-[#1b140e]">Upload a Photo</h1>
-          <p className="mt-2 text-base text-gray-600">Share your beautiful moments with the world.</p>
+          <h1 className="text-4xl font-bold tracking-tight text-[#1b140e]">Fotoğraf Yükle</h1>
+          <p className="mt-2 text-base text-gray-600">Güzel anlarınızı dünyayla paylaşın</p>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6">
           {successMessage && <div className="p-4 rounded-md bg-green-100 text-green-700">{successMessage}</div>}
@@ -95,7 +95,7 @@ export default function PhotoUploadForm() {
 
           <div>
             <label className="block pb-2 text-sm font-medium text-[#1b140e]" htmlFor="title">
-              Title
+              Başlık
             </label>
             <input
               className="form-input h-12 w-full flex-1 resize-none rounded-lg border-none bg-[#f5f1ea] p-4 text-base text-[#1b140e] placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#e6994c]"
@@ -108,7 +108,7 @@ export default function PhotoUploadForm() {
           </div>
           <div>
             <label className="block pb-2 text-sm font-medium text-[#1b140e]" htmlFor="description">
-              Description
+              Açıklama
             </label>
             <textarea
               className="form-textarea min-h-32 w-full flex-1 resize-none rounded-lg border-none bg-[#f5f1ea] p-4 text-base text-[#1b140e] placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#e6994c]"
@@ -120,7 +120,7 @@ export default function PhotoUploadForm() {
           </div>
           <div>
             <label className="block pb-2 text-sm font-medium text-[#1b140e]" htmlFor="tags">
-              Tags
+              Etiketler
             </label>
             <input
               className="form-input h-12 w-full flex-1 resize-none rounded-lg border-none bg-[#f5f1ea] p-4 text-base text-[#1b140e] placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#e6994c]"
@@ -134,7 +134,7 @@ export default function PhotoUploadForm() {
             <span className="material-symbols-outlined text-5xl text-gray-400">
               <CloudIcon />
             </span>
-            <p className="mt-4 text-lg font-semibold text-[#1b140e]">Drag and drop or click to upload</p>
+            <p className="mt-4 text-lg font-semibold text-[#1b140e]">Sürükleyip bırakın veya yüklemek için tıklayın</p>
             <p className="mt-1 text-sm text-gray-500">
               <span className="font-bold">{fileName}</span>
             </p>
@@ -142,7 +142,7 @@ export default function PhotoUploadForm() {
               className="mt-6 flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-[#e6994c] h-10 px-6 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#d6893c]"
               htmlFor="file-upload"
             >
-              <span className="truncate">Select a photo</span>
+              <span className="truncate">Fotoğraf seç</span>
             </label>
             <input id="file-upload" type="file" className="hidden" {...register('photo', { onChange: handleChange })} />
           </div>
@@ -154,7 +154,7 @@ export default function PhotoUploadForm() {
               type="submit"
               disabled={isSubmitting || isPending}
             >
-              <span className="truncate">{isPending ? 'Uploading...' : 'Upload'}</span>
+              <span className="truncate">{isPending ? 'Yükleniyor...' : 'Yükle'}</span>
             </button>
           </div>
         </form>

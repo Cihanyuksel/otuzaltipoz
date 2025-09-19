@@ -46,8 +46,8 @@ function LikeSection({ photoId }: ILikeSection) {
       {accessToken && (
         <div className="flex justify-between items-center mt-2 p-3">
           <div className="flex items-center gap-1 ml-3">
-            <span className="text-gray-500 text-sm font-bold">Average Rating: {ratingData?.averageRating.toFixed(2)}</span>
-            <span className="text-xs text-gray-400">({ratingData?.totalVotes} votes)</span>
+            <span className="text-gray-500 text-sm font-bold">Ortalama Puan: {ratingData?.averageRating.toFixed(2)}</span>
+            <span className="text-xs text-gray-400">({ratingData?.totalVotes} oy)</span>
           </div>
           <div className="flex items-center gap-2 relative">
             <LikeButton photoId={photoId} likeCount={likeCount} isLikedByMe={isLikedByMe} onOpenModal={openModal} ref={likeButtonRef} />

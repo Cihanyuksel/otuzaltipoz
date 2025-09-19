@@ -23,10 +23,10 @@ function PhotoCardInfo({ description, created_at, uploader, profileImgUrl, photo
           </div>
         </Link>
 
-        <Link href={`/biri/${uploaderId}`} className="flex items-center gap-x-5 p-1 rounded-xl">
+        <Link href={`/biri/${uploaderId}`} prefetch={false} className="flex items-center gap-x-5 p-1 rounded-xl">
           <div className="flex flex-col items-end">
             <p className="text-xs text-gray-800 truncate leading-6">
-              Uploaded by: <strong>{uploader}</strong>
+              Yükleyen: <strong>{uploader}</strong>
             </p>
             <p className="text-xs text-gray-500">{formatDate(created_at)}</p>
           </div>

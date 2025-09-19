@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { FaRegComments as CommentIcon } from "react-icons/fa";
 
 export default function CommentSection({ userPhoto }: { userPhoto: string | undefined }) {
   return (
@@ -17,7 +18,9 @@ export default function CommentSection({ userPhoto }: { userPhoto: string | unde
             placeholder="Yorum ekle..."
             rows={3}
           ></textarea>
-          <button className="mt-1 rounded-md bg-blue-400 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-300 transition-colors cursor-pointer">
+          <button className="mt-1 rounded-lg border-gray-200 border h-10 px-6 text-xs md:text-sm font-medium text-blue-500 transition-colors hover:bg-gray-100 cursor-pointer flex items-center gap-2">
+          <CommentIcon />
+
             Yorum Yap
           </button>
         </div>

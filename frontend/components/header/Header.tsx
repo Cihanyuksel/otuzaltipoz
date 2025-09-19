@@ -51,7 +51,7 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 px-4 w-full bg-[#f5f1ea] text-gray-800 flex justify-between items-center z-50 shadow-xl">
+    <header className="fixed top-0 mb-2 px-4 w-full bg-[#f5f1ea] text-gray-800 flex justify-between items-center z-50 shadow-xl">
       <Logo />
       <NavMenu />
       {pathname === '/photos' && <SearchBar />}

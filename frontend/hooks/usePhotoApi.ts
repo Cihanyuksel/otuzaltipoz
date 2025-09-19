@@ -25,12 +25,13 @@ export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null
   });
 
 export const useGetPhoto = (id: string) =>
-  useQuery<Photo>({
+  useQuery<Photo | null>({
     queryKey: ['photos', id],
     queryFn: () => photoService.getPhoto(id),
     enabled: !!id,
     staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
+    retry: false,
   });
 
 export const useAddPhoto = (accessToken: string) => {
@@ -61,3 +62,35 @@ export const useGetLikedPhotos = (userId: string, accessToken?: string | null) =
     staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
   });
+
+export const useUpdatePhoto = (accessToken?: string | null) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<ApiResponse<Photo>, Error, { id: string; updatedData: Partial<Photo> }>({
+    mutationFn: ({ id, updatedData }) => photoService.updatePhoto(id, updatedData, accessToken),
+    onSuccess: (updatedPhoto) => {
+      queryClient.invalidateQueries({ queryKey: ['photos'] });
+      if (updatedPhoto.data?._id) {
+        queryClient.invalidateQueries({ queryKey: ['photos', updatedPhoto.data._id] });
+        queryClient.setQueryData(['photos', updatedPhoto.data._id], updatedPhoto);
+      }
+    },
+  });
+};
+
+export const useDeletePhoto = (accessToken?: string | null) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<ApiResponse<null>, Error, string>({
+    mutationFn: (id: string) => photoService.deletePhoto(id, accessToken),
+
+    onSuccess: (_data, id) => {
+      queryClient.removeQueries({ queryKey: ['photos', id] });
+      queryClient.invalidateQueries({ queryKey: ['photos'] });
+    },
+
+    onError: (error, id) => {
+      console.error(`Fotoğraf (${id}) silinirken hata oluştu:`, error);
+    },
+  });
+};
