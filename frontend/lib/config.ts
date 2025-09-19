@@ -1,11 +1,11 @@
 export const API_BASE_URL: string = 'http://localhost:4000/api/v1';
 
-export type AuthPaths = {
+interface AuthPaths {
   LOGIN: string;
   LOGOUT: string;
   SIGNUP: string;
   REFRESH: string;
-};
+}
 
 interface PhotosPaths {
   GETALL_PHOTOS: string;
@@ -15,6 +15,12 @@ interface PhotosPaths {
   UPDATE_PHOTO: (id: number | string) => string;
   GET_PHOTOS_BY_USER_ID: (id: number | string) => string;
   GET_LIKED_PHOTOS: (id: number | string) => string;
+}
+
+interface CommentPaths {
+  GET_COMMENTS: (id: string) => string;
+  ADD_COMMENT: (id: string) => string;
+  DELETE_COMMENT: (id: string) => string;
 }
 
 export const AUTH_PATHS: AuthPaths = {
@@ -32,4 +38,10 @@ export const PHOTO_PATHS: PhotosPaths = {
   UPDATE_PHOTO: (id) => `/photos/${id}`,
   GET_PHOTOS_BY_USER_ID: (id) => `/photos/user/${id}`,
   GET_LIKED_PHOTOS: (id) => `/photos/liked/${id}`,
+};
+
+export const COMMENTS_PATH: CommentPaths = {
+  GET_COMMENTS: (id) => `/photos/${id}/comments`,
+  ADD_COMMENT: (id) => `/photos/${id}/comments`,
+  DELETE_COMMENT: (id) => `/photos/${id}/comments`,
 };

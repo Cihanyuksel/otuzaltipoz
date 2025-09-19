@@ -7,7 +7,7 @@ const router = Router();
 router.post("/photos/:photoId/comments", authenticate, addComment);
 router.get("/photos/:photoId/comments", getCommentsByPhoto);
 
-router.delete("/comments/:id", authenticate, deleteComment);
-router.put("/comments/:id", authenticate, updateComment);
+router.delete("/photos/:id/comments/", authenticate, deleteComment);
+router.put("/photos/comments/:id", authenticate, updateComment);
 
 export default router;
