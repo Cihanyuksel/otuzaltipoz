@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import { useState } from 'react';
+import Button from '../common/button';
 
 interface ReplyFormProps {
   userPhoto?: string;
@@ -10,7 +11,13 @@ interface ReplyFormProps {
   replyingTo?: string;
 }
 
-export default function ReplyForm({ userPhoto, onSubmit, onCancel, isSubmitting, replyingTo }: ReplyFormProps) {
+export default function ReplyForm({
+  userPhoto,
+  onSubmit,
+  onCancel,
+  isSubmitting,
+  replyingTo,
+}: ReplyFormProps) {
   const [text, setText] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -23,7 +30,13 @@ export default function ReplyForm({ userPhoto, onSubmit, onCancel, isSubmitting,
 
   return (
     <form onSubmit={handleSubmit} className="mt-4 flex items-start gap-4">
-      <Image src={userPhoto || '/no_profile.png'} alt="Profil" width={32} height={32} className="h-8 w-8 object-cover flex-shrink-0 rounded-full" />
+      <Image
+        src={userPhoto || '/no_profile.png'}
+        alt="Profil"
+        width={32}
+        height={32}
+        className="h-8 w-8 object-cover flex-shrink-0 rounded-full"
+      />
       <div className="w-full">
         <textarea
           className="form-textarea w-full p-2 rounded-md border-gray-300 bg-gray-50 text-xs focus:border-blue-500 focus:ring-blue-500"
@@ -34,17 +47,18 @@ export default function ReplyForm({ userPhoto, onSubmit, onCancel, isSubmitting,
           autoFocus
         />
         <div className="flex gap-2 mt-1">
-          <button
+          <Button
             type="submit"
-            className="px-4 py-2 text-xs font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            variant="primary"
+            size="small"
             disabled={isSubmitting || !text.trim()}
           >
             {isSubmitting ? 'Gönderiliyor...' : 'Gönder'}
-          </button>
+          </Button>
           {onCancel && (
-            <button type="button" onClick={onCancel} className="px-4 py-2 text-xs font-medium text-gray-500 hover:text-gray-700 rounded-md">
+            <Button type="button" variant="tertiary" size="small" onClick={onCancel}>
               İptal
-            </button>
+            </Button>
           )}
         </div>
       </div>

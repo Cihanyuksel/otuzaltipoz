@@ -1,10 +1,14 @@
 'use client';
 //nextjs and react
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 //third-party
 import { FiCheck as CheckIcon } from 'react-icons/fi';
 import { AnimatePresence, motion } from 'framer-motion';
-import { IoIosStar as StarFilledIcon, IoIosStarOutline as StarOutlineIcon, IoMdHeartEmpty as HeartEmptyIcon } from 'react-icons/io';
+import {
+  IoIosStar as StarFilledIcon,
+  IoIosStarOutline as StarOutlineIcon,
+  IoMdHeartEmpty as HeartEmptyIcon,
+} from 'react-icons/io';
 //project-files
 import { useGetRatings, useRatePhoto } from '@/hooks/useRatingApi';
 import Loader from '../common/loader';
@@ -16,7 +20,12 @@ interface RatingSectionProps {
   onLoginRequired: () => void;
 }
 
-export default function RatingSection({ photoId, accessToken, likeCount, onLoginRequired }: RatingSectionProps) {
+export default function RatingSection({
+  photoId,
+  accessToken,
+  likeCount,
+  onLoginRequired,
+}: RatingSectionProps) {
   const [rating, setRating] = useState(0);
   const [showMessage, setShowMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -103,7 +112,10 @@ export default function RatingSection({ photoId, accessToken, likeCount, onLogin
       </div>
 
       {/* Star Rating Input */}
-      <div ref={starRef} className="mt-2 flex flex-row-reverse items-center justify-end w-full flex-shrink-0">
+      <div
+        ref={starRef}
+        className="mt-2 flex flex-row-reverse items-center justify-end w-full flex-shrink-0"
+      >
         <div className="relative flex items-center">
           {rating > 0 && (
             <motion.button
@@ -181,7 +193,11 @@ export default function RatingSection({ photoId, accessToken, likeCount, onLogin
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   className={ratePhotoMutation.isPending ? 'opacity-50' : ''}
                 >
-                  {n <= rating ? <StarFilledIcon color="gold" size={30} /> : <StarOutlineIcon color="gray" size={30} />}
+                  {n <= rating ? (
+                    <StarFilledIcon color="gold" size={30} />
+                  ) : (
+                    <StarOutlineIcon color="gray" size={30} />
+                  )}
                 </motion.div>
               </label>
             ))}
@@ -192,7 +208,11 @@ export default function RatingSection({ photoId, accessToken, likeCount, onLogin
       </div>
 
       {errorMessage && (
-        <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="mt-2 text-sm text-red-500">
+        <motion.div
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-2 text-sm text-red-500"
+        >
           {errorMessage}
         </motion.div>
       )}

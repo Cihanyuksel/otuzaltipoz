@@ -1,10 +1,15 @@
 'use client';
+//nextjs and react
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { commentFormatDate } from 'lib/commentFormatDate';
-import ReplyForm from './ReplyForm';
+//third-party
+import { useRouter } from 'next/navigation';
 import { RiDeleteBin6Line as DeleteIcon } from 'react-icons/ri';
+//project-files
 import DeleteConfirmCommentModal from '../common/confirm-modal';
+import ReplyForm from './ReplyForm';
+import { commentFormatDate } from 'lib/commentFormatDate';
+import { truncateText } from 'lib/truncateText';
 
 export interface Comment {
   _id: string;
@@ -47,6 +52,7 @@ export default function CommentItem({
   const [showReplies, setShowReplies] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -62,16 +68,28 @@ export default function CommentItem({
   const paddingLeft = actualDepth > 0 ? `${actualDepth * 20}px` : '0px';
 
   const isOwnComment = currentUser && comment.user.username === currentUser.username;
+  const isLoggedIn = !!accessToken;
 
   const handleReplySubmit = (text: string) => {
     onReply(comment._id, text);
     setShowReplyForm(false);
   };
 
+  const handleReplyClick = () => {
+    if (!isLoggedIn) {
+      router.push('/login');
+      return;
+    }
+    setShowReplyForm(!showReplyForm);
+  };
+
+  const MAX_COMMENT_LENGTH = 50;
+  const truncatedCommentText = truncateText(comment.text, MAX_COMMENT_LENGTH);
+
   return (
     <div
       style={{ paddingLeft }}
-      className={`flex items-start gap-4 mb-6 transition-all duration-300 transform ${
+      className={`flex items-start gap-4 mb-6 transition-all duration-300 transform relative ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
       }`}
     >
@@ -87,7 +105,9 @@ export default function CommentItem({
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-sm">{comment.user?.username}</span>
-              <span className="text-xs text-gray-500">• {commentFormatDate(comment.created_at)}</span>
+              <span className="text-xs text-gray-500">
+                • {commentFormatDate(comment.created_at)}
+              </span>
             </div>
             {isOwnComment && (
               <button
@@ -103,13 +123,22 @@ export default function CommentItem({
         </div>
 
         <div className="flex items-center gap-4 mt-2">
-          {accessToken && (
-            <button onClick={() => setShowReplyForm(!showReplyForm)} className="text-xs font-medium text-blue-500 hover:underline">
-              Yanıtla
-            </button>
-          )}
+          <button
+            onClick={handleReplyClick}
+            className={`text-xs font-medium transition-colors ${
+              isLoggedIn
+                ? 'text-[#ef7464] hover:underline cursor-pointer'
+                : 'text-gray-400 cursor-not-allowed'
+            }`}
+            disabled={!isLoggedIn}
+          >
+            Yanıtla
+          </button>
           {comment.replies && comment.replies.length > 0 && (
-            <button onClick={() => setShowReplies(!showReplies)} className="text-xs font-medium text-gray-500 hover:underline">
+            <button
+              onClick={() => setShowReplies(!showReplies)}
+              className="text-xs font-medium text-gray-500 hover:underline"
+            >
               {showReplies ? 'Yanıtları Gizle' : `Yanıtları Gör (${comment.replies.length})`}
             </button>
           )}
@@ -145,18 +174,21 @@ export default function CommentItem({
           </div>
         )}
       </div>
+
       <DeleteConfirmCommentModal
         isOpen={deleteModal}
         onClose={handleCloseDeleteModal}
-        title="Fotoğrafı Sil"
+        title="Yorumu Sil"
         message={
           <>
-            <strong>{comment.text}</strong> isimli yorumunuzu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+            <strong>{truncatedCommentText}</strong> isimli yorumunuzu silmek istediğinizden emin
+            misiniz? Bu işlem geri alınamaz.
           </>
         }
         onConfirm={() => onDelete(comment._id)}
         confirmButtonText="Sil"
         isConfirming={isDeleting}
+        modalType="delete-comment"
       />
     </div>
   );

@@ -104,7 +104,7 @@ export default function PhotoUploadForm() {
               type="text"
               {...register('title')}
             />
-            {errors.title && <p className="mt-2 text-sm text-red-600">{errors.title.message}</p>}
+            {errors.title && <p className="mt-2 text-sm text-red-500">{errors.title.message}</p>}
           </div>
           <div>
             <label className="block pb-2 text-sm font-medium text-[#1b140e]" htmlFor="description">
@@ -116,7 +116,7 @@ export default function PhotoUploadForm() {
               placeholder="Tell us more about your photo..."
               {...register('description')}
             ></textarea>
-            {errors.description && <p className="mt-2 text-sm text-red-600">{errors.description.message}</p>}
+            {errors.description && <p className="mt-2 text-sm text-red-500">{errors.description.message}</p>}
           </div>
           <div>
             <label className="block pb-2 text-sm font-medium text-[#1b140e]" htmlFor="tags">
@@ -134,7 +134,7 @@ export default function PhotoUploadForm() {
             <span className="material-symbols-outlined text-5xl text-gray-400">
               <CloudIcon />
             </span>
-            <p className="mt-4 text-lg font-semibold text-[#1b140e]">Sürükleyip bırakın veya yüklemek için tıklayın</p>
+            <p className="mt-4 text-lg font-semibold text-gray-500">Sürükleyip bırakın veya yüklemek için tıklayın</p>
             <p className="mt-1 text-sm text-gray-500">
               <span className="font-bold">{fileName}</span>
             </p>
