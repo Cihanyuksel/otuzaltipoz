@@ -14,7 +14,11 @@ const commentSchema = new Schema<IComment>(
   {
     text: { type: String, required: true, trim: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    photo: { type: mongoose.Schema.Types.ObjectId, ref: "Photo", required: true },
+    photo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Photo",
+      required: true,
+    },
 
     parentComment: {
       type: mongoose.Schema.Types.ObjectId,
@@ -29,6 +33,9 @@ const commentSchema = new Schema<IComment>(
   }
 );
 
-const Comment: Model<IComment> = mongoose.model<IComment>("Comment", commentSchema);
+const Comment: Model<IComment> = mongoose.model<IComment>(
+  "Comment",
+  commentSchema
+);
 
 export default Comment;

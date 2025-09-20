@@ -26,7 +26,7 @@ const addComment = async (
   }
 };
 
-// Get comments 
+// Get comments
 const getCommentsByPhoto = async (
   req: Request,
   res: Response,
@@ -37,14 +37,14 @@ const getCommentsByPhoto = async (
 
     const comments = await Comment.find({ photo: photoId, parentComment: null })
       .populate("user", "_id username profile_img_url")
-      .sort({ created_at: -1 }) 
+      .sort({ created_at: -1 })
       .lean();
 
-    const commentsWithReplies = await Promise.all(  
+    const commentsWithReplies = await Promise.all(
       comments.map(async (comment) => {
         const replies = await Comment.find({ parentComment: comment._id })
-          .sort({ created_at: -1 }) 
-          .populate("user", "_id username profile_img_url") 
+          .sort({ created_at: -1 })
+          .populate("user", "_id username profile_img_url")
           .lean();
         return { ...comment, replies };
       })
@@ -55,7 +55,7 @@ const getCommentsByPhoto = async (
   }
 };
 
-// Delete comment 
+// Delete comment
 const deleteComment = async (
   req: IGetUserAuthInfoRequest,
   res: Response,
