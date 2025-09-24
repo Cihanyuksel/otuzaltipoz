@@ -1,14 +1,22 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { IoIosInformationCircleOutline as InformationCircleIcon } from 'react-icons/io';
+import { IoHomeOutline as HomeIcon } from 'react-icons/io5';
 
-export default function HeaderNavbar() {
+import { MdMonochromePhotos as PhotoIcon } from 'react-icons/md';
+
+interface HeaderNavbarProps {
+  isScrolled: boolean;
+}
+
+export default function HeaderNavbar({ isScrolled }: HeaderNavbarProps) {
   const pathname = usePathname();
 
   const links = [
-    { name: 'Anasayfa', href: '/' },
-    { name: 'Fotoğraflar', href: '/photos' },
-    { name: 'Hakkımızda', href: '/about' },
+    { name: 'Anasayfa', href: '/', icon: HomeIcon },
+    { name: 'Fotoğraflar', href: '/photos', icon: PhotoIcon },
+    { name: 'Hakkımızda', href: '/about', icon: InformationCircleIcon },
   ];
 
   return (
@@ -17,16 +25,24 @@ export default function HeaderNavbar() {
         <ul className="flex items-center space-x-10 text-gray-600">
           {links.map((link) => {
             const isActive = pathname === link.href;
+            const Icon = link.icon;
+
             return (
               <li key={link.name}>
                 <Link
                   href={link.href}
-                  className={`relative  hover:text-gray-400 transition-colors duration-300 cursor-pointer p-1
+                  className={`relative flex items-center gap-2 hover:text-gray-400 transition-colors duration-300 cursor-pointer p-1
                     ${isActive ? 'font-semibold' : ''}
                   `}
                 >
-                  {link.name}
-                  {isActive && <span className="absolute -bottom-1 border border-[#d3deda] left-0 w-full bg-[#d3deda]"></span>}
+                  <Icon className="h-6 w-6" />
+                  {!isScrolled && <span>{link.name}</span>}
+                  {isActive && !isScrolled && (
+                    <span className="absolute -bottom-1 border border-[#d3deda] left-0 w-full bg-[#d3deda]"></span>
+                  )}
+                  {isActive && isScrolled && (
+                    <span className="absolute -bottom-1 border border-[#d3deda] left-0 w-full bg-[#d3deda]"></span>
+                  )}
                 </Link>
               </li>
             );

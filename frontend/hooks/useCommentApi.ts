@@ -16,7 +16,7 @@ export const useCommentApi = (photoId: string, accessToken?: string) => {
   });
 
   const addCommentMutation = useMutation({
-    mutationFn: (commentText: string) => commentService.addComment(photoId, commentText, accessToken),
+    mutationFn: (commentText: string) => commentService.addComment(photoId, commentText, accessToken || null),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', photoId] });
@@ -29,10 +29,11 @@ export const useCommentApi = (photoId: string, accessToken?: string) => {
 
   const addReplyMutation = useMutation({
     mutationFn: (data: { parentCommentId: string; replyText: string }) =>
-      commentService.addComment(photoId, data.replyText, accessToken, data.parentCommentId),
+      commentService.addComment(photoId, data.replyText, accessToken || null, data.parentCommentId),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', photoId] });
+      
     },
     onError: (err) => {
       console.error('Yanıt eklenirken hata oluştu:', err);
@@ -40,7 +41,7 @@ export const useCommentApi = (photoId: string, accessToken?: string) => {
   });
 
   const deleteCommentMutation = useMutation({
-    mutationFn: (commentId: string) => commentService.deleteComment(commentId, accessToken),
+    mutationFn: (commentId: string) => commentService.deleteComment(commentId, accessToken || null),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', photoId] });

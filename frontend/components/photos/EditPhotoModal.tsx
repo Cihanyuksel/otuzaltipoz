@@ -1,5 +1,4 @@
 //third-party
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IoClose as CloseIcon } from 'react-icons/io5';
@@ -7,23 +6,16 @@ import { IoClose as CloseIcon } from 'react-icons/io5';
 import Button from '../common/button';
 import { Photo } from 'types/photo';
 import { useUpdatePhoto } from '@/hooks/usePhotoApi';
+import { PhotoEditFormValues, photoEditSchema } from 'lib/schemas';
 
-interface EditPhotoModalProps {
+interface IEditPhotoModal {
   isOpen: boolean;
   onClose: () => void;
   photo: Photo;
   accessToken: string | null;
 }
 
-export const photoEditSchema = z.object({
-  title: z.string().min(1, { message: 'Başlık alanı boş bırakılamaz.' }),
-  description: z.string().optional(),
-  tags: z.string().optional(),
-});
-
-export type PhotoEditFormValues = z.infer<typeof photoEditSchema>;
-
-const EditPhotoModal = ({ onClose, photo, accessToken }: EditPhotoModalProps) => {
+const EditPhotoModal = ({ onClose, photo, accessToken }: IEditPhotoModal) => {
   const {
     register,
     handleSubmit,
@@ -115,7 +107,7 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: EditPhotoModalProps) =>
                 type="text"
                 {...register('title')}
                 disabled={isLoading}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ef7464] focus:border-[#ef7464] disabled:bg-gray-50 disabled:cursor-not-allowed"
                 placeholder="Fotoğraf başlığı"
               />
               {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
@@ -130,7 +122,7 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: EditPhotoModalProps) =>
                 rows={4}
                 {...register('description')}
                 disabled={isLoading}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:cursor-not-allowed resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ef7464] focus:border-[#ef7464] disabled:bg-gray-50 disabled:cursor-not-allowed resize-none"
                 placeholder="Fotoğraf açıklaması (isteğe bağlı)"
               />
               {errors.description && (
@@ -147,7 +139,7 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: EditPhotoModalProps) =>
                 type="text"
                 {...register('tags')}
                 disabled={isLoading}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ef7464] focus:border-[#ef7464] disabled:bg-gray-50 disabled:cursor-not-allowed"
                 placeholder="doğa, manzara, güneş (virgülle ayırın)"
               />
               {errors.tags && <p className="mt-1 text-sm text-red-600">{errors.tags.message}</p>}

@@ -4,7 +4,10 @@ import { ApiResponse, Photo } from 'types/photo';
 
 export const photoService = {
   //GET ALL PHOTO
-  getAllPhoto: async (searchQuery?: string, accessToken?: string | null): Promise<ApiResponse<Photo[]>> => {
+  getAllPhoto: async (
+    searchQuery?: string,
+    accessToken?: string | null
+  ): Promise<ApiResponse<Photo[]>> => {
     try {
       let path = PHOTO_PATHS.GETALL_PHOTOS;
       if (searchQuery) {
@@ -73,7 +76,10 @@ export const photoService = {
   },
 
   //USER PHOTOS
-  getPhotoByUserId: async (userId: string, accessToken?: string | null): Promise<ApiResponse<Photo[]>> => {
+  getPhotoByUserId: async (
+    userId: string,
+    accessToken?: string | null
+  ): Promise<ApiResponse<Photo[]>> => {
     try {
       const options: any = {};
 
@@ -94,7 +100,10 @@ export const photoService = {
   },
 
   //LIKED PHOTOS
-  getLikedPhotos: async (userId: string, accessToken?: string | null): Promise<ApiResponse<Photo[]>> => {
+  getLikedPhotos: async (
+    userId: string,
+    accessToken?: string | null
+  ): Promise<ApiResponse<Photo[]>> => {
     try {
       const options: any = {};
 
@@ -115,7 +124,11 @@ export const photoService = {
   },
 
   // UPDATE PHOTO
-  updatePhoto: async (id: string, updatedData: Partial<Photo>, accessToken?: string | null): Promise<ApiResponse<Photo>> => {
+  updatePhoto: async (
+    id: string,
+    updatedData: Partial<Photo>,
+    accessToken?: string | null
+  ): Promise<ApiResponse<Photo>> => {
     try {
       const response = await apiFetch<ApiResponse<Photo>>(PHOTO_PATHS.UPDATE_PHOTO(id), {
         method: 'PUT',
@@ -144,6 +157,19 @@ export const photoService = {
       return response;
     } catch (error) {
       console.error(`Error deleting photo with ID ${id}:`, error);
+      throw error;
+    }
+  },
+
+  //GET RANDOM PHOTO
+  getRandomPhoto: async (limit: number) => {
+    try {
+      const response = await apiFetch<ApiResponse<null>>(PHOTO_PATHS.GET_RANDOM_PHOTOS(limit), {
+        method: 'GET',
+      });
+      return response;
+    } catch (error) {
+      console.error(error);
       throw error;
     }
   },

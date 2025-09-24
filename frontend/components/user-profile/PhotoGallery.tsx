@@ -8,6 +8,8 @@ interface PhotoGalleryProps {
 }
 
 const PhotoGallery = ({ photosToShow, isOwner }: PhotoGalleryProps) => {
+
+  console.log(photosToShow)
   return (
     <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
       {photosToShow.length > 0 ? (
@@ -25,6 +27,7 @@ const PhotoGallery = ({ photosToShow, isOwner }: PhotoGalleryProps) => {
               </div>
               <div className="flex items-center gap-1 text-[#f5f1ea]">
                 <CommentIcon className="text-lg" />
+                <span className="text-sm font-medium">{photo.commentCount}</span>
               </div>
             </div>
           </Link>

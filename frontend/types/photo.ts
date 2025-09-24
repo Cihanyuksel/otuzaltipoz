@@ -25,5 +25,6 @@ export interface Photo {
   user: OmittedUser;
   likes: number;
   likeCount: number,
-  isLikedByMe: boolean
+  isLikedByMe: boolean,
+  commentCount: number
 }

@@ -3,18 +3,24 @@ import Photo from "../models/Photo";
 import cloudinary from "../config/cloudinary";
 import { IGetUserAuthInfoRequest } from "./authController";
 import Like from "../models/Likes";
+import Comment from "../models/Comment";
 import mongoose from "mongoose";
 import { AppError } from "../utils/AppError";
 
 // Get all photos
-const getAllPhotos = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+/*const getAllPhotos = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const limit = parseInt(req.query.limit as string) || 15;
     const offset = parseInt(req.query.offset as string) || 0;
     const search = (req.query.search as string)?.trim();
 
     const query: any = {};
-    if (search && search.length > 0) query.title = { $regex: search, $options: "i" };
+    if (search && search.length > 0)
+      query.title = { $regex: search, $options: "i" };
 
     const total = await Photo.countDocuments(query);
 
@@ -27,15 +33,17 @@ const getAllPhotos = async (req: IGetUserAuthInfoRequest, res: Response, next: N
 
     const loggedInUserId = req.user?.id;
 
-    const photoIds = photos.map(photo => new mongoose.Types.ObjectId(photo._id));
+    const photoIds = photos.map(
+      (photo) => new mongoose.Types.ObjectId(photo._id)
+    );
 
     let isLikedMap = new Set();
     if (loggedInUserId) {
-      const userLikes = await Like.find({ 
-        photo_id: { $in: photoIds }, 
-        user_id: new mongoose.Types.ObjectId(loggedInUserId) 
+      const userLikes = await Like.find({
+        photo_id: { $in: photoIds },
+        user_id: new mongoose.Types.ObjectId(loggedInUserId),
       }).lean();
-      isLikedMap = new Set(userLikes.map(like => like.photo_id.toString()));
+      isLikedMap = new Set(userLikes.map((like) => like.photo_id.toString()));
     }
 
     const likes = await Like.find({ photo_id: { $in: photoIds } }).lean();
@@ -46,7 +54,7 @@ const getAllPhotos = async (req: IGetUserAuthInfoRequest, res: Response, next: N
       return acc;
     }, {});
 
-    const data = photos.map(photo => {
+    const data = photos.map((photo) => {
       const photoIdStr = photo._id.toString();
       const { user_id, ...rest } = photo;
       return {
@@ -57,14 +65,113 @@ const getAllPhotos = async (req: IGetUserAuthInfoRequest, res: Response, next: N
       };
     });
 
-    res.status(200).json({ total, status: true, data });
+    res.status(200).json({
+      totalRecords: total,
+      currentRecords: photos.length,
+      status: true,
+      data,
+    });
+  } catch (error: any) {
+    next(new AppError(error.message || "Photos not found", 500));
+  }
+};*/
+
+const getAllPhotos = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const limit = parseInt(req.query.limit as string) || 15;
+    const offset = parseInt(req.query.offset as string) || 0;
+    const search = (req.query.search as string)?.trim();
+    // Yeni parametre: sort
+    const sort = req.query.sort as string;
+
+    const query: any = {};
+    if (search && search.length > 0)
+      query.title = { $regex: search, $options: "i" };
+
+    let photos;
+    const total = await Photo.countDocuments(query);
+
+    // Eğer sort=random ise özel bir sorgu yap
+    if (sort === "random") {
+      photos = await Photo.aggregate([
+        { $match: query }, // Önce filtreleme yap
+        { $sample: { size: limit } }, // Sonra rastgele 'limit' adet fotoğraf seç
+        {
+          $lookup: { // user_id'yi populate etmek için $lookup kullan
+            from: 'users',
+            localField: 'user_id',
+            foreignField: '_id',
+            as: 'user_id',
+          },
+        },
+        { $unwind: '$user_id' }, // lookup sonucunu düzleştir
+      ]);
+    } else {
+      // Normal, en yeniye göre sıralanmış sorgu
+      photos = await Photo.find(query)
+        .sort({ created_at: -1 })
+        .skip(offset)
+        .limit(limit)
+        .populate("user_id", "username email profile_img_url created_at")
+        .lean();
+    }
+    
+    const loggedInUserId = req.user?.id;
+
+    // Fotoğraf kimliklerini al
+    const photoIds = photos.map(
+      (photo: any) => new mongoose.Types.ObjectId(photo._id)
+    );
+
+    let isLikedMap = new Set();
+    if (loggedInUserId) {
+      const userLikes = await Like.find({
+        photo_id: { $in: photoIds },
+        user_id: new mongoose.Types.ObjectId(loggedInUserId),
+      }).lean();
+      isLikedMap = new Set(userLikes.map((like) => like.photo_id.toString()));
+    }
+
+    const likes = await Like.find({ photo_id: { $in: photoIds } }).lean();
+
+    const likeCounts = likes.reduce((acc: { [key: string]: number }, like) => {
+      const photoIdStr = like.photo_id.toString();
+      acc[photoIdStr] = (acc[photoIdStr] || 0) + 1;
+      return acc;
+    }, {});
+
+    const data = photos.map((photo: any) => {
+      const photoIdStr = photo._id.toString();
+      const { user_id, ...rest } = photo;
+      return {
+        ...rest,
+        user: user_id,
+        likeCount: likeCounts[photoIdStr] || 0,
+        isLikedByMe: isLikedMap.has(photoIdStr),
+      };
+    });
+
+    res.status(200).json({
+      totalRecords: total,
+      currentRecords: photos.length,
+      status: true,
+      data,
+    });
   } catch (error: any) {
     next(new AppError(error.message || "Photos not found", 500));
   }
 };
 
 // Get photo by ID
-const getPhoto = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+const getPhoto = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const photo = await Photo.findById(req.params.id)
       .populate("user_id", "username email profile_img_url created_at")
@@ -89,7 +196,11 @@ const getPhoto = async (req: IGetUserAuthInfoRequest, res: Response, next: NextF
 };
 
 // Upload photo
-const uploadPhoto = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+const uploadPhoto = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     if (!req.file) return next(new AppError("Photo required", 400));
 
@@ -118,10 +229,14 @@ const uploadPhoto = async (req: IGetUserAuthInfoRequest, res: Response, next: Ne
 // Update photo
 const updatePhoto = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const updatedPhoto = await Photo.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedPhoto = await Photo.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     if (!updatedPhoto) return next(new AppError("Photo not found", 404));
     res.status(200).json(updatedPhoto);
@@ -153,8 +268,11 @@ const deletePhoto = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-// Get photos by user ID
-const getPhotoByUserId = async (req: Request, res: Response, next: NextFunction) => {
+const getPhotoByUserId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const userId = req.params.userId;
     const photos = await Photo.find({ user_id: userId })
@@ -162,10 +280,17 @@ const getPhotoByUserId = async (req: Request, res: Response, next: NextFunction)
       .sort({ created_at: -1 })
       .lean();
 
-    if (!photos) return next(new AppError("Photos not found for this user.", 404));
+    if (!photos)
+      return next(new AppError("Photos not found for this user.", 404));
 
-    const photoIds = photos.map(photo => new mongoose.Types.ObjectId(photo._id));
-    const likes = await Like.find({ photo_id: { $in: photoIds } }).lean();
+    const photoIds = photos.map(
+      (photo) => new mongoose.Types.ObjectId(photo._id)
+    );
+
+    const [likes, comments] = await Promise.all([
+      Like.find({ photo_id: { $in: photoIds } }).lean(),
+      Comment.find({ photo: { $in: photoIds } }).lean(),
+    ]);
 
     const likeCounts = likes.reduce((acc: { [key: string]: number }, like) => {
       const photoIdStr = like.photo_id.toString();
@@ -173,41 +298,89 @@ const getPhotoByUserId = async (req: Request, res: Response, next: NextFunction)
       return acc;
     }, {});
 
-    const data = photos.map(photo => {
+    const commentCounts = comments.reduce(
+      (acc: { [key: string]: number }, comment) => {
+        if (comment.photo) {
+          const photoIdStr = comment.photo.toString();
+          acc[photoIdStr] = (acc[photoIdStr] || 0) + 1;
+        }
+        return acc;
+      },
+      {}
+    );
+
+    const data = photos.map((photo) => {
       const photoIdStr = photo._id.toString();
       const { user_id, ...rest } = photo;
-      return { ...rest, user: user_id, likeCount: likeCounts[photoIdStr] || 0 };
+      return {
+        ...rest,
+        user: user_id,
+        likeCount: likeCounts[photoIdStr] || 0,
+        commentCount: commentCounts[photoIdStr] || 0,
+      };
     });
 
     res.status(200).json({ status: true, data });
   } catch (error: any) {
-    next(new AppError(error.message || "An error occurred while fetching photos.", 500));
+    next(
+      new AppError(
+        error.message || "An error occurred while fetching photos.",
+        500
+      )
+    );
   }
 };
 
 // Get liked photos
-const getLikedPhotos = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+const getLikedPhotos = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const targetUserId = req.params.userId;
-    const likedPhotoIds = await Like.find({ user_id: targetUserId }).select('photo_id').lean();
-    const photoIds = likedPhotoIds.map(doc => doc.photo_id);
+    const likedPhotoIds = await Like.find({ user_id: targetUserId })
+      .select("photo_id")
+      .lean();
+    const photoIds = likedPhotoIds.map((doc) => doc.photo_id);
 
     const photos = await Photo.find({ _id: { $in: photoIds } })
       .populate("user_id", "username fullname profile_img_url")
       .sort({ created_at: -1 })
       .lean();
 
-    const likeCounts = await Like.aggregate([
-      { $match: { photo_id: { $in: photoIds } } },
-      { $group: { _id: '$photo_id', count: { $sum: 1 } } }
+    const [likeCounts, comments] = await Promise.all([
+      Like.aggregate([
+        { $match: { photo_id: { $in: photoIds } } },
+        { $group: { _id: "$photo_id", count: { $sum: 1 } } },
+      ]),
+      Comment.find({ photo: { $in: photoIds } }).lean(),
     ]);
 
-    const likeCountMap = new Map(likeCounts.map(item => [item._id.toString(), item.count]));
+    const likeCountMap = new Map(
+      likeCounts.map((item) => [item._id.toString(), item.count])
+    );
 
-    const data = photos.map(photo => {
+    const commentCounts = comments.reduce(
+      (acc: { [key: string]: number }, comment) => {
+        if (comment.photo) {
+          const photoIdStr = comment.photo.toString();
+          acc[photoIdStr] = (acc[photoIdStr] || 0) + 1;
+        }
+        return acc;
+      },
+      {}
+    );
+
+    const data = photos.map((photo) => {
       const { user_id, ...rest } = photo;
       const photoIdStr = photo._id.toString();
-      return { ...rest, user: user_id, likeCount: likeCountMap.get(photoIdStr) || 0 };
+      return {
+        ...rest,
+        user: user_id,
+        likeCount: likeCountMap.get(photoIdStr) || 0,
+        commentCount: commentCounts[photoIdStr] || 0,
+      };
     });
 
     res.status(200).json({ status: true, data });
@@ -216,4 +389,12 @@ const getLikedPhotos = async (req: IGetUserAuthInfoRequest, res: Response, next:
   }
 };
 
-export { getAllPhotos, getPhoto, uploadPhoto, updatePhoto, deletePhoto, getPhotoByUserId, getLikedPhotos };
+export {
+  getAllPhotos,
+  getPhoto,
+  uploadPhoto,
+  updatePhoto,
+  deletePhoto,
+  getPhotoByUserId,
+  getLikedPhotos,
+};

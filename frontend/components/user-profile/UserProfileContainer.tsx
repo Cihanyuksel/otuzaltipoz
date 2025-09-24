@@ -35,11 +35,24 @@ const UserProfileContainer = () => {
     localStorage.setItem(storageKey, tab);
   };
 
-  const { data: profileOwnerData, isLoading: isUserLoading, isError: isUserError } = useUser(profileOwnerId as string);
-  const { data: uploadedData, isLoading: isUploadedLoading, isError: isUploadedError } = useGetUserPhotos(profileOwnerId as string);
-  const { data: likedData, isLoading: isLikedLoading, isError: isLikedError } = useGetLikedPhotos(profileOwnerId as string);
+  const {
+    data: profileOwnerData,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useUser(profileOwnerId as string);
+  const {
+    data: uploadedData,
+    isLoading: isUploadedLoading,
+    isError: isUploadedError,
+  } = useGetUserPhotos(profileOwnerId as string);
+  const {
+    data: likedData,
+    isLoading: isLikedLoading,
+    isError: isLikedError,
+  } = useGetLikedPhotos(profileOwnerId as string);
 
-  const isLoading = isUserLoading || (activeTab === 'uploaded' ? isUploadedLoading : isLikedLoading);
+  const isLoading =
+    isUserLoading || (activeTab === 'uploaded' ? isUploadedLoading : isLikedLoading);
   const isError = isUserError || (activeTab === 'uploaded' ? isUploadedError : isLikedError);
 
   if (isLoading) {
@@ -66,16 +79,16 @@ const UserProfileContainer = () => {
   }
 
   return (
-    <UserProfile
-      isLoading={isLoading}
-      isError={isError}
-      profileOwner={profileOwner}
-      imageUrl={imageUrl}
-      isOwner={isOwner}
-      activeTab={activeTab}
-      handleTabChange={handleTabChange}
-      photosToShow={photosToShow}
-    />
+      <UserProfile
+        isLoading={isLoading}
+        isError={isError}
+        profileOwner={profileOwner}
+        imageUrl={imageUrl}
+        isOwner={isOwner}
+        activeTab={activeTab}
+        handleTabChange={handleTabChange}
+        photosToShow={photosToShow}
+      />
   );
 };
 

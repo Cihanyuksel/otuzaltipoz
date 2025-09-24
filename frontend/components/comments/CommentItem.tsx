@@ -21,6 +21,7 @@ export interface Comment {
     profile_img_url: string;
   };
   replies?: Comment[];
+  parentComment?: string | null;
 }
 
 interface CommentItemProps {
@@ -64,11 +65,12 @@ export default function CommentItem({
   const handleCloseDeleteModal = () => setDeleteModal(false);
   const handleOpenDeleteModel = () => setDeleteModal(true);
 
-  const actualDepth = Math.min(depth, 1);
-  const paddingLeft = actualDepth > 0 ? `${actualDepth * 20}px` : '0px';
+  const actualDepth = depth > 0 ? 1 : 0;
+  const paddingLeft = actualDepth > 0 ? '20px' : '0px';
 
   const isOwnComment = currentUser && comment.user.username === currentUser.username;
   const isLoggedIn = !!accessToken;
+  const hasReplies = comment.replies && comment.replies.length > 0;
 
   const handleReplySubmit = (text: string) => {
     onReply(comment._id, text);
@@ -123,17 +125,19 @@ export default function CommentItem({
         </div>
 
         <div className="flex items-center gap-4 mt-2">
-          <button
-            onClick={handleReplyClick}
-            className={`text-xs font-medium transition-colors ${
-              isLoggedIn
-                ? 'text-[#ef7464] hover:underline cursor-pointer'
-                : 'text-gray-400 cursor-not-allowed'
-            }`}
-            disabled={!isLoggedIn}
-          >
-            Yanıtla
-          </button>
+          {!comment.parentComment && (
+            <button
+              onClick={handleReplyClick}
+              className={`text-xs font-medium transition-colors ${
+                isLoggedIn
+                  ? 'text-[#ef7464] hover:underline cursor-pointer'
+                  : 'text-gray-400 cursor-not-allowed'
+              }`}
+              disabled={!isLoggedIn}
+            >
+              Yanıtla
+            </button>
+          )}
           {comment.replies && comment.replies.length > 0 && (
             <button
               onClick={() => setShowReplies(!showReplies)}
@@ -164,7 +168,7 @@ export default function CommentItem({
                 accessToken={accessToken}
                 currentUser={currentUser}
                 userPhoto={userPhoto}
-                depth={depth + 1}
+                depth={1}
                 onReply={onReply}
                 onDelete={onDelete}
                 isReplying={isReplying}

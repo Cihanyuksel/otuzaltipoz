@@ -2,7 +2,7 @@
 //nextjs and react
 import { PhotoImage, PhotoInfo, RatingSection, UploaderInfo } from '@/components/photo-detail';
 import { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 //third-party
 import { CiEdit as EditIcon } from 'react-icons/ci';
 import { RiDeleteBin6Line as DeleteIcon } from 'react-icons/ri';
@@ -64,9 +64,10 @@ const PhotoDetail = () => {
         <Loader />
       </span>
     );
-  if (isError || !photo) return <p>Fotoğraf bulunamadı</p>;
 
-  const isOwner = user?.id === photo.user._id;
+  if (isError || !photo) return notFound();
+
+  const isOwnerPhoto = user?.id === photo.user._id;
 
   return (
     <section
@@ -83,7 +84,7 @@ const PhotoDetail = () => {
                 <UploaderInfo user={photo.user} />
               </div>
               <div className="flex flex-col justify-end items-end gap-5">
-                {isOwner && (
+                {isOwnerPhoto && (
                   <div className="mt-8 flex gap-2 justify-end">
                     <button
                       onClick={() => handleModalToggle('edit', true)}

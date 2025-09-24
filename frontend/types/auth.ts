@@ -3,7 +3,7 @@ export type User = {
   username: string;
   full_name?: string;
   email: string;
-  role?: string;
+  role: 'user' | 'admin';
   profile_img_url?: string;
   is_active: boolean
 };

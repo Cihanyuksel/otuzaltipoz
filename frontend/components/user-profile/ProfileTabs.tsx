@@ -11,8 +11,8 @@ const ProfileTabs = ({ activeTab, handleTabChange }: IProfileTabs) => {
           onClick={() => handleTabChange('uploaded')}
           className={`whitespace-nowrap border-b-2 px-1 py-4 text-sm font-semibold cursor-pointer ${
             activeTab === 'uploaded'
-              ? 'border-[var(--primary-color)] text-[var(--primary-color)]'
-              : 'border-transparent text-[#957a50] hover:border-gray-300 hover:text-gray-700'
+              ? 'border-[#ef7464] text-[#ef7464]'
+              : 'border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-500'
           }`}
         >
           Yüklenenler
@@ -21,8 +21,8 @@ const ProfileTabs = ({ activeTab, handleTabChange }: IProfileTabs) => {
           onClick={() => handleTabChange('liked')}
           className={`whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium cursor-pointer ${
             activeTab === 'liked'
-              ? 'border-[var(--primary-color)] text-[var(--primary-color)]'
-              : 'border-transparent text-[#957a50] hover:border-gray-300 hover:text-gray-700'
+              ? 'border-[#ef7464] text-[#ef7464]'
+              : 'border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-500'
           }`}
         >
           Beğenilenler

@@ -13,7 +13,7 @@ export default async function RegisterPage() {
   return (
     <div className="relative min-h-screen flex items-center justify-center">
       <Image
-        src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80"
+        src="/register.jpg"
         alt="Background"
         fill
         style={{ objectFit: 'cover' }}

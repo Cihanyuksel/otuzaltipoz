@@ -1,18 +1,13 @@
 'use client';
-
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+//nextjs and react
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+//third-party
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+//project files
+import { LoginFormValues, loginSchema } from 'lib/schemas';
 import { useAuth } from '@/context/AuthContext';
-
-const schema = z.object({
-  email: z.string().email('Geçerli bir email giriniz'),
-  password: z.string().min(6, 'Şifre en az 6 karakter olmalı'),
-});
-
-type FormData = z.infer<typeof schema>;
 
 export default function LoginForm() {
   const { login, setAuth } = useAuth();
@@ -24,11 +19,11 @@ export default function LoginForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: LoginFormValues) => {
     setErrorMessage(null);
     setSuccessMessage(null);
 
@@ -78,7 +73,10 @@ export default function LoginForm() {
             {errors.password && <p className="text-red-500">{errors.password.message}</p>}
           </div>
 
-          <button type="submit" className="w-full bg-[#ef7464] text-white py-2 rounded-lg hover:bg-[#f56b5c] cursor-pointer">
+          <button
+            type="submit"
+            className="w-full bg-[#ef7464] text-white py-2 rounded-lg hover:bg-[#f56b5c] cursor-pointer"
+          >
             Giriş Yap
           </button>
         </form>

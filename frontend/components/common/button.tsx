@@ -26,7 +26,7 @@ const Button: React.FC<ButtonProps> = ({
   const sizeStyles = {
     small: "px-2 py-1 text-xs",
     medium: "px-4 py-2 text-sm",
-    large: "px-6 py-3 text-lg"
+    large: "px-7 py-2 text-md"
   };
 
   const combinedClasses = `${baseStyle} ${variantStyles[variant]} ${sizeStyles[size]} ${className || ''}`;

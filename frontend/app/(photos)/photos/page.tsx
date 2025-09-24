@@ -5,7 +5,9 @@ import { Suspense } from 'react';
 export default function PhotosPage() {
   return (
     <Suspense fallback={<Loader />}>
-      <PhotoContainer />
+      <div className="flex-1">
+        <PhotoContainer />
+      </div>
     </Suspense>
   );
 }
