@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { likeService } from '../services/likeService';
-import { toast } from 'react-toastify';
 import { useEffect } from 'react';
 
 interface ToggleLikeVariables {
@@ -46,7 +45,6 @@ const useToggleLike = () => {
     onError: (_err, { photoId }, context) => {
       if (context?.previousLikes) {
         queryClient.setQueryData(['likes', photoId], context.previousLikes);
-        toast.error('Beğeni işlemi başarısız oldu.');
       }
     },
   });

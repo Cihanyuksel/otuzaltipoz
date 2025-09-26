@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import photographers from '../../public/photographers.json';
+import photographers from '@/public/photographers.json';
 
 export default function PhotographerLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,7 +9,7 @@ export default function PhotographerLayout({ children }: { children: React.React
           <ul>
             <li>
               <Link
-                href={'/unlu-fotografcilar'}
+                href={'/photographers'}
                 className="block py-4 px-6 text-sm font-semibold tracking-wide hover:bg-gray-100 transition-colors duration-200"
               >
                 Tüm Fotoğrafçılar
@@ -18,7 +18,7 @@ export default function PhotographerLayout({ children }: { children: React.React
             {photographers.map((p) => (
               <li key={p.id}>
                 <Link
-                  href={`/unlu-fotografcilar/${p.slug}`}
+                  href={`/photographers/${p.slug}`}
                   className="block py-3 px-6 text-sm hover:bg-gray-100 transition-colors duration-200"
                 >
                   {p.name}

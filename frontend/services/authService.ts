@@ -30,4 +30,8 @@ export const authService = {
   refresh: async (): Promise<AuthResponse['data']> => {
     return apiFetch(AUTH_PATHS.REFRESH, { method: 'POST' });
   },
+
+  verifyToken: async (token: string) => {
+    return apiFetch(AUTH_PATHS.VERIFY_EMAIL(token));
+  },
 };

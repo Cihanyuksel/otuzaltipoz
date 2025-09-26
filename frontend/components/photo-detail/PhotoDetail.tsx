@@ -14,6 +14,7 @@ import CommentSection from '../comments/CommentSection';
 import DeleteConfirmPhotoModal from '../common/confirm-modal';
 import { useAuth } from '@/context/AuthContext';
 import { useGetPhoto, useDeletePhoto } from '@/hooks/usePhotoApi';
+import { canManagePhoto } from 'lib/permission';
 
 type ModalName = 'login' | 'edit' | 'delete';
 
@@ -31,6 +32,8 @@ const PhotoDetail = () => {
     edit: false,
     delete: false,
   });
+
+  console.log(user, "USERRRRRRRRRRRR")
 
   const params = useParams();
   const photoId = params.id as string;
@@ -84,7 +87,7 @@ const PhotoDetail = () => {
                 <UploaderInfo user={photo.user} />
               </div>
               <div className="flex flex-col justify-end items-end gap-5">
-                {isOwnerPhoto && (
+                {canManagePhoto(user?.role, isOwnerPhoto) &&(
                   <div className="mt-8 flex gap-2 justify-end">
                     <button
                       onClick={() => handleModalToggle('edit', true)}

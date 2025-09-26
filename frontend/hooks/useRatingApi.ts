@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { ratingService, IGetRatingsResponse, IRatePhotoResponse } from '../services/ratingService';
-import { toast } from 'react-toastify';
 import { useEffect } from 'react';
 
 interface RatePhotoVariables {
@@ -23,13 +22,11 @@ const useRatePhoto = () => {
 
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['ratings', variables.photoId] });
-      toast.success('Puanlama işlemi başarılı!');
     },
 
     onError: (_err, variables, context) => {
       if (context?.previousRatings) {
         queryClient.setQueryData(['ratings', variables.photoId], context.previousRatings);
-        toast.error('Puanlama işlemi başarısız oldu.');
       }
     },
   });

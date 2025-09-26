@@ -12,9 +12,8 @@ import { RegisterFormValues, registerSchema } from 'lib/schemas';
 
 export default function SignupForm() {
   const { signup } = useAuth();
-
   const router = useRouter();
-
+  
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -99,7 +98,7 @@ export default function SignupForm() {
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)}
-          className={`absolute right-2 top-3 cursor-pointer`}
+          className='absolute right-2 top-3 cursor-pointer'
         >
           {showPassword ? <ShowIcon /> : <HideIcon />}
         </button>
@@ -144,7 +143,7 @@ export default function SignupForm() {
 
       <button
         type="submit"
-        className="bg-[#ef7464] text-white py-2 rounded-md hover:bg-[#f56b5c] transition mt-2 cursor-pointer"
+        className="bg-[#ef7464] text-white py-2 rounded-md hover:bg-[#f56b5cbb] transition mt-2 cursor-pointer"
       >
         Kayıt Ol
       </button>

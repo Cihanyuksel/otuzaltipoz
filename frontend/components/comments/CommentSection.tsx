@@ -99,7 +99,7 @@ export default function CommentSection({
                   onDelete={handleDeleteComment}
                   isReplying={isAddingReply}
                   isDeleting={isDeletingComment}
-                  onLoginRequest={handleLoginRequest}
+                  //onLoginRequest={handleLoginRequest}
                 />
               ))
             ) : (

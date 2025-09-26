@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import photographers from '../../public/photographers.json';
+import photographers from '@/public/photographers.json';
 import Link from 'next/link';
 
 export default function PhotographersList() {
@@ -15,7 +15,7 @@ export default function PhotographersList() {
               <Link
                 key={photographer.name}
                 className="group flex items-center gap-4 p-4 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 transform hover:-translate-y-1"
-                href={`/unlu-fotografcilar/${photographer.slug}`}
+                href={`/photographers/${photographer.slug}`}
               >
                 <div className="relative w-20 h-24 rounded flex-shrink-0">
                   <Image

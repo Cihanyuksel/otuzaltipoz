@@ -28,7 +28,7 @@ interface CommentItemProps {
   comment: Comment;
   photoId: string;
   accessToken: string | null;
-  currentUser?: { _id: string; username: string } | null;
+  currentUser?: { id: string; username: string } | null;
   userPhoto?: string;
   depth?: number;
   onReply: (parentId: string, replyText: string) => void;

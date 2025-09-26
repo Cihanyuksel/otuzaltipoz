@@ -76,8 +76,8 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: IEditPhotoModal) => {
     >
       <div className="w-full max-w-lg bg-white rounded-lg shadow-xl transform transition-all">
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">Fotoğrafı Düzenle</h3>
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-[#ef7464]">
+          <h3 className="text-lg font-medium text-gray-100 border-b-2">Fotoğrafı Düzenle</h3>
           <button
             type="button"
             className="rounded-md p-2 cursor-pointer text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"

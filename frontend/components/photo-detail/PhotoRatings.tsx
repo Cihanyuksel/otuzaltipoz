@@ -33,6 +33,7 @@ export default function RatingSection({
 
   const { data: ratingsData, isLoading, error } = useGetRatings(photoId);
   const ratePhotoMutation = useRatePhoto();
+  const IsLoggedIn = !!accessToken
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -48,7 +49,7 @@ export default function RatingSection({
     if (rating === 0) return;
     setErrorMessage(null);
 
-    if (!accessToken) {
+    if (!IsLoggedIn) {
       onLoginRequired();
       return;
     }
@@ -77,9 +78,7 @@ export default function RatingSection({
     );
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  if (isLoading) return <Loader />;
 
   if (error) {
     return (
@@ -151,7 +150,7 @@ export default function RatingSection({
                 initial={{ scale: 0 }}
                 animate={{ scale: rating > 0 ? 1 : 0 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
-                className="absolute inset-0 rounded-full bg-gray-200 opacity-40"
+                className="absolute inset-0 rounded-full bg-gray-100 opacity-40"
               />
             </motion.button>
           )}

@@ -1,6 +1,9 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 import bcrypt from 'bcrypt';
 import Photo from "./Photo";
+import Like from "./Likes";
+import Comment from "./Comment";
+import Rating from "./Rating";
 
 
 export interface IUser extends Document {
@@ -10,6 +13,7 @@ export interface IUser extends Document {
     full_name: string,
     role: "user" | "admin" | "moderator",
     is_active: boolean,
+    is_verified: boolean,
     created_at: Date,
     updated_at: Date,
     profile_img_url?: string,
@@ -25,6 +29,7 @@ const UserSchema: Schema<IUser> = new Schema(
         role: {type: String, enum: ["user", "admin", "moderator"],  default: "user"},
         is_active: { type: Boolean, default: false },
         profile_img_url: { type: String },
+        is_verified: {type: Boolean, default: false}
     },
 
     {
@@ -49,16 +54,30 @@ UserSchema.methods.comparePassword = async function (
     return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// CASCADE DELETE 
 UserSchema.post("findOneAndDelete", async function (deletedUser) {
-    if (deletedUser) {
-        try {
-            const result = await Photo.deleteMany({ user_id: deletedUser._id });
-            console.log(`${result.deletedCount} adet fotoğraf başarıyla silindi.`);
-        } catch (error) {
-            console.error("Fotoğrafları silerken bir hata oluştu:", error);
-        }
+    if (!deletedUser) return;
+  
+    const userId = deletedUser._id;
+  
+    try {
+      const photoResult = await Photo.deleteMany({ user_id: userId });
+      console.log(`${photoResult.deletedCount} adet fotoğraf silindi.`);
+  
+      const commentResult = await Comment.deleteMany({ user: userId });
+      console.log(`${commentResult.deletedCount} adet yorum silindi.`);
+  
+      const likeResult = await Like.deleteMany({ user: userId });
+      console.log(`${likeResult.deletedCount} adet beğeni/puan silindi.`);
+      
+      const ratingResult = await Rating.deleteMany({ user: userId });
+      console.log(`${ratingResult.deletedCount} adet rating/puanlama silindi.`);
+      
+    } catch (err) {
+      console.error("Kullanıcı ilişkili verilerini silerken hata oluştu:", err);
     }
-});
+  });
+  
 
 const User: Model<IUser> = mongoose.model<IUser>("User", UserSchema);
 

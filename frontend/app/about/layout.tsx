@@ -19,7 +19,7 @@ const AboutUsLayout: React.FC<AboutUsLayoutProps> = ({ children }) => {
               </a>
             </div>
             <div className="flex justify-center space-x-6 mb-4 md:mb-0">{/* Sosyal medya ikonları buraya */}</div>
-            <p className="text-sm text-gray-500 mt-4 md:mt-0">© {new Date().getFullYear()} FocusHub. All rights reserved.</p>
+            <p className="text-sm text-gray-500 mt-4 md:mt-0">© {new Date().getFullYear()} OTUZALTIPOZ. All rights reserved.</p>
           </div>
         </div>
       </footer>

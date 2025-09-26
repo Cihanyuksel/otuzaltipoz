@@ -1,13 +1,9 @@
 import Image from 'next/image';
-import photographers from '../../../public/photographers.json';
+import photographers from '@/public/photographers.json'
 import { notFound } from 'next/navigation';
 
-type Params = {
-  params: { slug: string };
-};
-
-export default async function PhotographerProfile({ params }: Params) {
-  const { slug } = await params;
+export default async function PhotographerProfile({ params }: any) {
+  const { slug } = params;
   const photographer = photographers.find((p) => p.slug === slug);
 
   if (!photographer) return notFound();

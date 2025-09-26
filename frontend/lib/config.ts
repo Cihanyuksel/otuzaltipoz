@@ -5,6 +5,8 @@ interface AuthPaths {
   LOGOUT: string;
   SIGNUP: string;
   REFRESH: string;
+  VERIFY_EMAIL: (token: string) => string;
+
 }
 
 interface PhotosPaths {
@@ -29,6 +31,7 @@ export const AUTH_PATHS: AuthPaths = {
   LOGOUT: '/auth/logout',
   SIGNUP: '/auth/signup',
   REFRESH: '/auth/refresh',
+  VERIFY_EMAIL: (token: string) => `/auth/verify-email?token=${token}`,
 };
 
 export const PHOTO_PATHS: PhotosPaths = {

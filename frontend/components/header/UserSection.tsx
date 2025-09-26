@@ -86,7 +86,7 @@ function UserSection({ setDropdownOpen, handleDropdown, user, loading, dropdownO
         />
         <div className="hidden md:flex flex-col text-sm">
           <span className="font-bold text-gray-800 text-base">{user.username}</span>
-          <span className="text-xs text-gray-500">User</span>
+          <span className="text-xs text-gray-500">{user.role == "user" ? 'User' : 'Admin'}</span>
         </div>
       </div>
 

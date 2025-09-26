@@ -6,9 +6,11 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FaTimes as CloseIcon } from 'react-icons/fa';
 import { CgProfile as ProfileIcon } from 'react-icons/cg';
+import { FaCrown as CrownIcon } from 'react-icons/fa6';
 //project-files
 import { useGetLikes } from '@/hooks/useLikeApi';
 import { useAuth } from '@/context/AuthContext';
+import { isAdmin } from 'lib/permission';
 
 interface PhotoLikedUsersProps {
   photoId: string;
@@ -44,7 +46,10 @@ export default function PhotoLikedUsers({ photoId, isOpen, onClose }: PhotoLiked
         >
           <div className="bg-white rounded-lg p-4 shadow-xl w-96 max-h-[250px] overflow-y-auto relative border border-gray-200">
             <h4 className="text-sm font-bold mb-2 pr-6">Beğenen Kullanıcılar ({likeCount})</h4>
-            <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-800">
+            <button
+              onClick={onClose}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+            >
               <CloseIcon />
             </button>
             <ul className="space-y-2">
@@ -53,15 +58,25 @@ export default function PhotoLikedUsers({ photoId, isOpen, onClose }: PhotoLiked
               ) : usersWhoLiked.length > 0 ? (
                 usersWhoLiked.map((user: any) => (
                   <li key={user._id}>
-                    <Link href={`/biri/${user._id}`} className="flex items-center gap-2" onClick={onClose}>
+                    <Link
+                      href={`/biri/${user._id}`}
+                      className="flex items-center gap-2"
+                      onClick={onClose}
+                    >
                       <div className="relative w-8 h-8 rounded-full flex-shrink-0">
                         {user.profile_img_url ? (
-                          <Image src={user.profile_img_url} alt={user.username} fill className="rounded-full object-cover" />
+                          <Image
+                            src={user.profile_img_url}
+                            alt={user.username}
+                            fill
+                            className="rounded-full object-cover"
+                          />
                         ) : (
                           <ProfileIcon className="w-full h-full text-gray-400 rounded-full" />
                         )}
                       </div>
                       <span className="text-sm font-medium truncate">{user.username}</span>
+                      <span className='text-[#ef7464]'> {isAdmin(user) && <CrownIcon />}</span>
                     </Link>
                   </li>
                 ))

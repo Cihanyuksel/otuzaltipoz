@@ -9,7 +9,7 @@ const getPhotoLikes = async (req: IGetUserAuthInfoRequest, res: Response, next: 
     const userId = req.user?.id;
 
     const likes = await Like.find({ photo_id: photoId })
-      .populate({ path: 'user_id', select: 'username profile_img_url' });
+      .populate({ path: 'user_id', select: 'username profile_img_url role' });
 
     const likeCount = likes.length;
     const usersWhoLiked = likes.map(like => like.user_id);

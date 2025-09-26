@@ -17,7 +17,7 @@ function DiscoverSection() {
       description: 'Fotoğrafçılığı şekillendiren efsanevi kameraları keşfedin.',
     },
     {
-      href: '/unlu-fotografcilar',
+      href: '/photographers',
       src: '/ara_guler.jpg',
       alt: 'Ünlü Fotoğrafçılar',
       title: 'Ünlü Fotoğrafçılar',

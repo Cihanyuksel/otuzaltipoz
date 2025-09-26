@@ -14,10 +14,15 @@ function DiscoverCard({ href, src, description, title }: IDiscoverCard) {
     <>
       <Link href={href} className="group block">
         <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
-          <div className="relative h-64">
-            <Image className='object-cover' src={src} alt="Fotoğrafın Tarihi" fill />
+          <div className="relative h-64 overflow-hidden">
+            <Image
+              className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
+              src={src}
+              alt="Fotoğrafın Tarihi"
+              fill
+            />
           </div>
-          <div className="p-6 bg-white">
+          <div className="p-6 bg-white h-40">
             <h3 className="text-xl font-semibold text-gray-900 group-hover:text-[#e6a84c] transition-colors">
               {title}
             </h3>
