@@ -54,7 +54,9 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
 
   const toggleLike = useCallback(
     (photoId: string) => {
-      queryClient.setQueryData<ApiResponse<Photo[]>>(['photos', { searchQuery: debouncedSearchValue }], (oldData) => {
+      const queryKey = ['photos', { searchQuery: debouncedSearchValue, hasToken: !!accessToken }];
+
+      queryClient.setQueryData<ApiResponse<Photo[]>>(queryKey, (oldData) => {
         if (!oldData?.data) return oldData;
 
         const updatedPhotos = oldData.data.map((photo) => {
@@ -77,28 +79,14 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
       toggleLikeMutation.mutate(
         { photoId, accessToken },
         {
-          onSuccess: (data) => {
-            queryClient.setQueryData<ApiResponse<Photo[]>>(['photos', { searchQuery: debouncedSearchValue }], (oldData) => {
-              if (!oldData?.data) return oldData;
-
-              const updatedPhotos = oldData.data.map((photo) => {
-                if (photo._id === photoId) {
-                  return {
-                    ...photo,
-                    isLikedByMe: data.isLikedByMe,
-                    likeCount: data.likeCount,
-                  };
-                }
-                return photo;
-              });
-
-              return {
-                ...oldData,
-                data: updatedPhotos,
-              };
+          onSuccess: (_data) => {
+            queryClient.invalidateQueries({
+              queryKey: ['photos'],
+              exact: false,
             });
           },
           onError: () => {
+            queryClient.invalidateQueries({ queryKey });
             refetch();
           },
         }

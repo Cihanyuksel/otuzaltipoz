@@ -6,7 +6,11 @@ interface AuthPaths {
   SIGNUP: string;
   REFRESH: string;
   VERIFY_EMAIL: (token: string) => string;
+}
 
+interface UserPaths {
+  DELETE_USER: (id: string) => string;
+  GET_USERS: (id: string) => string;
 }
 
 interface PhotosPaths {
@@ -17,7 +21,7 @@ interface PhotosPaths {
   UPDATE_PHOTO: (id: number | string) => string;
   GET_PHOTOS_BY_USER_ID: (id: number | string) => string;
   GET_LIKED_PHOTOS: (id: number | string) => string;
-  GET_RANDOM_PHOTOS: (limit: number) => string
+  GET_RANDOM_PHOTOS: (limit: number) => string;
 }
 
 interface CommentPaths {
@@ -34,6 +38,11 @@ export const AUTH_PATHS: AuthPaths = {
   VERIFY_EMAIL: (token: string) => `/auth/verify-email?token=${token}`,
 };
 
+export const USER_PATHS: UserPaths = {
+  DELETE_USER: (id: string) => `/users/${id}`,
+  GET_USERS: (id: string) => `/users/${id}`,
+};
+
 export const PHOTO_PATHS: PhotosPaths = {
   GETALL_PHOTOS: '/photos',
   GET_PHOTOS: (id) => `/photos/${id}`,
@@ -42,7 +51,7 @@ export const PHOTO_PATHS: PhotosPaths = {
   UPDATE_PHOTO: (id) => `/photos/${id}`,
   GET_PHOTOS_BY_USER_ID: (id) => `/photos/user/${id}`,
   GET_LIKED_PHOTOS: (id) => `/photos/liked/${id}`,
-  GET_RANDOM_PHOTOS: (limit) => `/photos?sort=random&limit=${limit}`
+  GET_RANDOM_PHOTOS: (limit) => `/photos?sort=random&limit=${limit}`,
 };
 
 export const COMMENTS_PATH: CommentPaths = {

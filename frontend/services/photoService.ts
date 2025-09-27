@@ -1,6 +1,12 @@
-import apiFetch from '@/hooks/apiFetch';
+import axios from 'axios';
 import { API_BASE_URL, PHOTO_PATHS } from 'lib/config';
 import { ApiResponse, Photo } from 'types/photo';
+
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  withCredentials: true,
+});
 
 export const photoService = {
   //GET ALL PHOTO
@@ -14,42 +20,40 @@ export const photoService = {
         path += `?search=${searchQuery}`;
       }
 
-      const options: any = {};
-
+      const headers: Record<string, string> = {};
       if (accessToken) {
-        options.headers = {
-          Authorization: `Bearer ${accessToken}`,
-        };
+        headers['Authorization'] = `Bearer ${accessToken}`;
       }
 
-      const response = await apiFetch<ApiResponse<Photo[]>>(path, options);
-      return response;
-    } catch (error) {
+      const response = await apiClient.get<ApiResponse<Photo[]>>(path, {
+        headers,
+      });
+      console.log('getAllPhoto response:', response.data);
+      return response.data;
+    } catch (error: any) {
       console.error('Error fetching photos:', error);
-      throw error;
+      throw new Error(error.response?.data?.message || error.message);
     }
   },
 
   //GET PHOTO
   getPhoto: async (id: string | number, accessToken?: string | null): Promise<Photo | null> => {
     try {
-      const options: any = {};
-
+      const headers: Record<string, string> = {};
       if (accessToken) {
-        options.headers = {
-          Authorization: `Bearer ${accessToken}`,
-        };
+        headers['Authorization'] = `Bearer ${accessToken}`;
       }
 
-      const response = await apiFetch<ApiResponse<Photo>>(PHOTO_PATHS.GET_PHOTOS(id), options);
+      const response = await apiClient.get<ApiResponse<Photo>>(PHOTO_PATHS.GET_PHOTOS(id), {
+        headers,
+      });
 
-      if (!response || !response.data || response.success === false) {
+      if (!response.data || !response.data.data) {
         return null;
       }
 
-      const photo = response.data;
-      return photo;
-    } catch (error) {
+      return response.data.data;
+    } catch (error: any) {
       console.warn('Photo could not be fetched (likely deleted):', error);
       return null;
     }
@@ -57,22 +61,18 @@ export const photoService = {
 
   //ADD PHOTO
   addPhoto: async (formData: FormData, accessToken: string) => {
-    const res = await fetch(`${API_BASE_URL}${PHOTO_PATHS.ADD_PHOTO}`, {
-      method: 'POST',
-      body: formData,
-      credentials: 'include',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    try {
+      const response = await apiClient.post(PHOTO_PATHS.ADD_PHOTO, formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.message || 'API request failed');
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'API request failed';
+      throw new Error(errorMessage);
     }
-
-    return data;
   },
 
   //USER PHOTOS
@@ -81,21 +81,20 @@ export const photoService = {
     accessToken?: string | null
   ): Promise<ApiResponse<Photo[]>> => {
     try {
-      const options: any = {};
-
+      const headers: Record<string, string> = {};
       if (accessToken) {
-        options.headers = {
-          Authorization: `Bearer ${accessToken}`,
-        };
+        headers['Authorization'] = `Bearer ${accessToken}`;
       }
 
       const path = PHOTO_PATHS.GET_PHOTOS_BY_USER_ID(userId);
+      const response = await apiClient.get<ApiResponse<Photo[]>>(path, {
+        headers,
+      });
 
-      const response = await apiFetch<ApiResponse<Photo[]>>(path, options);
-      return response;
-    } catch (error) {
+      return response.data;
+    } catch (error: any) {
       console.error('Error fetching user photos:', error);
-      throw error;
+      throw new Error(error.response?.data?.message || error.message);
     }
   },
 
@@ -105,21 +104,20 @@ export const photoService = {
     accessToken?: string | null
   ): Promise<ApiResponse<Photo[]>> => {
     try {
-      const options: any = {};
-
+      const headers: Record<string, string> = {};
       if (accessToken) {
-        options.headers = {
-          Authorization: `Bearer ${accessToken}`,
-        };
+        headers['Authorization'] = `Bearer ${accessToken}`;
       }
 
       const path = PHOTO_PATHS.GET_LIKED_PHOTOS(userId);
+      const response = await apiClient.get<ApiResponse<Photo[]>>(path, {
+        headers,
+      });
 
-      const response = await apiFetch<ApiResponse<Photo[]>>(path, options);
-      return response;
-    } catch (error) {
+      return response.data;
+    } catch (error: any) {
       console.error('Error fetching liked photos:', error);
-      throw error;
+      throw new Error(error.response?.data?.message || error.message);
     }
   },
 
@@ -130,47 +128,56 @@ export const photoService = {
     accessToken?: string | null
   ): Promise<ApiResponse<Photo>> => {
     try {
-      const response = await apiFetch<ApiResponse<Photo>>(PHOTO_PATHS.UPDATE_PHOTO(id), {
-        method: 'PUT',
-        body: JSON.stringify(updatedData),
-        headers: {
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-        },
-      });
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
 
-      return response;
-    } catch (error) {
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+      }
+
+      const response = await apiClient.put<ApiResponse<Photo>>(
+        PHOTO_PATHS.UPDATE_PHOTO(id),
+        updatedData,
+        { headers }
+      );
+
+      return response.data;
+    } catch (error: any) {
       console.error('Error updating photo:', error);
-      throw error;
+      throw new Error(error.response?.data?.message || error.message);
     }
   },
 
   //DELETE PHOTO
   deletePhoto: async (id: string, accessToken?: string | null): Promise<ApiResponse<null>> => {
     try {
-      const response = await apiFetch<ApiResponse<null>>(PHOTO_PATHS.DELETE_PHOTO(id), {
-        method: 'DELETE',
-        headers: {
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-        },
+      const headers: Record<string, string> = {};
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+      }
+
+      const response = await apiClient.delete<ApiResponse<null>>(PHOTO_PATHS.DELETE_PHOTO(id), {
+        headers,
       });
-      return response;
-    } catch (error) {
+
+      return response.data;
+    } catch (error: any) {
       console.error(`Error deleting photo with ID ${id}:`, error);
-      throw error;
+      throw new Error(error.response?.data?.message || error.message);
     }
   },
 
   //GET RANDOM PHOTO
-  getRandomPhoto: async (limit: number) => {
+  getRandomPhoto: async (limit: number): Promise<ApiResponse<Photo[]>> => {
     try {
-      const response = await apiFetch<ApiResponse<null>>(PHOTO_PATHS.GET_RANDOM_PHOTOS(limit), {
-        method: 'GET',
-      });
-      return response;
-    } catch (error) {
+      const response = await apiClient.get<ApiResponse<Photo[]>>(
+        PHOTO_PATHS.GET_RANDOM_PHOTOS(limit)
+      );
+      return response.data;
+    } catch (error: any) {
       console.error(error);
-      throw error;
+      throw new Error(error.response?.data?.message || error.message);
     }
   },
 };

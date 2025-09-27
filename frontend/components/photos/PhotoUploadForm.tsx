@@ -156,7 +156,7 @@ export default function PhotoUploadForm() {
           )}
 
           <div className="flex justify-end pt-4">
-            <Button type="submit" variant="primary" className='font-bold' size='large' disabled={isSubmitting || isPending}>
+            <Button disabled={isPending} type="submit" variant="primary" className='font-bold' size='large'>
               <span className="truncate">{isPending ? 'Yükleniyor...' : 'Yükle'}</span>
             </Button>
           </div>

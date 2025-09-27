@@ -3,7 +3,7 @@ import photographers from '@/public/photographers.json'
 import { notFound } from 'next/navigation';
 
 export default async function PhotographerProfile({ params }: any) {
-  const { slug } = params;
+  const { slug } = await params;
   const photographer = photographers.find((p) => p.slug === slug);
 
   if (!photographer) return notFound();

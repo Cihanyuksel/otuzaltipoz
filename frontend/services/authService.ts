@@ -1,37 +1,65 @@
-import { apiFetch } from '@/hooks/apiFetch';
+import axios from 'axios';
 import { API_BASE_URL, AUTH_PATHS } from '../lib/config';
 import { AuthResponse, LoginRequest, MessageResponse } from '../types/auth';
 
+const authClient = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  withCredentials: true,
+});
+
 export const authService = {
   signup: async (formData: FormData): Promise<AuthResponse> => {
-    const res = await fetch(`${API_BASE_URL}${AUTH_PATHS.SIGNUP}`, {
-      method: 'POST',
-      body: formData,
-      credentials: 'include',
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.message || 'API request failed');
+    try {
+      const response = await authClient.post(AUTH_PATHS.SIGNUP, formData);
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'API request failed';
+      throw new Error(errorMessage);
     }
-
-    return data;
   },
 
   login: async (data: LoginRequest): Promise<AuthResponse> => {
-    return apiFetch(AUTH_PATHS.LOGIN, { method: 'POST', body: JSON.stringify(data) });
+    try {
+      const response = await authClient.post(AUTH_PATHS.LOGIN, data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'API request failed';
+      throw new Error(errorMessage);
+    }
   },
 
   logout: async (): Promise<MessageResponse> => {
-    return apiFetch(AUTH_PATHS.LOGOUT, { method: 'POST' });
+    try {
+      const response = await authClient.post(AUTH_PATHS.LOGOUT);
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'API request failed';
+      throw new Error(errorMessage);
+    }
   },
 
   refresh: async (): Promise<AuthResponse['data']> => {
-    return apiFetch(AUTH_PATHS.REFRESH, { method: 'POST' });
+    try {
+      const response = await authClient.post(AUTH_PATHS.REFRESH);
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'API request failed';
+      throw new Error(errorMessage);
+    }
   },
 
   verifyToken: async (token: string) => {
-    return apiFetch(AUTH_PATHS.VERIFY_EMAIL(token));
+    try {
+      const response = await authClient.get(AUTH_PATHS.VERIFY_EMAIL(token));
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'API request failed';
+      throw new Error(errorMessage);
+    }
   },
 };

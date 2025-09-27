@@ -55,21 +55,15 @@ const UserProfileContainer = () => {
     isUserLoading || (activeTab === 'uploaded' ? isUploadedLoading : isLikedLoading);
   const isError = isUserError || (activeTab === 'uploaded' ? isUploadedError : isLikedError);
 
-  if (isLoading) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <Loader />
-      </div>
-    );
-  }
-
   const profileOwner = profileOwnerData;
   const imageUrl = profileOwner?.profile_img_url || '/no_profile.png';
   const photosToShow = activeTab === 'uploaded' ? uploadedData?.data || [] : likedData?.data || [];
 
+  if (isLoading) return <Loader />;
+
   if (isError || !profileOwner) {
     return (
-      <section className="flex-1 flex items-center justify-center">
+      <section className="h-full flex-1 flex items-center justify-center">
         <div className="text-center">
           <p className="text-lg font-semibold">Kullanıcı bulunamadı</p>
           <p className="text-gray-600 mt-2">Bu kullanıcı mevcut değil.</p>
@@ -79,16 +73,16 @@ const UserProfileContainer = () => {
   }
 
   return (
-      <UserProfile
-        isLoading={isLoading}
-        isError={isError}
-        profileOwner={profileOwner}
-        imageUrl={imageUrl}
-        isOwner={isOwner}
-        activeTab={activeTab}
-        handleTabChange={handleTabChange}
-        photosToShow={photosToShow}
-      />
+    <UserProfile
+      isLoading={isLoading}
+      isError={isError}
+      profileOwner={profileOwner}
+      imageUrl={imageUrl}
+      isOwner={isOwner}
+      activeTab={activeTab}
+      handleTabChange={handleTabChange}
+      photosToShow={photosToShow}
+    />
   );
 };
 

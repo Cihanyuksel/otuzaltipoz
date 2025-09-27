@@ -80,7 +80,7 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: IEditPhotoModal) => {
           <h3 className="text-lg font-medium text-gray-100 border-b-2">Fotoğrafı Düzenle</h3>
           <button
             type="button"
-            className="rounded-md p-2 cursor-pointer text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="rounded-md p-2 cursor-pointer text-white hover:text-gray-600 hover:bg-gray-100 transition-colors"
             onClick={handleClose}
             disabled={isLoading}
           >
@@ -158,8 +158,8 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: IEditPhotoModal) => {
               >
                 İptal
               </Button>
-              <Button type="submit" variant="primary" size="medium" disabled={isLoading}>
-                {isLoading ? (
+              <Button disabled={isPending} type="submit" variant="primary" size="medium">
+                {isPending ? (
                   <div className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                     Kaydediliyor...

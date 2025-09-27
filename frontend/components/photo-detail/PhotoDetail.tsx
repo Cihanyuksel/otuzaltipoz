@@ -15,6 +15,7 @@ import DeleteConfirmPhotoModal from '../common/confirm-modal';
 import { useAuth } from '@/context/AuthContext';
 import { useGetPhoto, useDeletePhoto } from '@/hooks/usePhotoApi';
 import { canManagePhoto } from 'lib/permission';
+import { toast } from 'react-toastify';
 
 type ModalName = 'login' | 'edit' | 'delete';
 
@@ -32,14 +33,13 @@ const PhotoDetail = () => {
     edit: false,
     delete: false,
   });
-
-  console.log(user, "USERRRRRRRRRRRR")
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const params = useParams();
   const photoId = params.id as string;
 
   const { data: photo, isLoading, isError } = useGetPhoto(photoId);
-  const { mutate: deletePhoto, isPending, error } = useDeletePhoto(accessToken);
+  const { mutate: deletePhoto, isPending, error } = useDeletePhoto(accessToken,  );
 
   const handleModalToggle = (modalStates: ModalName, isOpen: boolean) => {
     setModalStates((prevState) => ({
@@ -50,24 +50,29 @@ const PhotoDetail = () => {
 
   const handleDelete = () => {
     if (!photo) return;
+
+    setIsDeleting(true);
+
     deletePhoto(photo._id, {
       onSuccess: () => {
-        handleModalToggle('delete', true);
-        router.push('/photos');
+        handleModalToggle('delete', false);
+
+        toast.success('Fotoğraf başarıyla silindi!', {
+          autoClose: 1500, 
+        });
+        setTimeout(() => {
+          router.push('/photos');
+        }, 2000);
       },
       onError: (err) => {
+        setIsDeleting(false);
         console.error(`Fotoğraf silinirken hata oluştu: ${photo._id}`, err);
       },
     });
   };
 
-  if (isLoading)
-    return (
-      <span>
-        <Loader />
-      </span>
-    );
-
+  if (isDeleting) return <Loader text={'Fotoğraf Siliniyor...'} />;
+  if (isLoading) return <Loader text={'Yükleniyor...'} />;
   if (isError || !photo) return notFound();
 
   const isOwnerPhoto = user?.id === photo.user._id;
@@ -87,7 +92,7 @@ const PhotoDetail = () => {
                 <UploaderInfo user={photo.user} />
               </div>
               <div className="flex flex-col justify-end items-end gap-5">
-                {canManagePhoto(user?.role, isOwnerPhoto) &&(
+                {canManagePhoto(user?.role, isOwnerPhoto) && (
                   <div className="mt-8 flex gap-2 justify-end">
                     <button
                       onClick={() => handleModalToggle('edit', true)}
@@ -123,6 +128,7 @@ const PhotoDetail = () => {
       </div>
 
       <LoginModal isOpen={modalStates.login} onClose={() => handleModalToggle('login', false)} />
+
       {modalStates.edit && (
         <EditPhotoModal
           isOpen={modalStates.edit}
@@ -131,23 +137,22 @@ const PhotoDetail = () => {
           accessToken={accessToken}
         />
       )}
-      {modalStates.delete && (
-        <DeleteConfirmPhotoModal
-          isOpen={modalStates.delete}
-          onClose={() => handleModalToggle('delete', false)}
-          title="Fotoğrafı Sil"
-          message={
-            <>
-              <strong>{photo.title}</strong> başlıklı fotoğrafı silmek istediğinizden emin misiniz?
-              Bu işlem geri alınamaz.
-            </>
-          }
-          onConfirm={handleDelete}
-          confirmButtonText={isPending ? 'Siliniyor...' : 'Sil'}
-          isConfirming={isPending}
-          error={error instanceof Error ? error.message : null}
-        />
-      )}
+
+      <DeleteConfirmPhotoModal
+        isOpen={modalStates.delete}
+        onClose={() => handleModalToggle('delete', false)}
+        title="Fotoğrafı Sil"
+        message={
+          <>
+            <strong>{photo.title}</strong> başlıklı fotoğrafı silmek istediğinizden emin misiniz? Bu
+            işlem geri alınamaz.
+          </>
+        }
+        onConfirm={handleDelete}
+        confirmButtonText={isPending ? 'Siliniyor...' : 'Sil'}
+        isConfirming={isPending}
+        error={error instanceof Error ? error.message : null}
+      />
     </section>
   );
 };

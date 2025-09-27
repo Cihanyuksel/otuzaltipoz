@@ -1,27 +1,36 @@
-import { apiFetch } from '@/hooks/apiFetch';
-import { COMMENTS_PATH } from 'lib/config';
+import axios from 'axios';
+import { API_BASE_URL, COMMENTS_PATH } from 'lib/config';
+
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000, 
+});
 
 export const commentService = {
   getComments: async (photoId: string, accessToken?: string) => {
     try {
-      const headers: HeadersInit = {};
+      const headers: Record<string, string> = {};
+      
       if (accessToken) {
         headers['Authorization'] = `Bearer ${accessToken}`;
       }
 
-      const response = await apiFetch(COMMENTS_PATH.GET_COMMENTS(photoId), {
-        method: 'GET',
+      const response = await apiClient.get(COMMENTS_PATH.GET_COMMENTS(photoId), {
         headers,
       });
 
-      return response;
+      return response.data;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new Error(error.response?.data?.message || error.message);
     }
   },
 
   addComment: async (photoId: string, commentText: string, accessToken: string | null, parentCommentId?: string) => {
     try {
+      if (!accessToken) {
+        throw new Error('Authentication required');
+      }
+
       const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
@@ -35,19 +44,16 @@ export const commentService = {
         body.parentComment = parentCommentId;
       }
 
-      const response = await apiFetch(COMMENTS_PATH.ADD_COMMENT(photoId), {
-        method: 'POST',
+      const response = await apiClient.post(COMMENTS_PATH.ADD_COMMENT(photoId), body, {
         headers,
-        body: JSON.stringify(body),
       });
 
-      return response;
-    } catch (error) {
-      throw error;
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || error.message);
     }
   },
 
-  //Delete Comments
   deleteComment: async (commentId: string, accessToken: string | null) => {
     try {
       if (!accessToken) {
@@ -58,14 +64,13 @@ export const commentService = {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      const response = await apiFetch(COMMENTS_PATH.DELETE_COMMENT(commentId), {
-        method: 'DELETE',
+      const response = await apiClient.delete(COMMENTS_PATH.DELETE_COMMENT(commentId), {
         headers,
       });
 
-      return response;
+      return response.data;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new Error(error.response?.data?.message || error.message);
     }
   },
 };

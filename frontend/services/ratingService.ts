@@ -1,4 +1,11 @@
-import { apiFetch } from '@/hooks/apiFetch';
+import axios from 'axios';
+import { API_BASE_URL } from 'lib/config';
+
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  withCredentials: true,
+});
 
 //rating
 export interface IRating {
@@ -25,31 +32,37 @@ export interface IGetRatingsResponse {
 }
 
 export const ratingService = {
-  ratePhoto: async (photoId: string, rating: number, accessToken: string): Promise<IRatePhotoResponse> => {
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    };
+  ratePhoto: async (
+    photoId: string,
+    rating: number,
+    accessToken: string
+  ): Promise<IRatePhotoResponse> => {
+    try {
 
-    const response: IRatePhotoResponse = await apiFetch(`/photos/${photoId}/rate`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({ rating }),
-    });
-    return response;
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      }
+
+      const response = await apiClient.post(`/photos/${photoId}/rate`, { rating }, { headers });
+      return response.data;
+
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Rating request failed';
+      throw new Error(errorMessage);
+    }
   },
 
   getRatings: async (photoId: string): Promise<IGetRatingsResponse> => {
     try {
-      const response: IGetRatingsResponse = await apiFetch(`/photos/${photoId}/ratings`, {
-        method: 'GET',
-      });
-      return response;
+      const response = await apiClient.get(`/photos/${photoId}/ratings`);
+      return response.data;
     } catch (error: any) {
-      if (error instanceof Error) {
-        throw new Error(`Oylamalar alınırken hata oluştu: ${error.message}`);
-      }
-      throw new Error('Oylamalar alınırken beklenmeyen bir hata oluştu.');
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        'Oylamalar alınırken beklenmeyen bir hata oluştu.';
+      throw new Error(`Oylamalar alınırken hata oluştu: ${errorMessage}`);
     }
   },
 };

@@ -18,8 +18,8 @@ type PhotoResponse = {
 
 export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null) =>
   useQuery({
-    queryKey: ['photos', { searchQuery }],
-    queryFn: () => photoService.getAllPhoto(searchQuery),
+    queryKey: ['photos', { searchQuery, hasToken: !!accessToken }],
+    queryFn: () => photoService.getAllPhoto(searchQuery, accessToken), 
     staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
   });
