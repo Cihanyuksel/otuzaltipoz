@@ -127,7 +127,6 @@ const signup = async (
     // Send verification email
     try {
       sendVerifyEmail(newUser.email, newUser.full_name, verificationToken);
-      console.log(`Verification email sent to: ${newUser.email}`);
     } catch (emailError: any) {
       console.error("Email sending failed:", emailError);
       // User and token delete
@@ -146,7 +145,7 @@ const signup = async (
     res.status(201).json({
       success: true,
       message:
-        "🎉 Kayıt başarılı! E-postanı kontrol et ve hesabını aktifleştir.",
+        "Kayıt başarılı! E-postanı kontrol et ve hesabını aktifleştir.",
       user: {
         id: newUser._id,
         username: newUser.username,
@@ -172,7 +171,6 @@ const verifyEmail = async (
 ): Promise<void> => {
   try {
     const { token } = req.query;
-    console.log("🔍 Verify email attempt with token:", token);
 
     if (!token || typeof token !== "string") {
       return next(new AppError("Geçersiz token", 400));
@@ -210,13 +208,11 @@ const verifyEmail = async (
       return;
     }
 
-    console.log("✅ Activating user...");
     user.is_verified = true;
     await user.save();
 
     await Token.deleteOne({ _id: tokenDoc._id });
 
-    console.log("✅ User activated successfully!");
     res.status(200).json({
       success: true,
       message: "🎉 E-posta başarıyla doğrulandı! Artık giriş yapabilirsin.",
@@ -227,6 +223,8 @@ const verifyEmail = async (
     next(new AppError("Doğrulama başarısız. Lütfen tekrar deneyin.", 500));
   }
 };
+
+
 const login = async (
   req: Request,
   res: Response,

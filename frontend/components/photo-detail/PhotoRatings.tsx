@@ -13,19 +13,19 @@ import {
 import { useGetRatings, useRatePhoto } from '@/hooks/useRatingApi';
 import Loader from '../common/loader';
 
-interface RatingSectionProps {
+interface IPhotoRatings {
   photoId: string;
   accessToken: string | null;
   likeCount: number;
   onLoginRequired: () => void;
 }
 
-export default function RatingSection({
+export default function PhotoRatings({
   photoId,
   accessToken,
   likeCount,
   onLoginRequired,
-}: RatingSectionProps) {
+}: IPhotoRatings) {
   const [rating, setRating] = useState(0);
   const [showMessage, setShowMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

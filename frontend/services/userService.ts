@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { USER_PATHS } from 'lib/config';
 
 const apiClient = axios.create({
@@ -6,12 +6,13 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 export const userService = {
   getUser: async (userId: string) => {
     try {
-      const response = await apiClient.get(USER_PATHS.GET_USERS(userId));
+      const response = await apiClient.get(USER_PATHS.GET_USER(userId));
       return response.data;
     } catch (error: any) {
       if (error.response) {
@@ -27,17 +28,10 @@ export const userService = {
   deleteUser: async (userId: string) => {
     try {
       const response = await apiClient.delete(USER_PATHS.DELETE_USER(userId));
-      return {
-        success: true,
-        data: response.data,
-      };
+      return response.data;
     } catch (error: any) {
       console.error('Error deleting user:', error);
-      return {
-        success: false,
-        message: error.response?.data?.message || error.message || 'Failed to delete user',
-        status: error.response?.status || error.status || 500,
-      };
+      throw new Error(error.response?.data?.message || 'Failed to delete user');
     }
   },
 };

@@ -1,11 +1,11 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authService } from '../services/authService';
 import { userService } from '../services/userService';
 import { AuthResponse, User } from '../types/auth';
 
 type SetAuthFn = (authData: AuthResponse['data'] | null) => void;
 
-const useUser = (userId: string | null) => {
+const useGetUser = (userId: string | null) => {
   return useQuery<User | null>({
     queryKey: ['user', userId],
     queryFn: () => {
@@ -16,6 +16,20 @@ const useUser = (userId: string | null) => {
     },
     enabled: !!userId,
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+  const keysToClean = ['photos', 'likes', 'comments', 'ratings', 'users'];
+
+  return useMutation({
+    mutationFn: (userId: string) => userService.deleteUser(userId),
+    onSuccess: () => {
+      keysToClean.forEach((key) => {
+        queryClient.removeQueries({ queryKey: [key] });
+      });
+    },
   });
 };
 
@@ -35,12 +49,4 @@ const useLogout = (fn: SetAuthFn) => {
   });
 };
 
-/*const useRefresh = () =>
-  useQuery({
-    queryKey: ['auth', 'refresh'],
-    queryFn: authService.refresh,
-    retry: false,
-    refetchOnWindowFocus: false,
-  }); */
-
-export { useSignup, useLogin, useLogout, useUser };
+export { useSignup, useLogin, useLogout, useGetUser, useDeleteUser };

@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 //project-files
 import { useAuth } from '@/context/AuthContext';
 import { useGetUserPhotos, useGetLikedPhotos } from '@/hooks/usePhotoApi';
-import { useUser } from '@/hooks/useAuthApi';
+import { useGetUser } from '@/hooks/useAuthApi';
 import Loader from '@/components/common/loader';
 import UserProfile from './UserProfile';
 
@@ -35,24 +35,11 @@ const UserProfileContainer = () => {
     localStorage.setItem(storageKey, tab);
   };
 
-  const {
-    data: profileOwnerData,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useUser(profileOwnerId as string);
-  const {
-    data: uploadedData,
-    isLoading: isUploadedLoading,
-    isError: isUploadedError,
-  } = useGetUserPhotos(profileOwnerId as string);
-  const {
-    data: likedData,
-    isLoading: isLikedLoading,
-    isError: isLikedError,
-  } = useGetLikedPhotos(profileOwnerId as string);
+  const { data: profileOwnerData, isLoading: isUserLoading, isError: isUserError } = useGetUser(profileOwnerId as string);
+  const { data: uploadedData, isLoading: isUploadedLoading, isError: isUploadedError } = useGetUserPhotos(profileOwnerId as string);
+  const { data: likedData, isLoading: isLikedLoading, isError: isLikedError } = useGetLikedPhotos(profileOwnerId as string);
 
-  const isLoading =
-    isUserLoading || (activeTab === 'uploaded' ? isUploadedLoading : isLikedLoading);
+  const isLoading = isUserLoading || (activeTab === 'uploaded' ? isUploadedLoading : isLikedLoading);
   const isError = isUserError || (activeTab === 'uploaded' ? isUploadedError : isLikedError);
 
   const profileOwner = profileOwnerData;

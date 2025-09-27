@@ -18,7 +18,7 @@ interface IUserProfile {
   photosToShow: Photo[];
 }
 
-const UserProfile = ({ isLoading, isError, profileOwner, imageUrl, isOwner, photosToShow, activeTab, handleTabChange }: IUserProfile) => {
+const UserProfile = ({isLoading, isError, profileOwner, imageUrl, isOwner, photosToShow, activeTab, handleTabChange }: IUserProfile) => {
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">

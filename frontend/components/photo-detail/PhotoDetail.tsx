@@ -6,16 +6,17 @@ import { notFound, useParams, useRouter } from 'next/navigation';
 //third-party
 import { CiEdit as EditIcon } from 'react-icons/ci';
 import { RiDeleteBin6Line as DeleteIcon } from 'react-icons/ri';
+import { toast } from 'react-toastify';
 //project files
 import LoginModal from '../auth/login-modal';
 import EditPhotoModal from '../photos/EditPhotoModal';
-import Loader from '../common/loader';
-import CommentSection from '../comments/CommentSection';
 import DeleteConfirmPhotoModal from '../common/confirm-modal';
+import Loader from '../common/loader';
+import Button from '../common/button';
+import CommentSection from '../comments/CommentSection';
 import { useAuth } from '@/context/AuthContext';
 import { useGetPhoto, useDeletePhoto } from '@/hooks/usePhotoApi';
 import { canManagePhoto } from 'lib/permission';
-import { toast } from 'react-toastify';
 
 type ModalName = 'login' | 'edit' | 'delete';
 
@@ -39,7 +40,7 @@ const PhotoDetail = () => {
   const photoId = params.id as string;
 
   const { data: photo, isLoading, isError } = useGetPhoto(photoId);
-  const { mutate: deletePhoto, isPending, error } = useDeletePhoto(accessToken,  );
+  const { mutate: deletePhoto, isPending, error } = useDeletePhoto(accessToken);
 
   const handleModalToggle = (modalStates: ModalName, isOpen: boolean) => {
     setModalStates((prevState) => ({
@@ -58,7 +59,7 @@ const PhotoDetail = () => {
         handleModalToggle('delete', false);
 
         toast.success('Fotoğraf başarıyla silindi!', {
-          autoClose: 1500, 
+          autoClose: 1500,
         });
         setTimeout(() => {
           router.push('/photos');
@@ -76,6 +77,7 @@ const PhotoDetail = () => {
   if (isError || !photo) return notFound();
 
   const isOwnerPhoto = user?.id === photo.user._id;
+  const isLoggedIn = !!accessToken;
 
   return (
     <section
@@ -91,32 +93,49 @@ const PhotoDetail = () => {
                 <PhotoInfo title={photo.title} description={photo.description} tags={photo.tags} />
                 <UploaderInfo user={photo.user} />
               </div>
-              <div className="flex flex-col justify-end items-end gap-5">
-                {canManagePhoto(user?.role, isOwnerPhoto) && (
-                  <div className="mt-8 flex gap-2 justify-end">
-                    <button
-                      onClick={() => handleModalToggle('edit', true)}
-                      className="rounded-lg border-gray-200 border h-10 px-6 text-xs md:text-sm font-medium transition-colors hover:bg-gray-100 cursor-pointer flex items-center gap-2"
+              {isLoggedIn ? (
+                <div className="flex flex-col justify-end items-end gap-5">
+                  {canManagePhoto(user?.role, isOwnerPhoto) && (
+                    <div className="mt-8 flex gap-3 justify-end">
+                      {' '}
+                      <button
+                        onClick={() => handleModalToggle('edit', true)}
+                        className="rounded-xl border border-gray-300 h-10 px-5 text-sm font-semibold text-gray-700 transition-all shadow-sm hover:shadow-md hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <EditIcon className="w-4 h-4" />
+                        Düzenle
+                      </button>
+                      <button
+                        onClick={() => handleModalToggle('delete', true)}
+                        className="rounded-xl border border-red-400 h-10 px-5 text-sm font-semibold text-red-600 transition-all shadow-sm hover:shadow-md hover:bg-red-50 hover:text-white flex items-center gap-2"
+                      >
+                        <DeleteIcon className="w-4 h-4" />
+                        Sil
+                      </button>
+                    </div>
+                  )}
+                  <RatingSection
+                    photoId={photo._id}
+                    accessToken={accessToken}
+                    likeCount={photo.likeCount}
+                    onLoginRequired={() => handleModalToggle('login', true)}
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-col justify-end items-end gap-5 mt-5">
+                  <div className="flex flex-col items-end justify-center p-4  rounded-xl text-right  max-w-sm w-full">
+                    <p className="text-sm font-medium text-gray-800 mb-3">
+                      Bu fotoğrafı oylamak ve beğenmek için aramıza katıl!
+                    </p>
+                    <Button
+                      onClick={() => handleModalToggle('login', true)}
+                      variant='primary'
                     >
-                      <EditIcon />
-                      Düzenle
-                    </button>
-                    <button
-                      onClick={() => handleModalToggle('delete', true)}
-                      className="rounded-lg border-gray-200 border h-10 px-6 text-xs md:text-sm font-medium text-red-500 transition-colors hover:bg-gray-100 cursor-pointer flex items-center gap-2"
-                    >
-                      <DeleteIcon />
-                      Sil
-                    </button>
+                      Hemen Giriş Yap
+                    </Button>
                   </div>
-                )}
-                <RatingSection
-                  photoId={photo._id}
-                  accessToken={accessToken}
-                  likeCount={photo.likeCount}
-                  onLoginRequired={() => handleModalToggle('login', true)}
-                />
-              </div>
+                </div>
+              )}
             </div>
             <CommentSection
               userPhoto={user?.profile_img_url}
@@ -144,8 +163,7 @@ const PhotoDetail = () => {
         title="Fotoğrafı Sil"
         message={
           <>
-            <strong>{photo.title}</strong> başlıklı fotoğrafı silmek istediğinizden emin misiniz? Bu
-            işlem geri alınamaz.
+            <strong>{photo.title}</strong> başlıklı fotoğrafı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
           </>
         }
         onConfirm={handleDelete}

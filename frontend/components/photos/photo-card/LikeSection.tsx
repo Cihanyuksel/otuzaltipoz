@@ -41,12 +41,16 @@ function LikeSection({ photoId }: ILikeSection) {
     };
   }, [isModalOpen]);
 
+  const isLoggedIn = !!accessToken
+
   return (
     <>
-      {accessToken && (
+      {isLoggedIn && (
         <div className="flex justify-between items-center mt-2 p-3">
           <div className="flex items-center gap-1 ml-3">
-            <span className="text-gray-500 text-sm font-bold">Ortalama Puan: {ratingData?.averageRating.toFixed(2)}</span>
+            <span className="text-gray-500 text-sm font-bold">
+              Ortalama Puan: <span className="font-bold text-xl text-gray-700">{ratingData?.averageRating.toFixed(2)}</span> / 5
+            </span>
             <span className="text-xs text-gray-400">({ratingData?.totalVotes} oy)</span>
           </div>
           <div className="flex items-center gap-2 relative">

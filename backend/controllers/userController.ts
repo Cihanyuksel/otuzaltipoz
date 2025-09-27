@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import User from "../models/User";
 import { AppError } from "../utils/AppError";
-
+import { refreshTokenCookieConfig } from "../config/cookieConfig";
 
 // Get All Users
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -54,9 +54,16 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
     if (!deletedUser) return next(new AppError("User not found", 404));
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict" as const,
+    });
+
     res.status(200).json({
       success: true,
-      message: "User deleted",
+      message: "User deleted and logout",
       user: {
         _id: deletedUser._id,
         username: deletedUser.username,

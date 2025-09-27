@@ -10,7 +10,7 @@ interface AuthPaths {
 
 interface UserPaths {
   DELETE_USER: (id: string) => string;
-  GET_USERS: (id: string) => string;
+  GET_USER: (id: string) => string;
 }
 
 interface PhotosPaths {
@@ -40,7 +40,7 @@ export const AUTH_PATHS: AuthPaths = {
 
 export const USER_PATHS: UserPaths = {
   DELETE_USER: (id: string) => `/users/${id}`,
-  GET_USERS: (id: string) => `/users/${id}`,
+  GET_USER: (id: string) => `/users/${id}`,
 };
 
 export const PHOTO_PATHS: PhotosPaths = {

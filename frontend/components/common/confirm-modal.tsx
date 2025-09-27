@@ -95,7 +95,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
               {error}
             </div>
           )}
-          <p className="text-gray-700 text-sm mb-6">{message}</p>
+          <div className="text-gray-700 text-sm mb-6">{message}</div>
 
           <div className="flex justify-end space-x-3">
             <Button
