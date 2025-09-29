@@ -9,6 +9,8 @@ import { useForm } from 'react-hook-form';
 import { LoginFormValues, loginSchema } from 'lib/schemas';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import Input from '../common/input';
+import Button from '../common/button';
 
 export default function LoginForm() {
   const { login, setAuth } = useAuth();
@@ -53,41 +55,30 @@ export default function LoginForm() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="flex flex-col items-center">
           <h1 className="text-2xl font-bold text-[#ef7464] text-center">Giriş Yap</h1>
-          <p className="text-gray-400 text-sm text-center mt-1">
-            Aşağıdaki bilgilerinizi girin veya ücretsiz kaydolun
-          </p>
+          <p className="text-gray-400 text-sm text-center mt-1">Aşağıdaki bilgilerinizi girin veya ücretsiz kaydolun</p>
         </div>
         <div>
           <label className="text-gray-700 font-bold">Email</label>
-          <input
-            {...register('email')}
-            type="email"
-            placeholder="ornek@email.com"
-            className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ef7464] transition-colors duration-200"
-          />
+          <Input name="email" register={register} error={errors.email?.message} placeholder="ornek@email.com" type="email" />
           {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
         </div>
 
         <div>
           <label className="text-gray-700 font-bold">Şifre</label>
-          <input
-            {...register('password')}
-            type="password"
+          <Input
+            name="password"
+            register={register}
+            error={errors.password?.message}
             placeholder="********"
-            className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ef7464] transition-colors duration-200"
+            type="password"
+            className="w-full"
           />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-          )}
+          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
         </div>
 
         <div className="flex justify-between items-center text-sm">
           <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="rememberMe"
-              className="mr-2 h-4 w-4 text-[#ef7464] rounded border-gray-300 focus:ring-[#ef7464]"
-            />
+            <input type="checkbox" id="rememberMe" className="mr-2 h-4 w-4 text-[#ef7464] rounded border-gray-300 focus:ring-[#ef7464]" />
             <label htmlFor="rememberMe" className="text-gray-600">
               Beni Hatırla
             </label>
@@ -97,12 +88,9 @@ export default function LoginForm() {
           </Link>
         </div>
 
-        <button
-          type="submit"
-          className="w-full bg-[#ef7464] text-white py-3 rounded-lg font-semibold hover:bg-[#f56b5cbe] transition-colors duration-200 cursor-pointer"
-        >
+        <Button type="submit" className="w-full" variant="primary">
           Giriş Yap
-        </button>
+        </Button>
       </form>
       <div className="flex gap-1 justify-center  text-center mt-4 text-sm text-gray-600">
         <p>Hesabınız yok mu?</p>
@@ -110,12 +98,8 @@ export default function LoginForm() {
           Üye Ol
         </Link>
       </div>
-      {errorMessage && (
-        <p className="text-red-500 text-sm mt-4 text-center font-medium">{errorMessage}</p>
-      )}
-      {successMessage && (
-        <p className="text-green-600 text-sm mt-4 text-center font-medium">{successMessage}</p>
-      )}
+      {errorMessage && <p className="text-red-500 text-sm mt-4 text-center font-medium">{errorMessage}</p>}
+      {successMessage && <p className="text-green-600 text-sm mt-4 text-center font-medium">{successMessage}</p>}
     </div>
   );
 }

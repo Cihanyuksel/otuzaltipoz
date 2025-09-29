@@ -23,7 +23,7 @@
       "@/components/*": ["components/*"],
       "@/hooks/*": ["hooks/*"],
       "@/context/*": ["context/*"],
-      "@/public/*": ["public/*"]
+      "@/public/*": ["public/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.js"],

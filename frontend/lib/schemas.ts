@@ -28,12 +28,22 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 const registerSchema = z
   .object({
-    username: z.string().min(3, 'Username en az 3 karakter olmalı'),
-    full_name: z.string().min(3, 'Full_name en az 3 karakter olmalı'),
-    email: z.string().email('Geçerli bir e-posta gir'),
+    username: z
+      .string()
+      .min(3, 'Username en az 3 karakter olmalı')
+      .regex(/^[a-zA-Z]+$/, 'Kullanıcı adı sadece harflerden oluşabilir'),
+    full_name: z
+      .string()
+      .min(3, 'Full_name en az 3 karakter olmalı')
+      .regex(/^[a-zA-Z]+$/, 'Kullanıcı adı sadece harflerden oluşabilir'),
+    email: z
+      .string()
+      .email('Geçerli bir e-posta gir')
+      .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Geçerli bir e-posta adresi girin'),
     password: z.string().min(6, 'Şifre en az 6 karakter olmalı'),
     passwordCheck: z.string(),
     profile_img: z.any().optional(),
+    bio: z.string().max(250, 'Biyografi en fazla 250 karakter olmalı').optional(),
   })
   .refine((data) => data.password === data.passwordCheck, {
     path: ['passwordCheck'],

@@ -40,7 +40,7 @@ const signup = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { email, username, password, full_name } = req.body;
+    const { email, username, password, full_name, bio } = req.body;
 
     // Input validation
     if (!email || !username || !password || !full_name) {
@@ -108,8 +108,9 @@ const signup = async (
       email: email.toLowerCase(),
       password,
       full_name: full_name.trim(),
-      role: "user",
+      bio: bio?.trim() || "", 
       profile_img_url,
+      role: "user",
       is_active: false,
       is_verified: false,
     });
@@ -152,8 +153,9 @@ const signup = async (
         fullname: newUser.full_name,
         email: newUser.email,
         profile_img_url: newUser.profile_img_url,
-        is_active: newUser.is_active,
+        bio: newUser.bio,
         role: newUser.role,
+        is_active: newUser.is_active,
         is_verified: newUser.is_verified,
       },
     });

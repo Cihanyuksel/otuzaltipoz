@@ -1,24 +1,27 @@
+// components/SignupForm.tsx
 'use client';
 //nextjs and react
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 //third-party
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { FaEye as ShowIcon, FaEyeSlash as HideIcon, FaCheck as CheckIcon } from 'react-icons/fa';
-//project files
+//project-files
 import { useAuth } from '@/context/AuthContext';
 import { RegisterFormValues, registerSchema } from 'lib/schemas';
+import Button from '../common/button';
+import Input from '../common/input';
 
 export default function SignupForm() {
   const { signup } = useAuth();
   const router = useRouter();
-  
-  const [successMessage, setSuccessMessage] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [fileName, setFileName] = useState<string>('Dosya Seçilmedi');
-  const [isSelected, setIsSelected] = useState<boolean>(false);
+
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [fileName, setFileName] = useState('Dosya Seçilmedi');
+  const [isSelected, setIsSelected] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -41,11 +44,11 @@ export default function SignupForm() {
 
   const onsubmit = (data: RegisterFormValues) => {
     const formData = new FormData();
-
     formData.append('username', data.username || '');
     formData.append('full_name', data.full_name || '');
     formData.append('email', data.email || '');
     formData.append('password', data.password || '');
+    formData.append('bio', data.bio || '');
 
     if (data.profile_img && data.profile_img.length > 0) {
       formData.append('profile_img', data.profile_img[0]);
@@ -65,62 +68,50 @@ export default function SignupForm() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onsubmit)}
-      className="flex flex-col gap-4 w-full"
-      encType="multipart/form-data"
-    >
+    <form onSubmit={handleSubmit(onsubmit)} className="flex flex-col gap-4 w-full" encType="multipart/form-data">
       {errorMessage && <div className="bg-red-100 text-red-800 p-2 rounded-md">{errorMessage}</div>}
-      {successMessage && (
-        <div className="bg-green-100 text-green-800 p-2 rounded-md">{successMessage}</div>
-      )}
-
-      <input
-        {...register('username')}
-        placeholder="Kullanıcı Adı"
-        className="border p-2 rounded-md"
-      />
+      {successMessage && <div className="bg-green-100 text-green-800 p-2 rounded-md">{successMessage}</div>}
+      <Input name="username" register={register} error={errors.username?.message} placeholder="Kullanıcı Adı" />{' '}
       {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
-
-      <input {...register('full_name')} placeholder="Ad Soyad" className="border p-2 rounded-md" />
+      <Input name="full_name" register={register} error={errors.full_name?.message} placeholder="Ad Soyad" />
       {errors.full_name && <p className="text-red-500 text-sm">{errors.full_name.message}</p>}
-
-      <input {...register('email')} placeholder="Email" className="border p-2 rounded-md" />
+      <Input name="email" register={register} error={errors.email?.message} placeholder="Email" type="email" />
       {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-
       <div className="relative">
-        <input
-          type={showPassword ? 'text' : 'password'}
-          {...register('password')}
+        <Input
+          name="password"
+          register={register}
+          error={errors.password?.message}
           placeholder="Şifre"
-          className="border p-2 rounded-md w-full"
+          type={showPassword ? 'text' : 'password'}
         />
-        <button
-          type="button"
-          onClick={() => setShowPassword((prev) => !prev)}
-          className='absolute right-2 top-3 cursor-pointer'
-        >
+        <button type="button" onClick={() => setShowPassword((prev) => !prev)} className="absolute right-2 top-3 cursor-pointer">
           {showPassword ? <ShowIcon /> : <HideIcon />}
         </button>
       </div>
       {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-
       <div className="relative">
-        <input
-          type={showPassword ? 'text' : 'password'}
-          {...register('passwordCheck')}
+        <Input
+          name="passwordCheck"
+          register={register}
+          error={errors.passwordCheck?.message}
           placeholder="Şifre Onayla"
-          className="border p-2 rounded-md w-full"
+          type={showPassword ? 'text' : 'password'}
         />
       </div>
-      {errors.passwordCheck && (
-        <p className="text-red-500 text-sm">{errors.passwordCheck.message}</p>
-      )}
-
+      {errors.passwordCheck && <p className="text-red-500 text-sm">{errors.passwordCheck.message}</p>}
+      {/* Biyografi */}
+      <textarea
+        {...register('bio')}
+        placeholder="Biyografinizi yazın..."
+        className="border border-gray-300 p-2 rounded-md w-full resize-none focus:border-[#ef7464] focus:outline-none"
+        rows={4}
+      />
+      {errors.bio && <p className="text-red-500 text-sm">{errors.bio.message}</p>}
       {/* Profil Fotoğrafı */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2 text-gray-700">Profil Fotoğrafı</label>
-        <label className="flex items-center justify-between border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-blue-400 transition duration-200">
+        <label className="flex items-center justify-between border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-[#ef7464] transition duration-200">
           <span className="text-gray-700 truncate">{fileName}</span>
           {isSelected ? (
             <span className="flex items-center gap-1 bg-green-600 text-white px-3 py-1 rounded-lg text-sm">
@@ -131,22 +122,12 @@ export default function SignupForm() {
               Dosya Seç
             </span>
           )}
-          <input
-            type="file"
-            accept="image/*"
-            {...register('profile_img')}
-            className="hidden"
-            onChange={handleChange}
-          />
+          <input type="file" accept="image/*" {...register('profile_img')} className="hidden" onChange={handleChange} />
         </label>
       </div>
-
-      <button
-        type="submit"
-        className="bg-[#ef7464] text-white py-2 rounded-md hover:bg-[#f56b5cbb] transition mt-2 cursor-pointer"
-      >
+      <Button type="submit" variant="primary">
         Kayıt Ol
-      </button>
+      </Button>
     </form>
   );
 }

@@ -67,7 +67,7 @@ const ProfileHeader = ({ user, imageUrl, isOwner }: IProfileHeader) => {
           <div className="text-center md:text-left">
             <h1 className="text-3xl font-bold">{user.full_name}</h1>
             <p className="text-md font-bold text-[#ef7464]">@{user.username}</p>
-            {isOwner && <p className="mt-2 text-base text-[#1b160e]">Hesap durumu: {user.is_active ? 'Aktif' : 'Pasif'}</p>}
+            <p className="mt-2 text-base text-gray-500">{user.bio}</p>
           </div>
         </div>
 
