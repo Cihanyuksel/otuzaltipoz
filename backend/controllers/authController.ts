@@ -126,7 +126,7 @@ const signup = async (
 
     // Send verification email
     try {
-      sendVerifyEmail(newUser.email, newUser.full_name, verificationToken);
+      sendVerifyEmail(newUser.email, newUser.username, verificationToken);
     } catch (emailError: any) {
       console.error("Email sending failed:", emailError);
       // User and token delete

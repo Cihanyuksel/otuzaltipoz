@@ -1,128 +1,150 @@
-'use client'; // Bu bileşen client tarafında çalışacağı için zorunludur.
+'use client';
+import { useState, FormEvent, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import Button from '@/components/common/button';
+import { authService } from 'services/authService';
 
-import React, { useState, FormEvent } from 'react';
-import Button from '../common/button';
+const ResetPassword = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
 
-/**
- * Kullanıcının şifre sıfırlama bağlantısı almak için e-posta adresini girdiği bileşen.
- */
-export default function PasswordResetEmail() {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState<{ type: 'success' | 'error' | null; text: string | null }>({ type: null, text: null });
-  const [isLoading, setIsLoading] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      router.push('/login');
+    }
+  }, [token, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setMessage({ type: null, text: null }); // Önceki mesajı temizle
-    setIsLoading(true);
+    setMessage('');
+    setError('');
+    setLoading(true);
 
-    // Basit e-posta doğrulama kontrolü
-    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      setMessage({ type: 'error', text: 'Lütfen geçerli bir e-posta adresi girin.' });
-      setIsLoading(false);
+    if (!token) {
+      setError('Şifre sıfırlama bağlantısı eksik veya geçersiz. Lütfen e-postanızı kontrol edin.');
+      setLoading(false);
+      return;
+    }
+
+    if (!newPassword) {
+      setError('Lütfen yeni şifrenizi girin.');
+      setLoading(false);
       return;
     }
 
     try {
-      // **GERÇEK UYGULAMADA BURAYA SUNUCU İSTEĞİ (API Call) GELİR**
-      // Örneğin: /api/auth/reset-password endpoint'ine e-posta gönderme
-      
-      /*
-      const response = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+      const response = await authService.resetPassword({
+        token,
+        newPassword,
       });
 
-      if (!response.ok) {
-        // Hata durumlarını yönet
-        throw new Error('Şifre sıfırlama talebi başarısız oldu. Lütfen tekrar deneyin.');
+      if (response.success) {
+        setMessage(response.message || 'Şifreniz başarıyla sıfırlandı. Artık yeni şifrenizle giriş yapabilirsiniz.');
+        setNewPassword('');
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
       }
-      */
-      
-      // Simülasyon: 2 saniye beklet
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-
-      // Başarılı yanıt
-      setMessage({
-        type: 'success',
-        text: `Şifrenizi sıfırlamak için ${email} adresine bir bağlantı gönderildi. Lütfen gelen kutunuzu kontrol edin.`,
-      });
-      setEmail(''); // Formu temizle
-
-    } catch (error) {
-      // Hata mesajını yakala ve göster
-      const errorMessage = error instanceof Error ? error.message : 'Bilinmeyen bir hata oluştu.';
-      setMessage({ type: 'error', text: errorMessage });
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'Şifre sıfırlanırken beklenmedik bir hata oluştu.');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  // Tailwind CSS ile dinamik mesaj stilleri
-  const messageClasses = {
-    success: 'bg-green-100 border-green-400 text-green-700',
-    error: 'bg-red-100 border-red-400 text-red-700',
-  };
+  if (!token) {
+    return null;
+  }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-xl border border-gray-200">
-        
-        <h2 className="text-3xl font-bold text-center text-gray-900">Şifremi Sıfırla</h2>
-        
-        <p className="text-center text-sm text-gray-600">
-          Hesabınızla ilişkili e-posta adresinizi girin. Size bir sıfırlama bağlantısı göndereceğiz.
-        </p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="absolute top-0 left-0 p-4 sm:p-6">
+        <h1 className="text-xl sm:text-2xl font-semibold text-gray-700 opacity-70">Otuzaltıpoz</h1>
+        <p className="text-sm text-gray-500 opacity-60">Şifre Yenileme</p>
+      </div>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          
+      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 sm:p-8 border border-gray-200">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Yeni Şifre Oluştur</h2>
+          <p className="text-gray-500 text-sm">Hesabın için güçlü bir şifre belirle.</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              E-posta Adresi
+            <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              Yeni Şifre
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="newPassword"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="En az 6 karakter"
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 text-sm"
+                aria-label="Şifreyi Göster/Gizle"
+              >
+                {showPassword ? 'Gizle' : 'Göster'}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              Şifreyi Onayla
             </label>
             <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
+              type={showPassword ? 'text' : 'password'}
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Şifreni tekrar gir"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out disabled:opacity-50"
-              placeholder="ornek@eposta.com"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition"
             />
           </div>
 
-          <Button
-            type="submit"
-            disabled={isLoading}
-            variant='primary'
-          >
-            {isLoading ? (
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            ) : (
-              'Gönder'
-            )}
+          {message && (
+            <div className="bg-green-50 border border-green-300 text-green-700 px-4 py-3 rounded-lg">
+              <p className="text-sm font-medium">{message}</p>
+              <p className="text-xs mt-1">Giriş sayfasına yönlendiriliyorsun...</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg">
+              <p className="text-sm">{error}</p>
+            </div>
+          )}
+
+          <Button type="submit" disabled={loading} className="w-full font-bold" variant="primary">
+            {loading ? 'Kaydediliyor...' : 'Şifremi Değiştir'}
           </Button>
         </form>
 
-        {/* Mesaj Alanı */}
-        {message.text && (
-          <div 
-            className={`p-3 border-l-4 rounded-md mt-4 text-sm ${message.type ? messageClasses[message.type] : ''}`} 
-            role="alert"
-          >
-            {message.text}
-          </div>
-        )}
-
+        <div className="mt-6 text-center">
+          <a href="/login" className="text-[#ef7464] hover:text-[#ef7464ba] text-sm font-medium">
+            ← Giriş sayfasına dön
+          </a>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default ResetPassword;

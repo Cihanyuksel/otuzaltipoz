@@ -5,6 +5,8 @@ interface AuthPaths {
   LOGOUT: string;
   SIGNUP: string;
   REFRESH: string;
+  FORGOT_PASSWORD: string
+  RESET_PASSWORD: (token: string) => string,
   VERIFY_EMAIL: (token: string) => string;
 }
 
@@ -35,6 +37,8 @@ export const AUTH_PATHS: AuthPaths = {
   LOGOUT: '/auth/logout',
   SIGNUP: '/auth/signup',
   REFRESH: '/auth/refresh',
+  FORGOT_PASSWORD: '/auth/forgot-password',
+  RESET_PASSWORD: (token: string) => `/auth/reset-password?token=${token}`,
   VERIFY_EMAIL: (token: string) => `/auth/verify-email?token=${token}`,
 };
 
@@ -45,8 +49,8 @@ export const USER_PATHS: UserPaths = {
 
 export const PHOTO_PATHS: PhotosPaths = {
   GETALL_PHOTOS: '/photos',
-  GET_PHOTOS: (id) => `/photos/${id}`,
   ADD_PHOTO: '/photos/upload',
+  GET_PHOTOS: (id) => `/photos/${id}`,
   DELETE_PHOTO: (id) => `/photos/${id}`,
   UPDATE_PHOTO: (id) => `/photos/${id}`,
   GET_PHOTOS_BY_USER_ID: (id) => `/photos/user/${id}`,
