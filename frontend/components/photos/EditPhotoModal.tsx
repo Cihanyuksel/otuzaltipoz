@@ -1,12 +1,11 @@
-//third-party
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IoClose as CloseIcon } from 'react-icons/io5';
-//project-files
 import Button from '../common/button';
 import { Photo } from 'types/photo';
 import { useUpdatePhoto } from '@/hooks/usePhotoApi';
 import { PhotoEditFormValues, photoEditSchema } from 'lib/schemas';
+import Input from '../common/input';
 
 interface IEditPhotoModal {
   isOpen: boolean;
@@ -28,6 +27,7 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: IEditPhotoModal) => {
       description: photo.description || '',
       tags: photo.tags?.join(', ') || '',
     },
+    mode: 'onChange',
   });
 
   const { mutate, isPending, error } = useUpdatePhoto(accessToken);
@@ -98,23 +98,21 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: IEditPhotoModal) => {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                Başlık
-              </label>
-              <input
-                id="title"
-                type="text"
-                {...register('title')}
-                disabled={isLoading}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ef7464] focus:border-[#ef7464] disabled:bg-gray-50 disabled:cursor-not-allowed"
-                placeholder="Fotoğraf başlığı"
-              />
-              {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
-            </div>
+            {/* Başlık */}
+            <Input
+              id="title"
+              type="text"
+              name="title"
+              register={register}
+              error={errors.title?.message}
+              label="Başlık"
+              disabled={isLoading}
+              placeholder="Fotoğraf başlığı"
+            />
 
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+            {/* Açıklama */}
+            <div className="flex flex-col w-full mt-2 mb-2">
+              <label htmlFor="description" className="mb-1 text-sm font-medium text-gray-700">
                 Açıklama
               </label>
               <textarea
@@ -130,24 +128,22 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: IEditPhotoModal) => {
               )}
             </div>
 
-            <div>
-              <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">
-                Etiketler
-              </label>
-              <input
-                id="tags"
-                type="text"
-                {...register('tags')}
-                disabled={isLoading}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ef7464] focus:border-[#ef7464] disabled:bg-gray-50 disabled:cursor-not-allowed"
-                placeholder="doğa, manzara, güneş (virgülle ayırın)"
-              />
-              {errors.tags && <p className="mt-1 text-sm text-red-600">{errors.tags.message}</p>}
-              <p className="mt-1 text-xs text-gray-500">
-                Etiketleri virgülle ayırarak girebilirsiniz
-              </p>
-            </div>
+            {/* Etiketler */}
+            <Input
+              id="tags"
+              type="text"
+              name="tags"
+              register={register}
+              error={errors.tags?.message}
+              label="Etiketler"
+              disabled={isLoading}
+              placeholder="doğa, manzara, güneş (virgülle ayırın)"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Etiketleri virgülle ayırarak girebilirsiniz
+            </p>
 
+            {/* Footer */}
             <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
               <Button
                 onClick={handleClose}

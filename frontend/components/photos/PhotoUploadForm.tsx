@@ -127,6 +127,9 @@ export default function PhotoUploadForm() {
               type="text"
               {...register('tags')}
             />
+            <p className="mt-1 text-xs text-gray-500">
+              Etiketleri virgülle ayırarak girebilirsiniz
+            </p>
           </div>
           <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#a6b8b1] bg-[#f5f1ea] px-6 py-10 text-center">
             <span className="material-symbols-outlined text-5xl text-gray-400">

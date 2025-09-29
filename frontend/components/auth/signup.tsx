@@ -40,6 +40,7 @@ export default function SignupForm() {
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
+    mode: 'onChange',
   });
 
   const onsubmit = (data: RegisterFormValues) => {
@@ -71,12 +72,11 @@ export default function SignupForm() {
     <form onSubmit={handleSubmit(onsubmit)} className="flex flex-col gap-4 w-full" encType="multipart/form-data">
       {errorMessage && <div className="bg-red-100 text-red-800 p-2 rounded-md">{errorMessage}</div>}
       {successMessage && <div className="bg-green-100 text-green-800 p-2 rounded-md">{successMessage}</div>}
-      <Input name="username" register={register} error={errors.username?.message} placeholder="Kullanıcı Adı" />{' '}
-      {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
+
+      <Input name="username" register={register} error={errors.username?.message} placeholder="Kullanıcı Adı" />
       <Input name="full_name" register={register} error={errors.full_name?.message} placeholder="Ad Soyad" />
-      {errors.full_name && <p className="text-red-500 text-sm">{errors.full_name.message}</p>}
       <Input name="email" register={register} error={errors.email?.message} placeholder="Email" type="email" />
-      {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+
       <div className="relative">
         <Input
           name="password"
@@ -85,11 +85,15 @@ export default function SignupForm() {
           placeholder="Şifre"
           type={showPassword ? 'text' : 'password'}
         />
-        <button type="button" onClick={() => setShowPassword((prev) => !prev)} className="absolute right-2 top-3 cursor-pointer">
+        <button
+          type="button"
+          onClick={() => setShowPassword((prev) => !prev)}
+          className="absolute right-2 top-3 cursor-pointer"
+        >
           {showPassword ? <ShowIcon /> : <HideIcon />}
         </button>
       </div>
-      {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+
       <div className="relative">
         <Input
           name="passwordCheck"
@@ -99,15 +103,15 @@ export default function SignupForm() {
           type={showPassword ? 'text' : 'password'}
         />
       </div>
-      {errors.passwordCheck && <p className="text-red-500 text-sm">{errors.passwordCheck.message}</p>}
-      {/* Biyografi */}
+
       <textarea
         {...register('bio')}
         placeholder="Biyografinizi yazın..."
         className="border border-gray-300 p-2 rounded-md w-full resize-none focus:border-[#ef7464] focus:outline-none"
-        rows={4}
+        rows={3}
       />
       {errors.bio && <p className="text-red-500 text-sm">{errors.bio.message}</p>}
+
       {/* Profil Fotoğrafı */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2 text-gray-700">Profil Fotoğrafı</label>

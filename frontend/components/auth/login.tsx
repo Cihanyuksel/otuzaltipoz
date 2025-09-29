@@ -24,6 +24,7 @@ export default function LoginForm() {
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
+    mode: 'onChange'
   });
 
   const onSubmit = (data: LoginFormValues) => {
@@ -60,7 +61,6 @@ export default function LoginForm() {
         <div>
           <label className="text-gray-700 font-bold">Email</label>
           <Input name="email" register={register} error={errors.email?.message} placeholder="ornek@email.com" type="email" />
-          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
         </div>
 
         <div>
@@ -73,7 +73,6 @@ export default function LoginForm() {
             type="password"
             className="w-full"
           />
-          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
         </div>
 
         <div className="flex justify-between items-center text-sm">
