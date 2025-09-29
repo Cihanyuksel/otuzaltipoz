@@ -1,11 +1,11 @@
 import { ReactNode } from 'react';
 import Footer from '@/components/common/footer';
 
-interface PhotosLayoutProps {
+interface IHomeLayout {
   children: ReactNode;
 }
 
-const PhotosLayout: React.FC<PhotosLayoutProps> = ({ children }) => {
+const HomeLayout: React.FC<IHomeLayout> = ({ children }) => {
   return (
     <div>
       {children}
@@ -14,4 +14,4 @@ const PhotosLayout: React.FC<PhotosLayoutProps> = ({ children }) => {
   );
 };
 
-export default PhotosLayout;
+export default HomeLayout;

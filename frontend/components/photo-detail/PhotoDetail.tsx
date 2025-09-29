@@ -100,14 +100,14 @@ const PhotoDetail = () => {
                       {' '}
                       <button
                         onClick={() => handleModalToggle('edit', true)}
-                        className="rounded-xl border border-gray-300 h-10 px-5 text-sm font-semibold text-gray-700 transition-all shadow-sm hover:shadow-md hover:bg-gray-50 flex items-center gap-2"
+                        className="rounded-xl border border-gray-300 h-10 px-5 text-sm font-semibold text-gray-700 transition-all shadow-sm hover:shadow-md hover:bg-gray-50 flex items-center gap-2 cursor-pointer"
                       >
                         <EditIcon className="w-4 h-4" />
                         Düzenle
                       </button>
                       <button
                         onClick={() => handleModalToggle('delete', true)}
-                        className="rounded-xl border border-red-400 h-10 px-5 text-sm font-semibold text-red-600 transition-all shadow-sm hover:shadow-md hover:bg-red-50 hover:text-white flex items-center gap-2"
+                        className="rounded-xl border border-red-400 h-10 px-5 text-sm font-semibold text-red-600 transition-all shadow-sm hover:shadow-md hover:bg-red-400 hover:text-white flex items-center gap-2 cursor-pointer"
                       >
                         <DeleteIcon className="w-4 h-4" />
                         Sil
@@ -127,10 +127,7 @@ const PhotoDetail = () => {
                     <p className="text-sm font-medium text-gray-800 mb-3">
                       Bu fotoğrafı oylamak ve beğenmek için aramıza katıl!
                     </p>
-                    <Button
-                      onClick={() => handleModalToggle('login', true)}
-                      variant='primary'
-                    >
+                    <Button onClick={() => handleModalToggle('login', true)} variant="primary">
                       Hemen Giriş Yap
                     </Button>
                   </div>
@@ -163,7 +160,8 @@ const PhotoDetail = () => {
         title="Fotoğrafı Sil"
         message={
           <>
-            <strong>{photo.title}</strong> başlıklı fotoğrafı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+            <strong>{photo.title}</strong> başlıklı fotoğrafı silmek istediğinizden emin misiniz? Bu işlem geri
+            alınamaz.
           </>
         }
         onConfirm={handleDelete}
