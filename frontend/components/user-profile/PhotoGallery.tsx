@@ -1,5 +1,7 @@
 import Link from 'next/link';
-import { FaHeart as HeartIcon, FaComment as CommentIcon } from 'react-icons/fa6';
+import { FaHeart as HeartIcon } from 'react-icons/fa6';
+import { FaRegCommentDots as CommentIcon } from 'react-icons/fa';
+
 import { Photo } from 'types/photo';
 
 interface PhotoGalleryProps {

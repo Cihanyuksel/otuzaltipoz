@@ -1,13 +1,15 @@
+'use client'
+import { useAuth } from '@/context/AuthContext';
 import { motion, Variants } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { photoService } from 'services/photoService';
-import { User } from 'types/auth';
 
-function HeroSection({ user }: { user?: User | null }) {
+function HeroSection() {
   const [randomPhoto, setRandomPhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   const MotionImage = motion(Image);
   const PHOTO_CHANGE_INTERVAL_MS = 6000;

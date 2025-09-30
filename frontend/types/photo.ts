@@ -28,3 +28,17 @@ export interface Photo {
   isLikedByMe: boolean,
   commentCount: number
 }
+
+export interface PopularPhoto {
+  _id: string;
+  photo_url: string;
+  title?: string;
+  likeCount: number;
+  commentCount: number;
+  user: {
+    _id: string;
+    username: string;
+    full_name: string;
+    profile_img_url?: string;
+  };
+}

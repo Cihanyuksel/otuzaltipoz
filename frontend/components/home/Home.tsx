@@ -1,26 +1,22 @@
-'use client';
-import { useAuth } from '@/context/AuthContext';
 import HomeUserSection from './HomeUserSection';
 import HeroSection from './HeroSection';
 import DiscoverSection from './DiscoverSection';
 import AnimatedSection from '../common/animated-section';
-import PopularPhotosSeciton from './PopulerPhotosSection';
+import PopularPhotosSection from './PopularPhotosSection';
 
 export default function Home() {
-  const { user } = useAuth();
-
   return (
     <>
       <AnimatedSection delay={0}>
-        <HomeUserSection user={user} />
+        <HomeUserSection />
       </AnimatedSection>
 
       <AnimatedSection delay={200}>
-        <HeroSection user={user} />
+        <HeroSection />
       </AnimatedSection>
 
-      <AnimatedSection delay={500}>
-        <PopularPhotosSeciton />
+      <AnimatedSection delay={200}>
+        <PopularPhotosSection />
       </AnimatedSection>
 
       <AnimatedSection delay={500}>

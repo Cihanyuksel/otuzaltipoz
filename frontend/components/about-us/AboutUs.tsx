@@ -14,7 +14,7 @@ export default function AboutUs() {
                 Hakkımızda
               </h1>
               <p className="max-w-3xl mx-auto text-lg text-gray-600">
-                Anılarınızı paylaşmanın ve ilham almanın en güzel yolu. PhotoShare, görsel hikaye
+                Anılarınızı paylaşmanın ve ilham almanın en güzel yolu. Otuzaltıpoz, görsel hikaye
                 anlatıcılarını bir araya getiren modern ve minimalist bir platformdur.
               </p>
             </div>

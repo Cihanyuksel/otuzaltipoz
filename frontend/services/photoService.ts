@@ -1,12 +1,15 @@
 import axios from 'axios';
 import { API_BASE_URL, PHOTO_PATHS } from 'lib/config';
-import { ApiResponse, Photo } from 'types/photo';
+import { ApiResponse, Photo, PopularPhoto } from 'types/photo';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
   withCredentials: true,
 });
+
+type Timeframe = 'all' | 'month' | 'week' | 'day';
+
 
 export const photoService = {
   //GET ALL PHOTO
@@ -177,6 +180,21 @@ export const photoService = {
       return response.data;
     } catch (error: any) {
       console.error(error);
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  },
+
+//Popular Photos
+  getPopularPhotos: async (
+    limit: number,
+    timeframe: Timeframe
+  ): Promise<ApiResponse<PopularPhoto[]>> => {
+    try {
+      const path = PHOTO_PATHS.POPULAR_PHOTOS(limit, timeframe);
+      const response = await apiClient.get<ApiResponse<PopularPhoto[]>>(path);
+      return response.data;
+    } catch (error: any) {
+      console.error('Error fetching popular photos:', error);
       throw new Error(error.response?.data?.message || error.message);
     }
   },

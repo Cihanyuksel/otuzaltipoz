@@ -1,7 +1,9 @@
+'use client'
+import { useAuth } from '@/context/AuthContext';
 import Image from 'next/image';
-import { User } from 'types/auth';
 
-function HomeUserSection({ user }: {user?: User | null}) {
+function HomeUserSection() {
+  const { user } = useAuth();
 
   return (
     <>

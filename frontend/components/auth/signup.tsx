@@ -1,13 +1,9 @@
-// components/SignupForm.tsx
 'use client';
-//nextjs and react
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-//third-party
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FaEye as ShowIcon, FaEyeSlash as HideIcon, FaCheck as CheckIcon } from 'react-icons/fa';
-//project-files
 import { useAuth } from '@/context/AuthContext';
 import { RegisterFormValues, registerSchema } from 'lib/schemas';
 import Button from '../common/button';
@@ -22,15 +18,18 @@ export default function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [fileName, setFileName] = useState('Dosya Seçilmedi');
   const [isSelected, setIsSelected] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setFileName(file.name);
       setIsSelected(true);
+      setSelectedFile(file);
     } else {
       setFileName('Dosya Seçilmedi');
       setIsSelected(false);
+      setSelectedFile(null);
     }
   };
 
@@ -51,8 +50,8 @@ export default function SignupForm() {
     formData.append('password', data.password || '');
     formData.append('bio', data.bio || '');
 
-    if (data.profile_img && data.profile_img.length > 0) {
-      formData.append('profile_img', data.profile_img[0]);
+    if (selectedFile) {
+      formData.append('profile_img', selectedFile);
     }
 
     signup.mutate(formData, {
@@ -69,7 +68,7 @@ export default function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onsubmit)} className="flex flex-col gap-4 w-full" encType="multipart/form-data">
+    <form onSubmit={handleSubmit(onsubmit)} className="flex flex-col gap-4 w-full">
       {errorMessage && <div className="bg-red-100 text-red-800 p-2 rounded-md">{errorMessage}</div>}
       {successMessage && <div className="bg-green-100 text-green-800 p-2 rounded-md">{successMessage}</div>}
 
@@ -112,7 +111,6 @@ export default function SignupForm() {
       />
       {errors.bio && <p className="text-red-500 text-sm">{errors.bio.message}</p>}
 
-      {/* Profil Fotoğrafı */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2 text-gray-700">Profil Fotoğrafı</label>
         <label className="flex items-center justify-between border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-[#ef7464] transition duration-200">
@@ -126,9 +124,10 @@ export default function SignupForm() {
               Dosya Seç
             </span>
           )}
-          <input type="file" accept="image/*" {...register('profile_img')} className="hidden" onChange={handleChange} />
+          <input type="file" accept="image/*" className="hidden" onChange={handleChange} />
         </label>
       </div>
+
       <Button type="submit" variant="primary">
         Kayıt Ol
       </Button>

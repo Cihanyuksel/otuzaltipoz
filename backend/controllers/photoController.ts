@@ -4,7 +4,7 @@ import cloudinary from "../config/cloudinary";
 import { IGetUserAuthInfoRequest } from "./authController";
 import Like from "../models/Likes";
 import Comment from "../models/Comment";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { AppError } from "../utils/AppError";
 
 const getAllPhotos = async (
@@ -316,6 +316,138 @@ const getLikedPhotos = async (
   }
 };
 
+const getPopularPhotos = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const limit = parseInt(req.query.limit as string) || 10;
+    const timeframe = req.query.timeframe as string; 
+
+    let dateFilter = {};
+    if (timeframe === "day") {
+      const dayAgo = new Date();
+      dayAgo.setHours(0, 0, 0, 0);
+      dateFilter = { created_at: { $gte: dayAgo } };
+    } else if (timeframe === "week") {
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      dateFilter = { created_at: { $gte: weekAgo } };
+    } else if (timeframe === "month") {
+      const monthAgo = new Date();
+      monthAgo.setMonth(monthAgo.getMonth() - 1);
+      dateFilter = { created_at: { $gte: monthAgo } };
+    }
+
+    const popularPhotos = await Photo.aggregate([
+      { $match: dateFilter },
+
+      {
+        $lookup: {
+          from: "likes",
+          localField: "_id",
+          foreignField: "photo_id",
+          as: "likes",
+        },
+      },
+
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "photo",
+          as: "comments",
+        },
+      },
+
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+
+      { $unwind: "$user" },
+
+      {
+        $addFields: {
+          likeCount: { $size: "$likes" },
+          commentCount: { $size: "$comments" },
+          popularityScore: {
+            $add: [
+              { $size: "$likes" },
+              { $multiply: [{ $size: "$comments" }, 2] },
+            ],
+          },
+        },
+      },
+
+      { $sort: { popularityScore: -1 } },
+
+      { $limit: limit },
+
+      {
+        $project: {
+          likes: 0,
+          comments: 0,
+          "user.password": 0,
+          "user.role": 0,
+          "user.is_active": 0,
+          "user.is_verified": 0,
+        },
+      },
+    ]);
+
+    const loggedInUserId = req.user?.id;
+    let isLikedMap = new Set();
+
+    if (loggedInUserId && popularPhotos.length > 0) {
+      /*const photoIds = popularPhotos.map(
+        (photo) => new mongoose.Types.ObjectId(photo._id)
+      );*/
+      const photoIds = popularPhotos.map((photo) =>
+        Types.ObjectId.createFromHexString(photo._id.toString())
+      );
+      const userLikes = await Like.find({
+        photo_id: { $in: photoIds },
+        user_id: new mongoose.Types.ObjectId(loggedInUserId),
+      }).lean();
+      isLikedMap = new Set(userLikes.map((like) => like.photo_id.toString()));
+    }
+
+    const data = popularPhotos.map((photo) => ({
+      _id: photo._id,
+      photo_url: photo.photo_url,
+      title: photo.title,
+      description: photo.description,
+      tags: photo.tags,
+      created_at: photo.created_at,
+      updated_at: photo.updated_at,
+      user: {
+        _id: photo.user._id,
+        username: photo.user.username,
+        full_name: photo.user.full_name,
+        profile_img_url: photo.user.profile_img_url,
+      },
+      likeCount: photo.likeCount,
+      commentCount: photo.commentCount,
+      popularityScore: photo.popularityScore,
+      isLikedByMe: isLikedMap.has(photo._id.toString()),
+    }));
+
+    res.status(200).json({
+      status: true,
+      totalRecords: data.length,
+      data,
+    });
+  } catch (error: any) {
+    next(new AppError(error.message || "Could not fetch popular photos", 500));
+  }
+};
+
 export {
   getAllPhotos,
   getPhoto,
@@ -324,4 +456,5 @@ export {
   deletePhoto,
   getPhotoByUserId,
   getLikedPhotos,
+  getPopularPhotos,
 };

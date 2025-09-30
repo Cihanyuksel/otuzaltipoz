@@ -5,8 +5,8 @@ interface AuthPaths {
   LOGOUT: string;
   SIGNUP: string;
   REFRESH: string;
-  FORGOT_PASSWORD: string
-  RESET_PASSWORD: (token: string) => string,
+  FORGOT_PASSWORD: string;
+  RESET_PASSWORD: (token: string) => string;
   VERIFY_EMAIL: (token: string) => string;
 }
 
@@ -24,6 +24,7 @@ interface PhotosPaths {
   GET_PHOTOS_BY_USER_ID: (id: number | string) => string;
   GET_LIKED_PHOTOS: (id: number | string) => string;
   GET_RANDOM_PHOTOS: (limit: number) => string;
+  POPULAR_PHOTOS: (limit: number, timeframe:'all' | 'week' | 'month' | 'day' ) => string;
 }
 
 interface CommentPaths {
@@ -56,6 +57,7 @@ export const PHOTO_PATHS: PhotosPaths = {
   GET_PHOTOS_BY_USER_ID: (id) => `/photos/user/${id}`,
   GET_LIKED_PHOTOS: (id) => `/photos/liked/${id}`,
   GET_RANDOM_PHOTOS: (limit) => `/photos?sort=random&limit=${limit}`,
+  POPULAR_PHOTOS: (limit, timeframe) => `/photos/popular?limit=${limit}&timeframe=${timeframe}`,
 };
 
 export const COMMENTS_PATH: CommentPaths = {
