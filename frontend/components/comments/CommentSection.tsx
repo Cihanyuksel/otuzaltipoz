@@ -8,7 +8,7 @@ import CommentForm from './CommentForm';
 import CommentItem, { Comment } from './CommentItem';
 import Button from '../common/button';
 import { useAuth } from '@/context/AuthContext';
-import { useCommentApi } from '@/hooks/useCommentApi';
+import { useCommentApi } from '@/hooks/api/useCommentApi';
 
 export default function CommentSection({
   userPhoto,
@@ -57,7 +57,7 @@ export default function CommentSection({
   const handleDeleteComment = (commentId: string) => {
     deleteComment(commentId);
   };
-  
+
   const handleLoginRequest = () => {
     !isLoggedIn && onLoginRequired();
   };
@@ -65,7 +65,6 @@ export default function CommentSection({
   const isLoggedIn = !!accessToken;
   const isCommentExist = comments?.length !== 0;
   const commentCount = comments?.length || 0;
-
 
   return (
     <div className="mt-8 border-t border-gray-200 pt-6">
@@ -110,9 +109,7 @@ export default function CommentSection({
           {!isLoggedIn && isCommentExist && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white bg-opacity-80 rounded-lg text-center p-8">
               <ThreeDot size={80} className="mb-5 text-gray-500" />
-              <p className="text-xl text-gray-700 font-semibold mb-2">
-                Yorumları görmek ister misin?
-              </p>
+              <p className="text-xl text-gray-700 font-semibold mb-2">Yorumları görmek ister misin?</p>
               <p className="text-sm text-gray-500 mb-6">
                 Yorumları görüntülemek ve kendi yorumunu bırakmak için giriş yapmalısın.
               </p>

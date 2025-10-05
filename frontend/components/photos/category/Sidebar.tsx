@@ -1,0 +1,100 @@
+'use client';
+import { IoIosClose as CloseIcon } from 'react-icons/io';
+import { FiMenu as MenuIcon } from 'react-icons/fi';
+import { CategorySection } from './CategorySection';
+
+interface SidebarProps {
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (value: boolean) => void;
+  categorySection: { title: string; icon: React.ReactNode; items: string[] }[];
+  openSections: { [key: string]: boolean };
+  handleSectionToggle: (title: string) => void;
+  selectedCategories: string[];
+  handleCategoryClick: (categoryName: string) => void;
+  handleRemoveCategory: (categoryName: string) => void;
+  MAX_CATEGORIES: number;
+}
+
+export default function Sidebar({
+  isSidebarOpen,
+  setIsSidebarOpen,
+  categorySection,
+  openSections,
+  handleSectionToggle,
+  selectedCategories,
+  handleCategoryClick,
+  handleRemoveCategory,
+  MAX_CATEGORIES,
+}: SidebarProps) {
+  return (
+    <div
+      className={`
+        hidden md:block md:sticky md:top-0 md:self-start md:h-screen md:overflow-y-auto
+        bg-white border-r border-gray-200 shadow-xl shadow-gray-200/50 
+        
+        transition-all duration-300 ease-in-out z-20 
+        ${isSidebarOpen ? 'w-64 p-4' : 'w-20 pt-5'}
+      `}
+    >
+      <div
+        className={`flex items-center mb-6 transition-all duration-300 ${
+          isSidebarOpen ? 'justify-between' : 'justify-center'
+        }`}
+      >
+        {isSidebarOpen && selectedCategories.length > 0 && (
+          <span className="bg-green-500 text-white text-xs font-medium tracking-wider px-3 py-1.5 rounded-md shadow-md">
+            {selectedCategories.length}/{MAX_CATEGORIES}
+          </span>
+        )}
+
+        <div
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="cursor-pointer p-1 rounded-full hover:bg-gray-100 transition duration-150"
+        >
+          {isSidebarOpen ? (
+            <CloseIcon size={32} className="text-green-600 hover:text-green-700" />
+          ) : (
+            <MenuIcon size={20} className="text-green-600 hover:text-green-700" />
+          )}
+        </div>
+      </div>
+
+      {isSidebarOpen && selectedCategories.length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-2 p-2 bg-gray-100 rounded-lg max-h-24 overflow-y-auto">
+          {selectedCategories.map((category) => (
+            <div
+              key={category}
+              className="flex items-center bg-green-500 text-white text-xs px-2 py-1 rounded-full shadow-sm"
+            >
+              {category}
+              <button
+                onClick={() => handleRemoveCategory(category)}
+                className="ml-1 text-white hover:text-gray-100 transition"
+              >
+                <CloseIcon size={18} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className={`overflow-y-auto transition-all duration-300`}>
+        <ul className="space-y-1">
+          {categorySection.map((section) => (
+            <CategorySection
+              key={section.title}
+              title={section.title}
+              items={section.items}
+              isOpen={openSections[section.title] || false}
+              onToggle={() => handleSectionToggle(section.title)}
+              isSidebarOpen={isSidebarOpen}
+              icon={section.icon}
+              onCategoryClick={handleCategoryClick}
+              selectedCategories={selectedCategories}
+              onRemoveCategory={handleRemoveCategory}
+            />
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}

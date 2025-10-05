@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { IoClose as CloseIcon } from 'react-icons/io5';
 import Button from '../common/button';
 import { Photo } from 'types/photo';
-import { useUpdatePhoto } from '@/hooks/usePhotoApi';
+import { useUpdatePhoto } from '@/hooks/api/usePhotoApi';
 import { PhotoEditFormValues, photoEditSchema } from 'lib/schemas';
 import Input from '../common/input';
 

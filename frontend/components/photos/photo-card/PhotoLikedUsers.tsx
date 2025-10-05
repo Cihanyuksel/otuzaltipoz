@@ -8,7 +8,7 @@ import { FaTimes as CloseIcon } from 'react-icons/fa';
 import { CgProfile as ProfileIcon } from 'react-icons/cg';
 import { FaCrown as CrownIcon } from 'react-icons/fa6';
 //project-files
-import { useGetLikes } from '@/hooks/useLikeApi';
+import { useGetLikes } from '@/hooks/api/useLikeApi';
 import { useAuth } from '@/context/AuthContext';
 import { isAdmin } from 'lib/permission';
 

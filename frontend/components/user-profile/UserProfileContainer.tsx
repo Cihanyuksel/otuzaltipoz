@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 //project-files
 import { useAuth } from '@/context/AuthContext';
-import { useGetUserPhotos, useGetLikedPhotos } from '@/hooks/usePhotoApi';
-import { useGetUser } from '@/hooks/useAuthApi';
+import { useGetUserPhotos, useGetLikedPhotos } from '@/hooks/api/usePhotoApi';
+import { useGetUser } from '@/hooks/api/useAuthApi';
 import Loader from '@/components/common/loader';
 import UserProfile from './UserProfile';
 

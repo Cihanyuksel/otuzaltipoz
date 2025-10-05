@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
-import { likeService } from '../services/likeService';
+import { likeService } from '../../services/likeService';
 import { useEffect } from 'react';
 
 interface ToggleLikeVariables {

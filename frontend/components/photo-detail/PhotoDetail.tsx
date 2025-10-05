@@ -15,7 +15,7 @@ import Loader from '../common/loader';
 import Button from '../common/button';
 import CommentSection from '../comments/CommentSection';
 import { useAuth } from '@/context/AuthContext';
-import { useGetPhoto, useDeletePhoto } from '@/hooks/usePhotoApi';
+import { useGetPhoto, useDeletePhoto } from '@/hooks/api/usePhotoApi';
 import { canManagePhoto } from 'lib/permission';
 
 type ModalName = 'login' | 'edit' | 'delete';

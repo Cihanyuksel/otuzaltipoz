@@ -10,17 +10,29 @@ const apiClient = axios.create({
 
 type Timeframe = 'all' | 'month' | 'week' | 'day';
 
-
 export const photoService = {
+  
   //GET ALL PHOTO
   getAllPhoto: async (
     searchQuery?: string,
-    accessToken?: string | null
+    accessToken?: string | null,
+    categories?: string
   ): Promise<ApiResponse<Photo[]>> => {
     try {
       let path = PHOTO_PATHS.GETALL_PHOTOS;
+
+      const params = new URLSearchParams();
+
       if (searchQuery) {
-        path += `?search=${searchQuery}`;
+        params.append('search', searchQuery);
+      }
+
+      if (categories) {
+        params.append('categories', categories);
+      }
+
+      if (params.toString()) {
+        path += `?${params.toString()}`;
       }
 
       const headers: Record<string, string> = {};
@@ -31,6 +43,7 @@ export const photoService = {
       const response = await apiClient.get<ApiResponse<Photo[]>>(path, {
         headers,
       });
+
       console.log('getAllPhoto response:', response.data);
       return response.data;
     } catch (error: any) {
@@ -79,10 +92,7 @@ export const photoService = {
   },
 
   //USER PHOTOS
-  getPhotoByUserId: async (
-    userId: string,
-    accessToken?: string | null
-  ): Promise<ApiResponse<Photo[]>> => {
+  getPhotoByUserId: async (userId: string, accessToken?: string | null): Promise<ApiResponse<Photo[]>> => {
     try {
       const headers: Record<string, string> = {};
       if (accessToken) {
@@ -102,10 +112,7 @@ export const photoService = {
   },
 
   //LIKED PHOTOS
-  getLikedPhotos: async (
-    userId: string,
-    accessToken?: string | null
-  ): Promise<ApiResponse<Photo[]>> => {
+  getLikedPhotos: async (userId: string, accessToken?: string | null): Promise<ApiResponse<Photo[]>> => {
     try {
       const headers: Record<string, string> = {};
       if (accessToken) {
@@ -139,11 +146,7 @@ export const photoService = {
         headers['Authorization'] = `Bearer ${accessToken}`;
       }
 
-      const response = await apiClient.put<ApiResponse<Photo>>(
-        PHOTO_PATHS.UPDATE_PHOTO(id),
-        updatedData,
-        { headers }
-      );
+      const response = await apiClient.put<ApiResponse<Photo>>(PHOTO_PATHS.UPDATE_PHOTO(id), updatedData, { headers });
 
       return response.data;
     } catch (error: any) {
@@ -174,9 +177,7 @@ export const photoService = {
   //GET RANDOM PHOTO
   getRandomPhoto: async (limit: number): Promise<ApiResponse<Photo[]>> => {
     try {
-      const response = await apiClient.get<ApiResponse<Photo[]>>(
-        PHOTO_PATHS.GET_RANDOM_PHOTOS(limit)
-      );
+      const response = await apiClient.get<ApiResponse<Photo[]>>(PHOTO_PATHS.GET_RANDOM_PHOTOS(limit));
       return response.data;
     } catch (error: any) {
       console.error(error);
@@ -184,11 +185,8 @@ export const photoService = {
     }
   },
 
-//Popular Photos
-  getPopularPhotos: async (
-    limit: number,
-    timeframe: Timeframe
-  ): Promise<ApiResponse<PopularPhoto[]>> => {
+  //Popular Photos
+  getPopularPhotos: async (limit: number, timeframe: Timeframe): Promise<ApiResponse<PopularPhoto[]>> => {
     try {
       const path = PHOTO_PATHS.POPULAR_PHOTOS(limit, timeframe);
       const response = await apiClient.get<ApiResponse<PopularPhoto[]>>(path);

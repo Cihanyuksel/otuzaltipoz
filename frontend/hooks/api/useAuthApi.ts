@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authService } from '../services/authService';
-import { userService } from '../services/userService';
-import { AuthResponse, User } from '../types/auth';
+import { authService } from '../../services/authService';
+import { userService } from '../../services/userService';
+import { AuthResponse, User } from '../../types/auth';
 
 type SetAuthFn = (authData: AuthResponse['data'] | null) => void;
 

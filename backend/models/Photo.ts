@@ -7,24 +7,56 @@ interface IPhoto {
   description?: string;
   created_at: Date;
   tags?: string[];
+  categories: Types.ObjectId[];
 }
 
 const photoSchema = new Schema<IPhoto>({
-  user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  photo_url: { type: String, required: true },
+  user_id: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+    index: true,
+  },
+  photo_url: {
+    type: String,
+    required: true,
+  },
   title: {
     type: String,
     required: true,
+    trim: true,
     minlength: [3, "Başlık en az 3 karakter olmalıdır."],
     maxlength: [25, "Başlık en fazla 25 karakter olmalıdır."],
   },
   description: {
     type: String,
+    trim: true,
     maxlength: [400, "Açıklama en fazla 400 karakter olmalıdır."],
   },
-  created_at: { type: Date, default: Date.now },
-  tags: { type: [String], default: [] },
+  created_at: {
+    type: Date,
+    default: Date.now,
+    index: true,
+  },
+  tags: {
+    type: [String],
+    default: [],
+  },
+  categories: {
+    type: [{ type: Schema.Types.ObjectId, ref: "Category" }],
+    required: [true, "En az bir kategori seçmelisiniz."],
+    validate: {
+      validator: function (v: Types.ObjectId[]) {
+        return v && v.length >= 1 && v.length <= 3;
+      },
+      message: "Her fotoğraf en az 1, en fazla 3 kategori içermelidir.",
+    },
+  },
 });
+
+photoSchema.index({ user_id: 1, created_at: -1 });
+photoSchema.index({ categories: 1 });
+photoSchema.index({ title: "text" });
 
 const Photo = model<IPhoto>("Photo", photoSchema);
 

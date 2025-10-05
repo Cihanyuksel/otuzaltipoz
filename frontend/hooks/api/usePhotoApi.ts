@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { photoService } from '../services/photoService';
+import { photoService } from '../../services/photoService';
 import { Photo, ApiResponse } from 'types/photo';
 
 type PhotoResponse = {
@@ -16,10 +16,10 @@ type PhotoResponse = {
   };
 };
 
-export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null) =>
+export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null, categories?: string) =>
   useQuery({
-    queryKey: ['photos', { searchQuery, hasToken: !!accessToken }],
-    queryFn: () => photoService.getAllPhoto(searchQuery, accessToken), 
+    queryKey: ['photos', { searchQuery, hasToken: !!accessToken, categories }],
+    queryFn: () => photoService.getAllPhoto(searchQuery, accessToken, categories), 
     staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
   });

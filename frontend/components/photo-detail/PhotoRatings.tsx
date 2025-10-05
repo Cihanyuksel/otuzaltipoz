@@ -10,7 +10,7 @@ import {
   IoMdHeartEmpty as HeartEmptyIcon,
 } from 'react-icons/io';
 //project-files
-import { useGetRatings, useRatePhoto } from '@/hooks/useRatingApi';
+import { useGetRatings, useRatePhoto } from '@/hooks/api/useRatingApi';
 import Loader from '../common/loader';
 
 interface IPhotoRatings {
@@ -20,12 +20,7 @@ interface IPhotoRatings {
   onLoginRequired: () => void;
 }
 
-export default function PhotoRatings({
-  photoId,
-  accessToken,
-  likeCount,
-  onLoginRequired,
-}: IPhotoRatings) {
+export default function PhotoRatings({ photoId, accessToken, likeCount, onLoginRequired }: IPhotoRatings) {
   const [rating, setRating] = useState(0);
   const [showMessage, setShowMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -33,7 +28,7 @@ export default function PhotoRatings({
 
   const { data: ratingsData, isLoading, error } = useGetRatings(photoId);
   const ratePhotoMutation = useRatePhoto();
-  const IsLoggedIn = !!accessToken
+  const IsLoggedIn = !!accessToken;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -111,10 +106,7 @@ export default function PhotoRatings({
       </div>
 
       {/* Star Rating Input */}
-      <div
-        ref={starRef}
-        className="mt-2 flex flex-row-reverse items-center justify-end w-full flex-shrink-0"
-      >
+      <div ref={starRef} className="mt-2 flex flex-row-reverse items-center justify-end w-full flex-shrink-0">
         <div className="relative flex items-center">
           {rating > 0 && (
             <motion.button
@@ -192,11 +184,7 @@ export default function PhotoRatings({
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   className={ratePhotoMutation.isPending ? 'opacity-50' : ''}
                 >
-                  {n <= rating ? (
-                    <StarFilledIcon color="gold" size={30} />
-                  ) : (
-                    <StarOutlineIcon color="gray" size={30} />
-                  )}
+                  {n <= rating ? <StarFilledIcon color="gold" size={30} /> : <StarOutlineIcon color="gray" size={30} />}
                 </motion.div>
               </label>
             ))}

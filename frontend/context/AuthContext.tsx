@@ -1,5 +1,5 @@
 'use client';
-import { useLogin, useLogout, useSignup } from '@/hooks/useAuthApi';
+import { useLogin, useLogout, useSignup } from '@/hooks/api/useAuthApi';
 import { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from 'react';
 import { authService } from 'services/authService';
 import { AuthResponse, User } from 'types/auth';

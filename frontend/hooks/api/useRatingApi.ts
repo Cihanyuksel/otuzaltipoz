@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
-import { ratingService, IGetRatingsResponse, IRatePhotoResponse } from '../services/ratingService';
+import { ratingService, IGetRatingsResponse, IRatePhotoResponse } from '../../services/ratingService';
 import { useEffect } from 'react';
 
 interface RatePhotoVariables {

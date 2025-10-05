@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 //project-files
 import { useAuth } from '@/context/AuthContext';
 import { usePhotos } from '@/context/PhotoContext';
-import { useGetRatings } from '@/hooks/useRatingApi';
+import { useGetRatings } from '@/hooks/api/useRatingApi';
 import LikeButton from './LikeButton';
 import PhotoLikedUsers from './PhotoLikedUsers';
 
@@ -41,7 +41,7 @@ function LikeSection({ photoId }: ILikeSection) {
     };
   }, [isModalOpen]);
 
-  const isLoggedIn = !!accessToken
+  const isLoggedIn = !!accessToken;
 
   return (
     <>
@@ -49,12 +49,19 @@ function LikeSection({ photoId }: ILikeSection) {
         <div className="flex justify-between items-center mt-2 p-3">
           <div className="flex items-center gap-1 ml-3">
             <span className="text-gray-500 text-sm font-bold">
-              Ortalama Puan: <span className="font-bold text-xl text-gray-700">{ratingData?.averageRating.toFixed(2)}</span> / 5
+              Ortalama Puan:{' '}
+              <span className="font-bold text-xl text-gray-700">{ratingData?.averageRating.toFixed(2)}</span> / 5
             </span>
             <span className="text-xs text-gray-400">({ratingData?.totalVotes} oy)</span>
           </div>
           <div className="flex items-center gap-2 relative">
-            <LikeButton photoId={photoId} likeCount={likeCount} isLikedByMe={isLikedByMe} onOpenModal={openModal} ref={likeButtonRef} />
+            <LikeButton
+              photoId={photoId}
+              likeCount={likeCount}
+              isLikedByMe={isLikedByMe}
+              onOpenModal={openModal}
+              ref={likeButtonRef}
+            />
             <PhotoLikedUsers photoId={photoId} isOpen={isModalOpen} onClose={closeModal} />
           </div>
         </div>

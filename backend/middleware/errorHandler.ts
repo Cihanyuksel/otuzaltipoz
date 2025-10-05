@@ -1,12 +1,11 @@
-// middleware/errorHandler.ts
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/AppError';
 
 export const globalErrorHandler = (
   err: Error | AppError,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
 
   const isAppError = err instanceof AppError;

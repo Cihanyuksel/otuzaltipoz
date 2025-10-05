@@ -6,7 +6,7 @@ dotenv.config();
 type JwtExpireType = SignOptions["expiresIn"];
 
 export const config = {
-  node_env: process.env.NODE_URL,
+  node_env: process.env.NODE_ENV,
   server: {
     url: process.env.SERVER_URL,
     port: process.env.PORT

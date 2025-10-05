@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 //project-files
 import { useAuth } from '@/context/AuthContext';
-import { useDeleteUser } from '@/hooks/useAuthApi';
+import { useDeleteUser } from '@/hooks/api/useAuthApi';
 import Button from '../common/button';
 import SuccessModal from '../common/success-modal';
 import UserDeleteConfirmModal from '../common/confirm-modal';

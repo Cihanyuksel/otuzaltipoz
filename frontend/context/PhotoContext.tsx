@@ -1,13 +1,11 @@
-//nextjs and react
 import { createContext, useContext, ReactNode, useCallback, useState, useEffect } from 'react';
-//third-party
 import { useQueryClient } from '@tanstack/react-query';
-//project-files
+import { useSearchParams } from 'next/navigation';
 import { Photo, ApiResponse } from 'types/photo';
 import { useAuth } from './AuthContext';
 import { useSearch } from './SearchContext';
-import { useGetAllPhoto } from '@/hooks/usePhotoApi';
-import { useToggleLike } from '@/hooks/useLikeApi';
+import { useGetAllPhoto } from '@/hooks/api/usePhotoApi';
+import { useToggleLike } from '@/hooks/api/useLikeApi';
 
 interface PhotosContextType {
   photos: Photo[] | undefined;
@@ -15,6 +13,8 @@ interface PhotosContextType {
   error: Error | null;
   toggleLike: (photoId: string) => void;
   refetch: () => void;
+  selectedCategories: string[];
+  setSelectedCategories: (categories: string[]) => void;
 }
 
 const PhotosContext = createContext<PhotosContextType | undefined>(undefined);
@@ -27,8 +27,35 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
   const queryClient = useQueryClient();
   const { accessToken, user } = useAuth();
   const { searchValue } = useSearch();
+  const searchParams = useSearchParams();
 
   const [debouncedSearchValue, setDebouncedSearchValue] = useState(searchValue);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const {
+    data: photosResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetAllPhoto(
+    debouncedSearchValue,
+    accessToken,
+    selectedCategories.length > 0 ? selectedCategories.join(',') : undefined
+  );
+  const toggleLikeMutation = useToggleLike();
+
+  useEffect(() => {
+    const categoriesFromUrl = searchParams.get('categories');
+
+    if (categoriesFromUrl) {
+      const categoriesArray = categoriesFromUrl.split(',').filter(Boolean);
+      if (JSON.stringify(categoriesArray) !== JSON.stringify(selectedCategories)) {
+        setSelectedCategories(categoriesArray);
+      }
+    } else if (selectedCategories.length > 0) {
+      setSelectedCategories([]);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -40,8 +67,6 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
     };
   }, [searchValue]);
 
-  const { data: photosResponse, isLoading, error, refetch } = useGetAllPhoto(debouncedSearchValue, accessToken);
-
   const photos = photosResponse?.data;
 
   useEffect(() => {
@@ -50,11 +75,16 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
     }
   }, [user, refetch]);
 
-  const toggleLikeMutation = useToggleLike();
-
   const toggleLike = useCallback(
     (photoId: string) => {
-      const queryKey = ['photos', { searchQuery: debouncedSearchValue, hasToken: !!accessToken }];
+      const queryKey = [
+        'photos',
+        {
+          searchQuery: debouncedSearchValue,
+          hasToken: !!accessToken,
+          categories: selectedCategories.join(',') || undefined,
+        },
+      ];
 
       queryClient.setQueryData<ApiResponse<Photo[]>>(queryKey, (oldData) => {
         if (!oldData?.data) return oldData;
@@ -79,7 +109,7 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
       toggleLikeMutation.mutate(
         { photoId, accessToken },
         {
-          onSuccess: (_data) => {
+          onSuccess: () => {
             queryClient.invalidateQueries({
               queryKey: ['photos'],
               exact: false,
@@ -92,7 +122,7 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
         }
       );
     },
-    [accessToken, toggleLikeMutation, queryClient, debouncedSearchValue, refetch]
+    [accessToken, toggleLikeMutation, queryClient, debouncedSearchValue, selectedCategories, refetch]
   );
 
   const value: PhotosContextType = {
@@ -101,6 +131,8 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
     error,
     toggleLike,
     refetch,
+    selectedCategories,
+    setSelectedCategories,
   };
 
   return <PhotosContext.Provider value={value}>{children}</PhotosContext.Provider>;
