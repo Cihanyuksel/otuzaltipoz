@@ -4,6 +4,7 @@ export interface ApiResponse<T> {
   data: T; 
   status: boolean;
   total: number;
+  totalRecords: number
 }
 
 export type OmittedUser = Omit<

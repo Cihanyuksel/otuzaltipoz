@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { photoService } from '../../services/photoService';
 import { Photo, ApiResponse } from 'types/photo';
 
@@ -16,13 +16,27 @@ type PhotoResponse = {
   };
 };
 
-export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null, categories?: string) =>
-  useQuery({
+export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null, categories?: string) => {
+  return useInfiniteQuery({
     queryKey: ['photos', { searchQuery, hasToken: !!accessToken, categories }],
-    queryFn: () => photoService.getAllPhoto(searchQuery, accessToken, categories), 
-    staleTime: 1000 * 60,
+    queryFn: async ({ pageParam = 0 }) => {
+      const response = await photoService.getAllPhoto(searchQuery, accessToken, categories, 10, pageParam);
+      return response;
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      const totalFetched = allPages.reduce((sum, page) => sum + page.data.length, 0);
+      if (!lastPage.data || totalFetched >= lastPage.totalRecords) {
+        return undefined;
+      }
+      return allPages.length * 10;
+    },
+    initialPageParam: 0,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
+};
 
 export const useGetPhoto = (id: string) =>
   useQuery<Photo | null>({

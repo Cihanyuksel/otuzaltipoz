@@ -1,10 +1,14 @@
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { likeService } from '../../services/likeService';
 import { useEffect } from 'react';
+import { Photo } from 'types/photo';
 
 interface ToggleLikeVariables {
   photoId: string;
-  accessToken: string | null;
+  accessToken?: string | null | undefined;
+  searchQuery?: string;
+  hasToken?: boolean;
+  categories?: string;
 }
 
 interface LikeData {
@@ -20,7 +24,7 @@ const useToggleLike = () => {
   return useMutation<any, Error, ToggleLikeVariables, { previousLikes?: LikeData }>({
     mutationFn: ({ photoId, accessToken }) => likeService.toggleLike(photoId, accessToken),
 
-    onMutate: async ({ photoId }) => {
+    onMutate: async ({ photoId, searchQuery, hasToken, categories }) => {
       const previousLikes = queryClient.getQueryData<LikeData>(['likes', photoId]);
       if (previousLikes) {
         const newData = {
@@ -30,22 +34,47 @@ const useToggleLike = () => {
         };
         queryClient.setQueryData(['likes', photoId], newData);
       }
+
+      const queryKey = ['photos', { searchQuery, hasToken, categories }];
+      queryClient.setQueryData(queryKey, (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            data: page.data.map((photo: Photo) =>
+              photo._id === photoId
+                ? {
+                    ...photo,
+                    isLikedByMe: !photo.isLikedByMe,
+                    likeCount: photo.isLikedByMe ? photo.likeCount - 1 : photo.likeCount + 1,
+                  }
+                : photo
+            ),
+          })),
+        };
+      });
+
       return { previousLikes };
+    },
+
+    onSuccess: (_data, { photoId }) => {
+      console.log('useToggleLike başarılı, photoId:', photoId);
+      queryClient.invalidateQueries({ queryKey: ['likes', photoId] });
+      queryClient.invalidateQueries({ queryKey: ['likedPhotos'] });
+    },
+
+    onError: (_err, { photoId, searchQuery, hasToken, categories }, context) => {
+      console.log('useToggleLike hata, photoId:', photoId, 'error:', _err);
+      if (context?.previousLikes) {
+        queryClient.setQueryData(['likes', photoId], context.previousLikes);
+      }
+      const queryKey = ['photos', { searchQuery, hasToken, categories }];
+      queryClient.setQueryData(queryKey, (oldData: any) => oldData);
     },
 
     onSettled: (_data, _error, { photoId }) => {
       queryClient.invalidateQueries({ queryKey: ['likes', photoId] });
-    },
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['likedPhotos'] });
-      queryClient.invalidateQueries({ queryKey: ['photos'] });
-    },
-
-    onError: (_err, { photoId }, context) => {
-      if (context?.previousLikes) {
-        queryClient.setQueryData(['likes', photoId], context.previousLikes);
-      }
     },
   });
 };

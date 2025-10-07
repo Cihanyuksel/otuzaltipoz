@@ -11,7 +11,7 @@ function HeroSection() {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  const MotionImage = motion(Image);
+  const MotionImage = motion.create(Image);
   const PHOTO_CHANGE_INTERVAL_MS = 6000;
 
   const fetchRandomPhoto = async () => {

@@ -1,7 +1,7 @@
+'use client';
 import { createContext, useContext, ReactNode, useCallback, useState, useEffect } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
-import { Photo, ApiResponse } from 'types/photo';
+import { Photo } from 'types/photo';
 import { useAuth } from './AuthContext';
 import { useSearch } from './SearchContext';
 import { useGetAllPhoto } from '@/hooks/api/usePhotoApi';
@@ -15,6 +15,9 @@ interface PhotosContextType {
   refetch: () => void;
   selectedCategories: string[];
   setSelectedCategories: (categories: string[]) => void;
+  fetchNextPage: () => void;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
 }
 
 const PhotosContext = createContext<PhotosContextType | undefined>(undefined);
@@ -24,7 +27,6 @@ interface PhotosProviderProps {
 }
 
 export const PhotosProvider = ({ children }: PhotosProviderProps) => {
-  const queryClient = useQueryClient();
   const { accessToken, user } = useAuth();
   const { searchValue } = useSearch();
   const searchParams = useSearchParams();
@@ -33,20 +35,23 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const {
-    data: photosResponse,
+    data: allPhotos,
     isLoading,
     error,
     refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   } = useGetAllPhoto(
     debouncedSearchValue,
     accessToken,
     selectedCategories.length > 0 ? selectedCategories.join(',') : undefined
   );
+
   const toggleLikeMutation = useToggleLike();
 
   useEffect(() => {
     const categoriesFromUrl = searchParams.get('categories');
-
     if (categoriesFromUrl) {
       const categoriesArray = categoriesFromUrl.split(',').filter(Boolean);
       if (JSON.stringify(categoriesArray) !== JSON.stringify(selectedCategories)) {
@@ -58,71 +63,41 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
   }, [searchParams]);
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchValue(searchValue);
-    }, 500);
-
-    return () => {
-      clearTimeout(handler);
-    };
+    const handler = setTimeout(() => setDebouncedSearchValue(searchValue), 500);
+    return () => clearTimeout(handler);
   }, [searchValue]);
 
-  const photos = photosResponse?.data;
+  const photos = allPhotos?.pages.flatMap((page: any) => page.data) ?? [];
 
   useEffect(() => {
-    if (user !== null) {
+    if (user !== null && !allPhotos && !isLoading && !error) {
+      console.log('refetch çağrıldı, user:', user);
       refetch();
     }
-  }, [user, refetch]);
+  }, [user, refetch, allPhotos, isLoading, error]);
 
   const toggleLike = useCallback(
     (photoId: string) => {
-      const queryKey = [
-        'photos',
+      console.log('toggleLike çağrıldı, photoId:', photoId);
+      toggleLikeMutation.mutate(
         {
+          photoId,
+          accessToken,
           searchQuery: debouncedSearchValue,
           hasToken: !!accessToken,
           categories: selectedCategories.join(',') || undefined,
         },
-      ];
-
-      queryClient.setQueryData<ApiResponse<Photo[]>>(queryKey, (oldData) => {
-        if (!oldData?.data) return oldData;
-
-        const updatedPhotos = oldData.data.map((photo) => {
-          if (photo._id === photoId) {
-            return {
-              ...photo,
-              isLikedByMe: !photo.isLikedByMe,
-              likeCount: photo.isLikedByMe ? photo.likeCount - 1 : photo.likeCount + 1,
-            };
-          }
-          return photo;
-        });
-
-        return {
-          ...oldData,
-          data: updatedPhotos,
-        };
-      });
-
-      toggleLikeMutation.mutate(
-        { photoId, accessToken },
         {
           onSuccess: () => {
-            queryClient.invalidateQueries({
-              queryKey: ['photos'],
-              exact: false,
-            });
+            console.log('toggleLike başarılı, photoId:', photoId);
           },
-          onError: () => {
-            queryClient.invalidateQueries({ queryKey });
-            refetch();
+          onError: (error) => {
+            console.log('toggleLike hata, photoId:', photoId, 'error:', error);
           },
         }
       );
     },
-    [accessToken, toggleLikeMutation, queryClient, debouncedSearchValue, selectedCategories, refetch]
+    [accessToken, toggleLikeMutation, debouncedSearchValue, selectedCategories]
   );
 
   const value: PhotosContextType = {
@@ -133,6 +108,9 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
     refetch,
     selectedCategories,
     setSelectedCategories,
+    fetchNextPage,
+    hasNextPage: !!hasNextPage,
+    isFetchingNextPage,
   };
 
   return <PhotosContext.Provider value={value}>{children}</PhotosContext.Provider>;
@@ -140,8 +118,7 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
 
 export const usePhotos = () => {
   const context = useContext(PhotosContext);
-  if (context === undefined) {
-    throw new Error('usePhotos must be used within a PhotosProvider');
-  }
+  if (!context) throw new Error('usePhotos must be used within a PhotosProvider');
   return context;
 };
+

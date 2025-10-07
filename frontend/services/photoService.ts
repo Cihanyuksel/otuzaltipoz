@@ -11,43 +11,35 @@ const apiClient = axios.create({
 type Timeframe = 'all' | 'month' | 'week' | 'day';
 
 export const photoService = {
-  
   //GET ALL PHOTO
+
   getAllPhoto: async (
     searchQuery?: string,
     accessToken?: string | null,
-    categories?: string
+    categories?: string,
+    limit: number = 10,
+    offset: number = 0
   ): Promise<ApiResponse<Photo[]>> => {
     try {
       let path = PHOTO_PATHS.GETALL_PHOTOS;
-
       const params = new URLSearchParams();
 
-      if (searchQuery) {
-        params.append('search', searchQuery);
-      }
+      if (searchQuery) params.append('search', searchQuery);
+      if (categories) params.append('categories', categories);
 
-      if (categories) {
-        params.append('categories', categories);
-      }
+      params.append('limit', limit.toString());
+      params.append('offset', offset.toString());
 
-      if (params.toString()) {
-        path += `?${params.toString()}`;
-      }
+      path += `?${params.toString()}`;
 
       const headers: Record<string, string> = {};
-      if (accessToken) {
-        headers['Authorization'] = `Bearer ${accessToken}`;
-      }
 
-      const response = await apiClient.get<ApiResponse<Photo[]>>(path, {
-        headers,
-      });
+      if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
 
-      console.log('getAllPhoto response:', response.data);
+      const response = await apiClient.get<ApiResponse<Photo[]>>(path, { headers });
+
       return response.data;
     } catch (error: any) {
-      console.error('Error fetching photos:', error);
       throw new Error(error.response?.data?.message || error.message);
     }
   },

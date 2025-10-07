@@ -32,21 +32,15 @@ export interface IGetRatingsResponse {
 }
 
 export const ratingService = {
-  ratePhoto: async (
-    photoId: string,
-    rating: number,
-    accessToken: string
-  ): Promise<IRatePhotoResponse> => {
+  ratePhoto: async (photoId: string, rating: number, accessToken: string): Promise<IRatePhotoResponse> => {
     try {
-
       const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
-      }
+      };
 
       const response = await apiClient.post(`/photos/${photoId}/rate`, { rating }, { headers });
       return response.data;
-
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Rating request failed';
       throw new Error(errorMessage);
@@ -59,9 +53,7 @@ export const ratingService = {
       return response.data;
     } catch (error: any) {
       const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        'Oylamalar alınırken beklenmeyen bir hata oluştu.';
+        error.response?.data?.message || error.message || 'Oylamalar alınırken beklenmeyen bir hata oluştu.';
       throw new Error(`Oylamalar alınırken hata oluştu: ${errorMessage}`);
     }
   },

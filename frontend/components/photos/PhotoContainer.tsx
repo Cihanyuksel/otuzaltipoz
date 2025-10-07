@@ -1,6 +1,6 @@
 'use client';
 //nextjs and react
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 //project files
 import PhotoList from '@/components/photos/PhotoList';
@@ -25,7 +25,11 @@ const PhotoContainer = () => {
     error: photosError,
     selectedCategories,
     setSelectedCategories,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   } = usePhotos();
+
   const MAX_CATEGORIES = 3;
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({ Kategoriler: true });
   const debouncedSearchValue = useDebouncedValue(searchQuery, 2000);
@@ -33,10 +37,12 @@ const PhotoContainer = () => {
     selectedCategories,
     setSelectedCategories,
     searchQuery,
-    3
+    MAX_CATEGORIES
   );
   const { isSidebarOpen, setIsSidebarOpen, isMobileMenuOpen, setIsMobileMenuOpen } = useResponsiveSidebar();
   const { categories, isLoading } = useCategories();
+
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const categoriesFromUrl = searchParams.get('categories');
@@ -60,14 +66,39 @@ const PhotoContainer = () => {
     }));
   };
 
-  if (isLoading && categories.length === 0) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Loader />
-        <p className="ml-2 text-gray-600">Kategoriler yükleniyor...</p>
-      </div>
+  const wrappedFetchNextPage = () => {
+    fetchNextPage();
+  };
+
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) {
+      return;
+    }
+
+    if (!loadMoreRef.current) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          wrappedFetchNextPage();
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px 0px 200px 0px',
+        threshold: 0.1,
+      }
     );
-  }
+
+    const currentRef = loadMoreRef.current;
+    observer.observe(currentRef);
+
+    return () => {
+      if (currentRef) observer.unobserve(currentRef);
+    };
+  }, [hasNextPage, isFetchingNextPage]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -86,7 +117,6 @@ const PhotoContainer = () => {
         handleCategoryClick={handleCategoryClick}
         handleRemoveCategory={handleRemoveCategory}
       />
-
       <div className="flex flex-1 relative">
         <Sidebar
           isSidebarOpen={isSidebarOpen}
@@ -99,9 +129,7 @@ const PhotoContainer = () => {
           handleRemoveCategory={handleRemoveCategory}
           MAX_CATEGORIES={MAX_CATEGORIES}
         />
-
-        {/* Main Section */}
-        <main className="flex-1 overflow-y-auto p-4">
+        <main className="flex-1 overflow-y-auto p-4 bg-gray-100" id="scroll-container">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {isPhotosLoading || isDebouncing ? (
               <div className="col-span-full text-center py-8 text-gray-500">
@@ -112,13 +140,29 @@ const PhotoContainer = () => {
                 Aradığınız kriterlere uygun fotoğraf bulunamadı. Lütfen başka bir anahtar kelime veya kategori deneyin.
               </div>
             ) : (
-              <PhotoList photos={photos || []} isLoading={isPhotosLoading} error={photosError} />
+              <>
+                <PhotoList photos={photos || []} isLoading={isPhotosLoading} error={photosError} />
+              </>
             )}
+            <div
+              data-testid="load-more"
+              ref={loadMoreRef}
+              className="col-span-full flex justify-center py-6 min-h-[20px]"
+            >
+              {isFetchingNextPage ? (
+                <Loader />
+              ) : isLoading ? (
+                <p className="text-gray-500 text-lg font-semibold animate-pulse">İlk fotoğraflar yükleniyor...</p>
+              ) : hasNextPage ? (
+                <p className="text-gray-500 text-lg font-semibold animate-pulse">Daha fazla fotoğraf yükleniyor...</p>
+              ) : (
+                <p className="text-gray-400 text-lg font-semibold">Tüm fotoğraflar yüklendi </p>
+              )}
+            </div>
           </div>
         </main>
       </div>
     </div>
   );
 };
-
 export default PhotoContainer;

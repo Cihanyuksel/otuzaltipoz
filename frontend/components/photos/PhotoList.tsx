@@ -47,6 +47,7 @@ export default function PhotoList({ photos, isLoading, error }: PhotoListProps) 
           tags={photo.tags || []}
           onPhotoClick={() => openModal(index)}
           uploaderId={photo.user?._id}
+          index={index}
         />
       ))}
       <PhotoModal photos={photos} currentIndex={currentIndex} onClose={closeModal} onNavigate={navigatePhotos} />

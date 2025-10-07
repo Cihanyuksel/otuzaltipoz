@@ -7,7 +7,7 @@ const apiClient = axios.create({
 });
 
 export const likeService = {
-  toggleLike: async (photoId: string, accessToken: string | null) => {
+  toggleLike: async (photoId: string, accessToken: string | null | undefined) => {
     try {
       if (!accessToken) {
         throw new Error('Authentication required');
