@@ -1,10 +1,5 @@
-import axios from 'axios';
-import { API_BASE_URL, COMMENTS_PATH } from 'lib/config';
-
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000, 
-});
+import { axiosInstance } from 'lib/axiosInstance';
+import { COMMENTS_PATH } from 'lib/config';
 
 export const commentService = {
   getComments: async (photoId: string, accessToken?: string) => {
@@ -15,7 +10,7 @@ export const commentService = {
         headers['Authorization'] = `Bearer ${accessToken}`;
       }
 
-      const response = await apiClient.get(COMMENTS_PATH.GET_COMMENTS(photoId), {
+      const response = await axiosInstance.get(COMMENTS_PATH.GET_COMMENTS(photoId), {
         headers,
       });
 
@@ -44,7 +39,7 @@ export const commentService = {
         body.parentComment = parentCommentId;
       }
 
-      const response = await apiClient.post(COMMENTS_PATH.ADD_COMMENT(photoId), body, {
+      const response = await axiosInstance.post(COMMENTS_PATH.ADD_COMMENT(photoId), body, {
         headers,
       });
 
@@ -64,7 +59,7 @@ export const commentService = {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      const response = await apiClient.delete(COMMENTS_PATH.DELETE_COMMENT(commentId), {
+      const response = await axiosInstance.delete(COMMENTS_PATH.DELETE_COMMENT(commentId), {
         headers,
       });
 

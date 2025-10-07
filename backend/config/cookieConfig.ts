@@ -1,26 +1,29 @@
 import dotenv from "dotenv";
 import { CookieOptions } from "express";
+import { config } from "./config";
 
 dotenv.config();
 
-const sevenDaysInSeconds = 7 * 24 * 60 * 60;
+const sevenDaysInMilliseconds = 7 * 24 * 60 * 60 * 1000;
+const isProduction = config.node_env === "production";
 
-if (!process.env.ACCESS_TOKEN_SECRET || !process.env.REFRESH_TOKEN_SECRET) {
+if (!config.jwt.accessToken.secret || !config.jwt.refreshToken.secret) {
   throw new Error(
     "ACCESS_TOKEN_SECRET and REFRESH_TOKEN_SECRET must be defined."
   );
 }
 
-// Cookie settings
 export const refreshTokenCookieConfig: CookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict" as const,
-  maxAge: sevenDaysInSeconds,
+  secure: isProduction,
+  sameSite: isProduction ? "strict" : "lax",
+  maxAge: sevenDaysInMilliseconds,
+  path: "/",
 };
 
 export const clearRefreshTokenCookieConfig: CookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
+  secure: isProduction,
+  sameSite: isProduction ? "strict" : "lax",
+  path: "/",
 };

@@ -102,13 +102,13 @@ const signup = async (
       }
     }
 
-    // Create user 
+    // Create user
     const newUser = await User.create({
       username: username.toLowerCase(),
       email: email.toLowerCase(),
       password,
       full_name: full_name.trim(),
-      bio: bio?.trim() || "", 
+      bio: bio?.trim() || "",
       profile_img_url,
       role: "user",
       is_active: false,
@@ -145,8 +145,7 @@ const signup = async (
 
     res.status(201).json({
       success: true,
-      message:
-        "Kayıt başarılı! E-postanı kontrol et ve hesabını aktifleştir.",
+      message: "Kayıt başarılı! E-postanı kontrol et ve hesabını aktifleştir.",
       user: {
         id: newUser._id,
         username: newUser.username,
@@ -184,7 +183,6 @@ const verifyEmail = async (
       expiresAt: { $gt: new Date() },
     }).populate("userId");
 
-    
     if (!tokenDoc) {
       return next(
         new AppError(
@@ -217,15 +215,14 @@ const verifyEmail = async (
 
     res.status(200).json({
       success: true,
-      message: "🎉 E-posta başarıyla doğrulandı! Artık giriş yapabilirsin.",
+      message: "E-posta başarıyla doğrulandı! Artık giriş yapabilirsin.",
       redirect: "/login",
     });
   } catch (err: any) {
-    console.error("❌ Email verification error:", err);
+    console.error("Email verification error:", err);
     next(new AppError("Doğrulama başarısız. Lütfen tekrar deneyin.", 500));
   }
 };
-
 
 const login = async (
   req: Request,
@@ -342,7 +339,7 @@ const refresh = async (
     const storedToken = await RefreshToken.findOne({
       token: refreshToken,
       userId: payload.userId,
-      deviceId: deviceId,
+      //deviceId: deviceId,
     });
 
     if (!storedToken) {
@@ -368,6 +365,8 @@ const refresh = async (
     storedToken.token = newRefreshToken;
     storedToken.lastUsedAt = new Date();
     storedToken.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    storedToken.deviceId = deviceId; 
+    storedToken.device = req.headers["user-agent"] || "unknown"; 
     await storedToken.save();
 
     res.cookie("refreshToken", newRefreshToken, refreshTokenCookieConfig);

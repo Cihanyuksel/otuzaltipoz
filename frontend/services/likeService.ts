@@ -1,10 +1,4 @@
-import axios from 'axios';
-import { API_BASE_URL } from 'lib/config';
-
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000,
-});
+import { axiosInstance } from 'lib/axiosInstance';
 
 export const likeService = {
   toggleLike: async (photoId: string, accessToken: string | null | undefined) => {
@@ -17,7 +11,7 @@ export const likeService = {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      const response = await apiClient.post(`/${photoId}/like`, {}, { headers });
+      const response = await axiosInstance.post(`/${photoId}/like`, {}, { headers });
       return response.data;
       
     } catch (error: any) {
@@ -33,7 +27,7 @@ export const likeService = {
         headers['Authorization'] = `Bearer ${accessToken}`;
       }
 
-      const response = await apiClient.get(`/${photoId}/likes`, {
+      const response = await axiosInstance.get(`/${photoId}/likes`, {
         headers,
       });
 

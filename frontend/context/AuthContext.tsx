@@ -1,5 +1,6 @@
 'use client';
 import { useLogin, useLogout, useSignup } from '@/hooks/api/useAuthApi';
+import { axiosInstance } from 'lib/axiosInstance';
 import { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from 'react';
 import { authService } from 'services/authService';
 import { AuthResponse, User } from 'types/auth';
@@ -23,20 +24,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const refreshPromise = useRef<Promise<boolean> | null>(null);
-  const tokenExpiry = useRef<number | null>(null);
+  const refreshTimer = useRef<NodeJS.Timeout | null>(null);
 
   const setAuth = useCallback((authData: AuthResponse['data'] | null) => {
     if (authData) {
       setUser(authData.user);
       setAccessToken(authData.accessToken);
-      const expiryTime = Date.now() + 30 * 60 * 1000;
-      tokenExpiry.current = expiryTime;
-      localStorage.setItem('tokenExpiry', expiryTime.toString());
     } else {
       setUser(null);
       setAccessToken(null);
-      tokenExpiry.current = null;
-      localStorage.removeItem('tokenExpiry');
     }
   }, []);
 
@@ -61,35 +57,63 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return refreshPromise.current;
   }, [setAuth]);
 
-  const shouldRefreshToken = useCallback((): boolean => {
-    if (!tokenExpiry.current) return false;
+  useEffect(() => {
+    const requestInterceptor = axiosInstance.interceptors.request.use(
+      (config) => {
+        if (accessToken) {
+          config.headers.Authorization = `Bearer ${accessToken}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
 
-    const now = Date.now();
-    const timeUntilExpiry = tokenExpiry.current - now;
-    const REFRESH_THRESHOLD = 5 * 60 * 1000;
+    return () => {
+      axiosInstance.interceptors.request.eject(requestInterceptor);
+    };
+  }, [accessToken]);
 
-    return timeUntilExpiry <= REFRESH_THRESHOLD;
-  }, []);
+  useEffect(() => {
+    if (refreshTimer.current) {
+      clearTimeout(refreshTimer.current);
+      refreshTimer.current = null;
+    }
+
+    if (accessToken) {
+      try {
+        const payload = JSON.parse(atob(accessToken.split('.')[1]));
+        const expiresAt = payload.exp * 1000; 
+        const now = Date.now();
+        
+        const refreshTime = expiresAt - now - 60000; 
+        
+        if (refreshTime > 0) {
+          refreshTimer.current = setTimeout(() => {
+            refreshToken();
+          }, refreshTime);
+        } else {
+          refreshToken();
+        }
+      } catch (error) {
+        console.error('JWT decode error:', error);
+      }
+    }
+
+    return () => {
+      if (refreshTimer.current) {
+        clearTimeout(refreshTimer.current);
+      }
+    };
+  }, [accessToken, refreshToken]);
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const savedExpiry = localStorage.getItem('tokenExpiry');
-      if (savedExpiry) {
-        tokenExpiry.current = parseInt(savedExpiry);
-      }
-
-      const hasCookieOrLocalStorageToken = document.cookie.includes('refreshToken') || !!localStorage.getItem('tokenExpiry');
-
-      if (hasCookieOrLocalStorageToken) {
-        try {
-          const refreshData = await authService.refresh();
-          setAuth(refreshData);
-        } catch (error: any) {
-          setAuth(null);
-        } finally {
-          setLoading(false);
-        }
-      } else {
+      try {
+        const refreshData = await authService.refresh();
+        setAuth(refreshData);
+      } catch (error) {
+        setAuth(null);
+      } finally {
         setLoading(false);
       }
     };
@@ -97,38 +121,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initializeAuth();
   }, [setAuth]);
 
-  useEffect(() => {
-    if (!accessToken) return;
-
-    const interval = setInterval(() => {
-      if (document.visibilityState === 'visible' && shouldRefreshToken()) {
-        refreshToken();
-      }
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, [accessToken, shouldRefreshToken, refreshToken]);
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && accessToken && shouldRefreshToken()) {
-        refreshToken();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [accessToken, shouldRefreshToken, refreshToken]);
-
   const login = useLogin();
   const signup = useSignup();
   const logout = useLogout(setAuth);
-
-  useEffect(() => {
-    (window as any).__accessToken = accessToken;
-    (window as any).__refreshToken = refreshToken;
-    (window as any).__shouldRefreshToken = shouldRefreshToken;
-  }, [accessToken, refreshToken, shouldRefreshToken]);
 
   return (
     <AuthContext.Provider

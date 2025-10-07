@@ -1,12 +1,7 @@
 import axios from 'axios';
+import { axiosInstance } from 'lib/axiosInstance';
 import { API_BASE_URL, PHOTO_PATHS } from 'lib/config';
 import { ApiResponse, Photo, PopularPhoto } from 'types/photo';
-
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000,
-  withCredentials: true,
-});
 
 type Timeframe = 'all' | 'month' | 'week' | 'day';
 
@@ -36,7 +31,7 @@ export const photoService = {
 
       if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
 
-      const response = await apiClient.get<ApiResponse<Photo[]>>(path, { headers });
+      const response = await axiosInstance.get<ApiResponse<Photo[]>>(path, { headers });
 
       return response.data;
     } catch (error: any) {
@@ -52,7 +47,7 @@ export const photoService = {
         headers['Authorization'] = `Bearer ${accessToken}`;
       }
 
-      const response = await apiClient.get<ApiResponse<Photo>>(PHOTO_PATHS.GET_PHOTOS(id), {
+      const response = await axiosInstance.get<ApiResponse<Photo>>(PHOTO_PATHS.GET_PHOTOS(id), {
         headers,
       });
 
@@ -70,7 +65,7 @@ export const photoService = {
   //ADD PHOTO
   addPhoto: async (formData: FormData, accessToken: string) => {
     try {
-      const response = await apiClient.post(PHOTO_PATHS.ADD_PHOTO, formData, {
+      const response = await axiosInstance.post(PHOTO_PATHS.ADD_PHOTO, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -92,7 +87,7 @@ export const photoService = {
       }
 
       const path = PHOTO_PATHS.GET_PHOTOS_BY_USER_ID(userId);
-      const response = await apiClient.get<ApiResponse<Photo[]>>(path, {
+      const response = await axiosInstance.get<ApiResponse<Photo[]>>(path, {
         headers,
       });
 
@@ -112,7 +107,7 @@ export const photoService = {
       }
 
       const path = PHOTO_PATHS.GET_LIKED_PHOTOS(userId);
-      const response = await apiClient.get<ApiResponse<Photo[]>>(path, {
+      const response = await axiosInstance.get<ApiResponse<Photo[]>>(path, {
         headers,
       });
 
@@ -138,7 +133,7 @@ export const photoService = {
         headers['Authorization'] = `Bearer ${accessToken}`;
       }
 
-      const response = await apiClient.put<ApiResponse<Photo>>(PHOTO_PATHS.UPDATE_PHOTO(id), updatedData, { headers });
+      const response = await axiosInstance.put<ApiResponse<Photo>>(PHOTO_PATHS.UPDATE_PHOTO(id), updatedData, { headers });
 
       return response.data;
     } catch (error: any) {
@@ -155,7 +150,7 @@ export const photoService = {
         headers['Authorization'] = `Bearer ${accessToken}`;
       }
 
-      const response = await apiClient.delete<ApiResponse<null>>(PHOTO_PATHS.DELETE_PHOTO(id), {
+      const response = await axiosInstance.delete<ApiResponse<null>>(PHOTO_PATHS.DELETE_PHOTO(id), {
         headers,
       });
 
@@ -169,7 +164,7 @@ export const photoService = {
   //GET RANDOM PHOTO
   getRandomPhoto: async (limit: number): Promise<ApiResponse<Photo[]>> => {
     try {
-      const response = await apiClient.get<ApiResponse<Photo[]>>(PHOTO_PATHS.GET_RANDOM_PHOTOS(limit));
+      const response = await axiosInstance.get<ApiResponse<Photo[]>>(PHOTO_PATHS.GET_RANDOM_PHOTOS(limit));
       return response.data;
     } catch (error: any) {
       console.error(error);
@@ -181,7 +176,7 @@ export const photoService = {
   getPopularPhotos: async (limit: number, timeframe: Timeframe): Promise<ApiResponse<PopularPhoto[]>> => {
     try {
       const path = PHOTO_PATHS.POPULAR_PHOTOS(limit, timeframe);
-      const response = await apiClient.get<ApiResponse<PopularPhoto[]>>(path);
+      const response = await axiosInstance.get<ApiResponse<PopularPhoto[]>>(path);
       return response.data;
     } catch (error: any) {
       console.error('Error fetching popular photos:', error);

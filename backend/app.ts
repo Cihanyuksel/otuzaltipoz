@@ -34,7 +34,7 @@ app.use(cookieParser());
 
 //rate-limiter
 if (config.node_env === "production") {
-  app.use("/api/v1/auth", authLimiter);
+  app.use("/api/v1/auth/refresh", authLimiter);
 }
 
 // Routes

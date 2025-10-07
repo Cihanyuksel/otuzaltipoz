@@ -1,11 +1,4 @@
-import axios from 'axios';
-import { API_BASE_URL } from 'lib/config';
-
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000,
-  withCredentials: true,
-});
+import { axiosInstance } from 'lib/axiosInstance';
 
 //rating
 export interface IRating {
@@ -39,7 +32,7 @@ export const ratingService = {
         Authorization: `Bearer ${accessToken}`,
       };
 
-      const response = await apiClient.post(`/photos/${photoId}/rate`, { rating }, { headers });
+      const response = await axiosInstance.post(`/photos/${photoId}/rate`, { rating }, { headers });
       return response.data;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Rating request failed';
@@ -49,7 +42,7 @@ export const ratingService = {
 
   getRatings: async (photoId: string): Promise<IGetRatingsResponse> => {
     try {
-      const response = await apiClient.get(`/photos/${photoId}/ratings`);
+      const response = await axiosInstance.get(`/photos/${photoId}/ratings`);
       return response.data;
     } catch (error: any) {
       const errorMessage =

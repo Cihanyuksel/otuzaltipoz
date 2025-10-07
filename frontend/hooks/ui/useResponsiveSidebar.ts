@@ -6,14 +6,10 @@ export const useResponsiveSidebar = () => {
 
   useEffect(() => {
     const checkScreenSize = () => {
-      if (window.innerWidth >= 768) {
-        setIsSidebarOpen(true);
-      } else {
-        setIsSidebarOpen(false);
-        setIsMobileMenuOpen(false);
-      }
+      setIsSidebarOpen(false);
+      setIsMobileMenuOpen(false);
     };
-
+  
     checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
     return () => window.removeEventListener("resize", checkScreenSize);

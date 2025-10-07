@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { USER_PATHS } from 'lib/config';
 
 const apiClient = axios.create({
