@@ -296,7 +296,7 @@ const updatePhoto = async (
 };
 
 const deletePhoto = async (
-  req: Request,
+  req: IGetUserAuthInfoRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {

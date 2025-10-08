@@ -1,15 +1,14 @@
-// authController.ts
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
-import { IGetUserAuthInfoRequest } from "../controllers/authController";
+import { config } from "../config/config";
+import { IGetUserAuthInfoRequest } from "./restrictTo";
 
 interface JwtPayload {
   userId: string;
 }
-
 export const authenticateOptional = async (
-  req: IGetUserAuthInfoRequest, 
+  req: IGetUserAuthInfoRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -18,11 +17,10 @@ export const authenticateOptional = async (
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return next();
     }
-
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(
       token,
-      process.env.ACCESS_TOKEN_SECRET!
+      config.jwt.accessToken.secret!
     ) as JwtPayload;
 
     const user = await User.findById(decoded.userId).select("-password");
@@ -31,9 +29,9 @@ export const authenticateOptional = async (
     }
 
     (req as any).user = user;
-
     next();
   } catch (err) {
+    console.log("JWT verify hatası:", err);
     return next();
   }
 };

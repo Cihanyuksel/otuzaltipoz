@@ -24,7 +24,10 @@ const useDeleteUser = () => {
   const keysToClean = ['photos', 'likes', 'comments', 'ratings', 'users'];
 
   return useMutation({
-    mutationFn: (userId: string) => userService.deleteUser(userId),
+    mutationFn: ({ userId, token }: { userId: string; token: string | null }) => {
+      if (!token) throw new Error('Token bulunamadı');
+      return userService.deleteUser(userId, token);
+    },
     onSuccess: () => {
       keysToClean.forEach((key) => {
         queryClient.removeQueries({ queryKey: [key] });

@@ -18,7 +18,7 @@ interface IProfileHeader {
 }
 
 const ProfileHeader = ({ user, imageUrl, isOwner }: IProfileHeader) => {
-  const { user: currentUser, setAuth } = useAuth();
+  const { user: currentUser, setAuth, accessToken } = useAuth();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const router = useRouter();
@@ -42,7 +42,7 @@ const ProfileHeader = ({ user, imageUrl, isOwner }: IProfileHeader) => {
   };
 
   const handleConfirmDelete = () => {
-    deleteUser(currentUser!.id);
+    deleteUser({ userId: currentUser!.id, token: accessToken });
   };
 
   const handleCloseConfirmModal = () => {
@@ -72,7 +72,12 @@ const ProfileHeader = ({ user, imageUrl, isOwner }: IProfileHeader) => {
         </div>
 
         {isOwner && (
-          <Button onClick={handleDeleteAccount} className="absolute top-0 right-0 px-4 py-2" variant="danger" disabled={isPending}>
+          <Button
+            onClick={handleDeleteAccount}
+            className="absolute top-0 right-0 px-4 py-2"
+            variant="danger"
+            disabled={isPending}
+          >
             {isPending ? 'Siliniyor...' : 'Hesabı Sil'}
           </Button>
         )}
@@ -87,7 +92,9 @@ const ProfileHeader = ({ user, imageUrl, isOwner }: IProfileHeader) => {
             <p className="mb-2">
               <strong>@{user.username}</strong> hesabınızı silmek istediğinizden emin misiniz?
             </p>
-            <p className="text-red-600 font-medium">Bu işlem geri alınamaz ve tüm verileriniz kalıcı olarak silinecektir.</p>
+            <p className="text-red-600 font-medium">
+              Bu işlem geri alınamaz ve tüm verileriniz kalıcı olarak silinecektir.
+            </p>
           </div>
         }
         onConfirm={handleConfirmDelete}

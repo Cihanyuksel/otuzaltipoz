@@ -25,13 +25,25 @@ export const userService = {
     }
   },
 
-  deleteUser: async (userId: string) => {
+  deleteUser: async (userId: string, token: string | null) => {
+    const url = USER_PATHS.DELETE_USER(userId);
+
     try {
-      const response = await apiClient.delete(USER_PATHS.DELETE_USER(userId));
+      const response = await apiClient.delete(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       return response.data;
     } catch (error: any) {
-      console.error('Error deleting user:', error);
-      throw new Error(error.response?.data?.message || 'Failed to delete user');
+      if (error.response) {
+        throw new Error(error.response.data?.message || `Failed to delete user: ${error.response.status}`);
+      } else if (error.request) {
+        throw new Error('No response received from server');
+      } else {
+        throw new Error(error.message || 'Failed to delete user');
+      }
     }
   },
 };

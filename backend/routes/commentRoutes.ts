@@ -6,6 +6,7 @@ import {
   updateComment,
 } from "../controllers/commentController";
 import { authenticate } from "../middleware/authMiddleware";
+
 const router = Router();
 
 router.post("/photos/:photoId/comments", authenticate, addComment);

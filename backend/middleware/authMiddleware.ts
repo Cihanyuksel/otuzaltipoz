@@ -1,38 +1,44 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
+import { AppError } from "../utils/AppError";
+import { config } from "../config/config";
+import { IGetUserAuthInfoRequest } from "./restrictTo";
 
 interface JwtPayload {
   userId: string;
 }
 
 export const authenticate = async (
-  req: Request,
+  req: IGetUserAuthInfoRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const authHeader = req.headers.authorization;
+
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "No token provided" });
+      return next(
+        new AppError("Bu işleme erişim için geçerli bir token gereklidir.", 401)
+      );
     }
 
     const token = authHeader.split(" ")[1];
+
     const decoded = jwt.verify(
       token,
-      process.env.ACCESS_TOKEN_SECRET!
+      config.jwt.accessToken.secret!
     ) as JwtPayload;
 
     const user = await User.findById(decoded.userId).select("-password");
+
     if (!user) {
-      return res.status(401).json({ message: "Invalid token" });
+      return next(new AppError("Bu token'a ait kullanıcı bulunamadı.", 401));
     }
 
-    //REFACTOR YAPILACAK
     (req as any).user = user;
-
     next();
   } catch (err) {
-    res.status(401).json({ message: "Unauthorized", error: err });
+    return next(new AppError("Geçersiz veya süresi dolmuş token.", 401));
   }
 };

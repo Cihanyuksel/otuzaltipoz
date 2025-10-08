@@ -281,6 +281,7 @@ const login = async (
       _id: user._id as string,
       role: user.role,
     });
+
     const refreshToken = generateRefreshToken({ _id: user._id as string });
     const deviceId = generateDeviceId(req);
 

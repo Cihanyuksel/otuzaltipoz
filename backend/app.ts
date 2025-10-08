@@ -1,5 +1,6 @@
-import express, { type Application } from "express";
 import dotenv from "dotenv";
+dotenv.config();
+import express, { type Application } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
@@ -14,9 +15,11 @@ import categoryRouter from "./routes/categoryRoutes";
 //middleware and config
 import { globalErrorHandler } from "./middleware/errorHandler";
 import { config } from "./config/config";
-import { authLimiter } from "./middleware/authLimiter";
-
-dotenv.config();
+import {
+  maxRefreshTokenRotations,
+  maxForgetPasswordRotations,
+  maxLoginRotations,
+} from "./middleware/authLimiter";
 
 const app: Application = express();
 
@@ -34,7 +37,9 @@ app.use(cookieParser());
 
 //rate-limiter
 if (config.node_env === "production") {
-  app.use("/api/v1/auth/refresh", authLimiter);
+  app.use("/api/v1/auth/refresh", maxRefreshTokenRotations);
+  app.use("/api/v1/auth/login", maxLoginRotations);
+  app.use("/api/v1/auth/forgot-password", maxForgetPasswordRotations);
 }
 
 // Routes

@@ -24,7 +24,7 @@ interface PhotosPaths {
   GET_PHOTOS_BY_USER_ID: (id: number | string) => string;
   GET_LIKED_PHOTOS: (id: number | string) => string;
   GET_RANDOM_PHOTOS: (limit: number) => string;
-  POPULAR_PHOTOS: (limit: number, timeframe:'all' | 'week' | 'month' | 'day' ) => string;
+  POPULAR_PHOTOS: (limit: number, timeframe: 'all' | 'week' | 'month' | 'day') => string;
 }
 
 interface CommentPaths {

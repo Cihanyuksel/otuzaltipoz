@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import User from "../models/User";
+import User, { IUser } from "../models/User";
 import { AppError } from "../utils/AppError";
-import { refreshTokenCookieConfig } from "../config/cookieConfig";
+import { IGetUserAuthInfoRequest } from "./authController";
 
 // Get All Users
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -35,39 +35,123 @@ const addUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-// Update User
-const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+//Update User
+const updateUser = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+    const userId = req.params.id;
+    const currentUser = req.user!; // REFACTOR IHTIYACI
+
+    if (currentUser.role !== "admin" && currentUser.role !== "moderator") {
+      if (userId !== currentUser.id.toString()) {
+        return next(new AppError("You can only update your own profile", 403));
+      }
+    }
+
+    if (req.body.role) {
+      if (currentUser.role !== "admin") {
+        return next(new AppError("Only admins can change user roles", 403));
+      }
+
+      if (userId === currentUser.id.toString() && req.body.role !== "admin") {
+        return next(new AppError("You cannot change your own admin role", 403));
+      }
+    }
+
+    const protectedFields = ["password", "is_verified", "created_at"];
+    protectedFields.forEach((field) => {
+      if (req.body[field] && currentUser.role !== "admin") {
+        delete req.body[field];
+      }
+    });
+
+    if (req.body.email) {
+      if (currentUser.role !== "admin") {
+        req.body.is_verified = false;
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, req.body, {
       new: true,
       runValidators: true,
+    }).select("-password");
+
+    if (!updatedUser) {
+      return next(new AppError("User not found", 404));
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: updatedUser,
     });
-    if (!updatedUser) return next(new AppError("User not found", 404));
-    res.status(200).json(updatedUser);
   } catch (error: any) {
     next(new AppError(error.message || "User not updated", 400));
   }
 };
 
-// Delete User
-const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+//Delete User
+const deleteUser = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const deletedUser = await User.findByIdAndDelete(req.params.id);
-    if (!deletedUser) return next(new AppError("User not found", 404));
+    const userId = req.params.id;
+    const currentUser = req.user;
 
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict" as const,
-    });
+    if (!currentUser) {
+      return next(new AppError("Authentication required", 401));
+    }
+
+    const userToDelete = await User.findById(userId);
+    if (!userToDelete) {
+      return next(new AppError("User not found", 404));
+    }
+
+    const isAdmin = currentUser.role === "admin";
+    const isOwner = userId === currentUser.id.toString();
+
+    if (!isAdmin && !isOwner) {
+      return next(
+        new AppError("You don't have permission to delete this user", 403)
+      );
+    }
+
+    if (isAdmin && userToDelete.role === "admin" && !isOwner) {
+      return next(new AppError("Admins cannot delete other admins", 403));
+    }
+
+    if (userToDelete.role === "admin") {
+      const adminCount = await User.countDocuments({ role: "admin" });
+      if (adminCount <= 1) {
+        return next(new AppError("Cannot delete the last admin user", 403));
+      }
+    }
+
+    await User.findByIdAndDelete(userId);
+
+    if (isOwner) {
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict" as const,
+      });
+    }
 
     res.status(200).json({
-      success: true,
-      message: "User deleted and logout",
-      user: {
-        _id: deletedUser._id,
-        username: deletedUser.username,
-        email: deletedUser.email,
+      status: "success",
+      message: isOwner
+        ? "Your account has been deleted and you have been logged out"
+        : "User deleted successfully",
+      data: {
+        deletedUser: {
+          _id: userToDelete._id,
+          username: userToDelete.username,
+          email: userToDelete.email,
+        },
       },
     });
   } catch (error: any) {
