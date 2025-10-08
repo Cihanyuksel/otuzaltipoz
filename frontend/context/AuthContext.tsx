@@ -1,6 +1,6 @@
 'use client';
 import { useLogin, useLogout, useSignup } from '@/hooks/api/useAuthApi';
-import { axiosInstance } from 'lib/axiosInstance';
+import { setAxiosAccessToken } from 'lib/axiosInstance';
 import { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from 'react';
 import { authService } from 'services/authService';
 import { AuthResponse, User } from 'types/auth';
@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
   const refreshPromise = useRef<Promise<boolean> | null>(null);
   const refreshTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -30,9 +29,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (authData) {
       setUser(authData.user);
       setAccessToken(authData.accessToken);
+      setAxiosAccessToken(authData.accessToken);
     } else {
       setUser(null);
       setAccessToken(null);
+      setAxiosAccessToken(null);
     }
   }, []);
 
@@ -58,50 +59,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [setAuth]);
 
   useEffect(() => {
-    const requestInterceptor = axiosInstance.interceptors.request.use(
-      (config) => {
-        if (accessToken) {
-          config.headers.Authorization = `Bearer ${accessToken}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
+    if (!accessToken) return;
+    if (refreshTimer.current) return;
 
-    return () => {
-      axiosInstance.interceptors.request.eject(requestInterceptor);
-    };
-  }, [accessToken]);
+    try {
+      const payload = JSON.parse(atob(accessToken.split('.')[1]));
+      const expiresAt = payload.exp * 1000;
+      const now = Date.now();
+      const refreshTime = expiresAt - now - 5 * 60 * 1000; 
 
-  useEffect(() => {
-    if (refreshTimer.current) {
-      clearTimeout(refreshTimer.current);
-      refreshTimer.current = null;
-    }
-
-    if (accessToken) {
-      try {
-        const payload = JSON.parse(atob(accessToken.split('.')[1]));
-        const expiresAt = payload.exp * 1000; 
-        const now = Date.now();
-        
-        const refreshTime = expiresAt - now - 60000; 
-        
-        if (refreshTime > 0) {
-          refreshTimer.current = setTimeout(() => {
-            refreshToken();
-          }, refreshTime);
-        } else {
-          refreshToken();
-        }
-      } catch (error) {
-        console.error('JWT decode error:', error);
+      if (refreshTime > 0) {
+        refreshTimer.current = setTimeout(async () => {
+          refreshTimer.current = null;
+          await refreshToken();
+        }, refreshTime);
+      } else {
+        refreshTimer.current = null;
+        refreshToken();
       }
+    } catch (error) {
+      console.error('JWT decode error:', error);
+      refreshToken();
     }
 
     return () => {
       if (refreshTimer.current) {
         clearTimeout(refreshTimer.current);
+        refreshTimer.current = null;
       }
     };
   }, [accessToken, refreshToken]);
@@ -119,6 +103,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     initializeAuth();
+  }, [setAuth]);
+
+  useEffect(() => {
+    const handleTokenRefreshed = (event: CustomEvent) => {
+      const authData = event.detail;
+      if (authData) {
+        setAuth(authData);
+      }
+    };
+
+    const handleUnauthorized = () => {
+      setAuth(null);
+    };
+
+    window.addEventListener('auth:tokenRefreshed', handleTokenRefreshed as EventListener);
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+
+    return () => {
+      window.removeEventListener('auth:tokenRefreshed', handleTokenRefreshed as EventListener);
+      window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    };
   }, [setAuth]);
 
   const login = useLogin();

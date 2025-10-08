@@ -1,4 +1,5 @@
-import { AUTH_PATHS } from '../lib/config';
+import axios from 'axios';
+import { API_BASE_URL, AUTH_PATHS } from '../lib/config';
 import { AuthResponse, LoginRequest, MessageResponse } from '../types/auth';
 import { axiosInstance } from 'lib/axiosInstance';
 
@@ -41,14 +42,17 @@ export const authService = {
   //--------------------------------------------------------------------------------------------\\
   refresh: async (): Promise<AuthResponse['data']> => {
     try {
-      const response = await axiosInstance.post(AUTH_PATHS.REFRESH);
+      const response = await axios.post(
+        `${API_BASE_URL}${AUTH_PATHS.REFRESH}`,
+        {},
+        { withCredentials: true }
+      );
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'API request failed';
+      const errorMessage = error.response?.data?.message || 'Token yenilenemedi';
       throw new Error(errorMessage);
     }
   },
-
   //--------------------------------------------------------------------------------------------\\
   verifyToken: async (token: string) => {
     try {
