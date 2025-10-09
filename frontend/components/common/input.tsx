@@ -37,7 +37,7 @@ interface InputProps<T extends FieldValues> extends Omit<InputHTMLAttributes<HTM
 
 function Input<T extends FieldValues>({ name, register, error, label, bgColor, ...rest }: InputProps<T>) {
   return (
-    <div className="flex flex-col w-full mt-2 mb-2">
+    <div className="flex flex-col w-full my-2">
       {label && <label className="mb-1 text-sm font-medium text-gray-700">{label}</label>}
       <input
         {...register(name)}

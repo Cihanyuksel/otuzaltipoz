@@ -68,7 +68,7 @@ export default function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onsubmit)} className="flex flex-col gap-4 w-full">
+    <form onSubmit={handleSubmit(onsubmit)} className="flex flex-col gap-2 w-full">
       {errorMessage && <div className="bg-red-100 text-red-800 p-2 rounded-md">{errorMessage}</div>}
       {successMessage && <div className="bg-green-100 text-green-800 p-2 rounded-md">{successMessage}</div>}
 
@@ -87,7 +87,7 @@ export default function SignupForm() {
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)}
-          className="absolute right-2 top-3 cursor-pointer"
+          className="absolute right-2 top-6 cursor-pointer"
         >
           {showPassword ? <ShowIcon /> : <HideIcon />}
         </button>
@@ -106,7 +106,7 @@ export default function SignupForm() {
       <textarea
         {...register('bio')}
         placeholder="Biyografinizi yazın..."
-        className="border border-gray-300 p-2 rounded-md w-full resize-none focus:border-[#ef7464] focus:outline-none"
+        className="border-2 border-gray-300 bg-white  p-2 rounded-md w-full resize-none focus:border-[#ef7464] focus:outline-none"
         rows={3}
       />
       {errors.bio && <p className="text-red-500 text-sm">{errors.bio.message}</p>}
@@ -124,7 +124,13 @@ export default function SignupForm() {
               Dosya Seç
             </span>
           )}
-          <input type="file" accept="image/*" className="hidden" onChange={handleChange} />
+          <input
+            type="file"
+            key={fileName}
+            accept="image/*"
+            className="hidden"
+            onChange={handleChange}
+          />
         </label>
       </div>
 

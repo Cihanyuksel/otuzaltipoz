@@ -23,7 +23,7 @@ export default function HeaderNavbar({ isScrolled }: HeaderNavbarProps) {
   return (
     <>
       <nav className="hidden lg:flex items-center justify-around space-x-10">
-        <ul className="flex items-center space-x-10 text-gray-600">
+        <ul className="flex items-center space-x-5 text-gray-500">
           {links.map((link) => {
             const isActive = pathname === link.href;
             const Icon = link.icon;
@@ -36,7 +36,7 @@ export default function HeaderNavbar({ isScrolled }: HeaderNavbarProps) {
                     ${isActive ? 'font-semibold' : ''}
                   `}
                 >
-                  <Icon className="h-6 w-6" />
+                  <Icon className="h-5 w-5" />
                   {!isScrolled && <span>{link.name}</span>}
                   {isActive && !isScrolled && (
                     <span className="absolute -bottom-1 border border-[#d3deda] left-0 w-full bg-[#d3deda]"></span>

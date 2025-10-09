@@ -29,11 +29,11 @@ export default function Sidebar({
   return (
     <div
       className={`
-        hidden lg:block md:sticky md:top-0 md:self-start md:h-screen md:overflow-y-auto
+        hidden top-20 lg:block md:sticky md:top-0 2xl:top-44  md:self-start md:h-screen md:overflow-y-auto
         bg-white border-r border-gray-200 shadow-xl shadow-gray-200/50 
         
         transition-all duration-300 ease-in-out z-20 
-        ${isSidebarOpen ? 'w-64 p-4' : 'w-20 pt-5'}
+        ${isSidebarOpen ? 'w-1/6 p-4' : 'w-1/12 pt-5 '}
       `}
     >
       <div

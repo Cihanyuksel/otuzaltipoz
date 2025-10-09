@@ -25,9 +25,9 @@ export default function HeaderSearchBar({ isScrolled }: HeaderSearchBarProps) {
     }, 300);
   };
 
-  const containerClasses = `hidden md:block relative transition-all duration-300 ease-in-out`;
-  const inputClasses = `pl-4 pr-10 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#d3deda] text-gray-800 placeholder-gray-600 transition-all duration-300 ease-in-out`;
-  const iconWrapperClasses = `absolute inset-y-0 right-0 flex items-center transition-all duration-300 ease-in-out bg-[#d3deda] rounded text-white`;
+  const containerClasses = `hidden md:block 2xl:w-1/3 relative transition-all duration-300 ease-in-out`;
+  const inputClasses = `pr-10 pl-2 py-2 2xl:w-full 2xl:p-5  border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#d3deda] text-gray-800 placeholder-gray-600 transition-all duration-300 ease-in-out`;
+  const iconWrapperClasses = `absolute inset-y-0 right-0  flex items-center transition-all duration-300 ease-in-out bg-[#d3deda] rounded text-white`;
 
   return (
     <div className={containerClasses}>
@@ -49,7 +49,7 @@ export default function HeaderSearchBar({ isScrolled }: HeaderSearchBarProps) {
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
           />
-          <div className={`${iconWrapperClasses} pointer-events-none p-3`}>
+          <div className={`${iconWrapperClasses} pointer-events-none p-2 2xl:p-5`}>
             <SearchIcon className="h-5 w-5" />
           </div>
         </>

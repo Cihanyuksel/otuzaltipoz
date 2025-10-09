@@ -24,6 +24,7 @@ export default function MobileMenu({ menuOpen, setMenuOpen, loading, user }: IMo
     { name: 'Ana Sayfa', href: '/' },
     { name: 'Fotoğraflar', href: '/photos' },
     { name: 'Hakkımızda', href: '/about' },
+    { name: 'İletişim', href: '/contact' },
   ];
 
   return (
