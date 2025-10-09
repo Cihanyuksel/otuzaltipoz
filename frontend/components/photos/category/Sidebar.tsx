@@ -29,7 +29,7 @@ export default function Sidebar({
   return (
     <div
       className={`
-        hidden md:block md:sticky md:top-0 md:self-start md:h-screen md:overflow-y-auto
+        hidden lg:block md:sticky md:top-0 md:self-start md:h-screen md:overflow-y-auto
         bg-white border-r border-gray-200 shadow-xl shadow-gray-200/50 
         
         transition-all duration-300 ease-in-out z-20 

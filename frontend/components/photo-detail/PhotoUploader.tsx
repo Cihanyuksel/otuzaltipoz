@@ -1,3 +1,4 @@
+import { formatDateLong } from 'lib/formatDate';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -9,10 +10,24 @@ export interface IUploaderInfo {
   created_at: string;
 }
 
-export default function UploaderInfo({ user }: { user: IUploaderInfo }) {
+interface UploaderInfoProps {
+  user: IUploaderInfo;
+  photoCreatedAt: string;
+  photoUpdatedAt?: string;
+}
+
+export default function UploaderInfo({ user, photoCreatedAt, photoUpdatedAt }: UploaderInfoProps) {
+  const createdTime = new Date(photoCreatedAt).getTime();
+  const updatedTime = photoUpdatedAt ? new Date(photoUpdatedAt).getTime() : createdTime;
+
+  const isEdited = updatedTime - createdTime > 5000;
+
+  const displayDate = isEdited ? photoUpdatedAt! : photoCreatedAt;
+  const dateLabel = isEdited ? 'Düzenleme Tarihi' : 'Yüklenme Tarihi';
+
   return (
     <Link href={`/biri/${user._id}`} className="mt-6 flex items-center gap-3 hover:opacity-80 transition">
-      <div className="relative h-12 w-12 rounded-full overflow-hidden">
+      <div className="relative h-8 w-8 md:h-12 md:w-12 rounded-full overflow-hidden">
         <Image
           src={user.profile_img_url || '/no_profile.png'}
           alt={user.username}
@@ -22,8 +37,10 @@ export default function UploaderInfo({ user }: { user: IUploaderInfo }) {
         />
       </div>
       <div>
-        <p className="font-semibold text-gray-900">{user.username}</p>
-        <p className="text-sm text-gray-500">Yüklenme Tarihi: {new Date(user.created_at).toLocaleDateString()}</p>
+        <p className="font-semibold text-sm text-gray-900">{user.username}</p>
+        <p className="text-sm text-gray-500">
+          {dateLabel}: {formatDateLong(displayDate)}
+        </p>
       </div>
     </Link>
   );

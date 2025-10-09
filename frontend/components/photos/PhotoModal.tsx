@@ -5,15 +5,16 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaArrowLeft as ArrowLeftIcon, FaArrowRight as ArrowRightIcon, FaTimes as CloseIcon } from 'react-icons/fa';
 // project-files
-import { formatDate } from 'lib/formatDate';
+import { formatDateNumeric } from 'lib/formatDate';
 
 interface PhotoDocument {
   photo_url: string;
   title: string;
   description: string;
+  created_at: string;
+  updated_at?: string;
   user?: {
     username: string;
-    created_at: string;
   };
 }
 
@@ -54,7 +55,9 @@ const PhotoModal: React.FC<IPhotoModal> = ({ photos, currentIndex, onClose, onNa
     return null;
   }
 
-  const date = currentPhoto.user?.created_at ? formatDate(currentPhoto.user.created_at) : null;
+  const date = currentPhoto.created_at ? formatDateNumeric(currentPhoto.created_at) : null;
+  const isEdited = currentPhoto.updated_at && currentPhoto.updated_at !== currentPhoto.created_at;
+  const editedDate = isEdited && currentPhoto.updated_at ? formatDateNumeric(currentPhoto.updated_at) : null;
 
   return (
     <motion.div
@@ -100,7 +103,11 @@ const PhotoModal: React.FC<IPhotoModal> = ({ photos, currentIndex, onClose, onNa
               {currentPhoto.user && (
                 <div className="mt-4 pt-4 border-t border-gray-500">
                   <p className="text-sm text-gray-300 font-semibold">@{currentPhoto.user.username}</p>
-                  <p className="text-xs text-gray-400">Yüklenme Tarihi: {date}</p>
+                  {isEdited ? (
+                    <p className="text-xs text-gray-400">Düzenlenme Tarihi: {editedDate}</p>
+                  ) : (
+                    <p className="text-xs text-gray-400">Yüklenme Tarihi: {date}</p>
+                  )}
                 </div>
               )}
             </motion.div>

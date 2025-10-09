@@ -12,19 +12,17 @@ export default function HeaderSearchBar({ isScrolled }: HeaderSearchBarProps) {
   const router = useRouter();
 
   const handleSearchClick = () => {
-    // Sayfanın en üstüne yumuşak bir şekilde kaydır
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     });
 
-    // Kaydırma bittikten sonra inputa odaklanmak için kısa bir gecikme ekle
     setTimeout(() => {
       const searchInput = document.getElementById('search-input') as HTMLInputElement;
       if (searchInput) {
         searchInput.focus();
       }
-    }, 300); // Header'daki geçiş süresine (duration-300) göre ayarlandı
+    }, 300);
   };
 
   const containerClasses = `hidden md:block relative transition-all duration-300 ease-in-out`;

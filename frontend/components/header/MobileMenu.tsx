@@ -28,7 +28,7 @@ export default function MobileMenu({ menuOpen, setMenuOpen, loading, user }: IMo
 
   return (
     <>
-      <button className="md:hidden text-gray-800 focus:outline-none relative w-8 h-8" onClick={() => setMenuOpen(!menuOpen)}>
+      <button className="lg:hidden text-gray-800 focus:outline-none relative w-8 h-8" onClick={() => setMenuOpen(!menuOpen)}>
         <MenuOpenIcon
           className={`absolute inset-0 m-auto text-2xl transition-all duration-300 ease-in-out ${
             menuOpen ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0'
@@ -42,7 +42,7 @@ export default function MobileMenu({ menuOpen, setMenuOpen, loading, user }: IMo
       </button>
 
       <div
-        className={`fixed top-16 left-0 w-full md:hidden transform transition-all duration-300 ease-in-out z-40 ${
+        className={`fixed top-22 left-0 w-full lg:hidden transform transition-all duration-300 ease-in-out z-40 ${
           menuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-5 pointer-events-none'
         }`}
       >

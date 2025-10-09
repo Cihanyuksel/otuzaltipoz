@@ -1,13 +1,11 @@
 'use client';
 //nextjs and react
-import { PhotoImage, PhotoInfo, RatingSection, UploaderInfo } from '@/components/photo-detail';
 import { useState } from 'react';
 import { notFound, useParams, useRouter } from 'next/navigation';
 //third-party
-import { CiEdit as EditIcon } from 'react-icons/ci';
-import { RiDeleteBin6Line as DeleteIcon } from 'react-icons/ri';
 import { toast } from 'react-toastify';
 //project files
+import { PhotoImage, PhotoInfo, RatingSection, UploaderInfo, PhotoActions } from '@/components/photo-detail';
 import LoginModal from '../auth/login-modal';
 import EditPhotoModal from '../photos/EditPhotoModal';
 import DeleteConfirmPhotoModal from '../common/confirm-modal';
@@ -16,7 +14,6 @@ import Button from '../common/button';
 import CommentSection from '../comments/CommentSection';
 import { useAuth } from '@/context/AuthContext';
 import { useGetPhoto, useDeletePhoto } from '@/hooks/api/usePhotoApi';
-import { canManagePhoto } from 'lib/permission';
 
 type ModalName = 'login' | 'edit' | 'delete';
 
@@ -81,53 +78,40 @@ const PhotoDetail = () => {
 
   return (
     <section
-      className="flex justify-center py-4 bg-neutral-100 text-gray-800 min-h-screen px-4 md:px-0"
+      className="w-full flex justify-center py-5 bg-neutral-100 text-gray-800 min-h-screen px-4 md:px-0"
       style={{ fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif' }}
     >
       <div className="w-full max-w-5xl">
         <div className="bg-white shadow-sm">
           <PhotoImage photoUrl={photo.photo_url} title={photo.title} />
-          <div className="p-6 w-full">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <div className="w-full px-4 md:pt-5  md:px-10">
+            <div className="grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-3">
               <div className="md:col-span-2">
                 <PhotoInfo title={photo.title} description={photo.description} tags={photo.tags} />
-                <UploaderInfo user={photo.user} />
+                <UploaderInfo user={photo.user} photoCreatedAt={photo.created_at} photoUpdatedAt={photo.updated_at} />
               </div>
               {isLoggedIn ? (
-                <div className="flex flex-col justify-end items-end gap-5">
-                  {canManagePhoto(user?.role, isOwnerPhoto) && (
-                    <div className="mt-8 flex gap-3 justify-end">
-                      {' '}
-                      <button
-                        onClick={() => handleModalToggle('edit', true)}
-                        className="rounded-xl border border-gray-300 h-10 px-5 text-sm font-semibold text-gray-700 transition-all shadow-sm hover:shadow-md hover:bg-gray-50 flex items-center gap-2 cursor-pointer"
-                      >
-                        <EditIcon className="w-4 h-4" />
-                        Düzenle
-                      </button>
-                      <button
-                        onClick={() => handleModalToggle('delete', true)}
-                        className="rounded-xl border border-red-400 h-10 px-5 text-sm font-semibold text-red-600 transition-all shadow-sm hover:shadow-md hover:bg-red-400 hover:text-white flex items-center gap-2 cursor-pointer"
-                      >
-                        <DeleteIcon className="w-4 h-4" />
-                        Sil
-                      </button>
-                    </div>
-                  )}
+                <div className="flex flex-col md:flex-col justify-end items-end gap-5">
                   <RatingSection
                     photoId={photo._id}
                     accessToken={accessToken}
                     likeCount={photo.likeCount}
                     onLoginRequired={() => handleModalToggle('login', true)}
                   />
+                  <PhotoActions
+                    userRole={user?.role}
+                    isOwnerPhoto={isOwnerPhoto}
+                    handleModalToggle={handleModalToggle}
+                  />
                 </div>
               ) : (
-                <div className="flex flex-col justify-end items-end gap-5 mt-5">
-                  <div className="flex flex-col items-end justify-center p-4  rounded-xl text-right  max-w-sm w-full">
+                <div className="flex flex-col justify-end items-end gap-5 mt-3 md:mt-5">
+                  <div className="flex flex-col items-end justify-center p-4 rounded-xl text-right max-w-full w-full">
+                    {' '}
                     <p className="text-sm font-medium text-gray-800 mb-3">
                       Bu fotoğrafı oylamak ve beğenmek için aramıza katıl!
                     </p>
-                    <Button onClick={() => handleModalToggle('login', true)} variant="primary">
+                    <Button onClick={() => handleModalToggle('login', true)} variant="primary" className="w-full">
                       Hemen Giriş Yap
                     </Button>
                   </div>

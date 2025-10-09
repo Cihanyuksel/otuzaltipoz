@@ -21,7 +21,7 @@ export default function HeaderNavbar({ isScrolled }: HeaderNavbarProps) {
 
   return (
     <>
-      <nav className="hidden md:flex items-center justify-around space-x-10">
+      <nav className="hidden lg:flex items-center justify-around space-x-10">
         <ul className="flex items-center space-x-10 text-gray-600">
           {links.map((link) => {
             const isActive = pathname === link.href;

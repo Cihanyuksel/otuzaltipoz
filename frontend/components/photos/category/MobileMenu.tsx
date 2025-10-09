@@ -22,7 +22,7 @@ export default function MobileMenu({
   return (
     <div
       className={`
-        md:hidden 
+        lg:hidden 
         bg-white border-b border-gray-200 
         overflow-hidden 
         transition-all duration-300 ease-in-out

@@ -18,6 +18,7 @@ export type OmittedUser = Omit<
 export interface Photo {
   _id: string;
   created_at: string;
+  updated_at: string;
   description: string;
   photo_url: string;
   tags: string[];

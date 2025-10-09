@@ -14,7 +14,7 @@ export default function MobileHeader({
   MAX_CATEGORIES,
 }: MobileHeaderProps) {
   return (
-    <header className="sticky top-0 z-10 bg-white border-b border-gray-200 p-3 md:hidden">
+    <header className="sticky top-0 z-10 bg-white border-b border-gray-200 p-3 lg:hidden">
       <div className="flex items-center justify-between">
         <button
           className="flex items-center gap-2 text-lg font-semibold text-gray-700 hover:text-gray-900 transition-colors"

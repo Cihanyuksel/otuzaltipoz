@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 
 export const generateAccessToken = (user: { _id: string; role?: string }) => {
-  console.log("SIGN SECRET:", config.jwt.accessToken.secret);
   return jwt.sign(
     { userId: String(user._id), role: user.role },
     config.jwt.accessToken.secret,

@@ -84,7 +84,7 @@ function UserSection({ setDropdownOpen, handleDropdown, user, loading, dropdownO
           height={50}
           className="rounded-full object-cover aspect-square"
         />
-        <div className="hidden md:flex flex-col text-sm">
+        <div className="hidden xl:flex flex-col text-sm">
           <span className="font-bold text-gray-800 text-base">{user.username}</span>
           <span className="text-xs text-gray-500">{user.role == "user" ? 'User' : 'Admin'}</span>
         </div>

@@ -1,6 +1,6 @@
 export default function MobileSearchBar() {
   return (
-    <div className="w-full px-4">
+    <div className="md:hidden w-full px-4">
       <input
         type="text"
         placeholder="Fotoğraf ara..."

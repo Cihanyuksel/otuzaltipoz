@@ -130,7 +130,7 @@ const PhotoContainer = () => {
           MAX_CATEGORIES={MAX_CATEGORIES}
         />
         <main className="flex-1 overflow-y-auto p-4 bg-gray-100" id="scroll-container">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
             {isPhotosLoading || isDebouncing ? (
               <div className="col-span-full text-center py-8 text-gray-500">
                 <Loader />

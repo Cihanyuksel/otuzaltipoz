@@ -6,6 +6,7 @@ interface IPhoto {
   title: string;
   description?: string;
   created_at: Date;
+  updated_at: Date;
   tags?: string[];
   categories: Types.ObjectId[];
 }
@@ -38,6 +39,10 @@ const photoSchema = new Schema<IPhoto>({
     default: Date.now,
     index: true,
   },
+  updated_at: {
+    type: Date,
+    default: Date.now,
+  },
   tags: {
     type: [String],
     default: [],
@@ -52,6 +57,16 @@ const photoSchema = new Schema<IPhoto>({
       message: "Her fotoğraf en az 1, en fazla 3 kategori içermelidir.",
     },
   },
+});
+
+photoSchema.pre("save", function (next) {
+  this.updated_at = new Date();
+  next();
+});
+
+photoSchema.pre("findOneAndUpdate", function (next) {
+  this.set({ updated_at: new Date() });
+  next();
 });
 
 photoSchema.index({ user_id: 1, created_at: -1 });
