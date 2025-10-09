@@ -39,3 +39,10 @@ export const maxForgetPasswordRotations = createLimiter({
   max: 3,
   message: "Bu işlem için çok fazla deneme yaptınız. Lütfen bir saat sonra tekrar deneyin.",
 });
+
+export const maxContactRotations = createLimiter({
+  windowMs: 24 * 60 * 60 * 1000,
+  max: 5,
+  message: "Günlük iletişim mesajı limitine ulaşıldı. Lütfen yarın tekrar deneyin.",
+
+})

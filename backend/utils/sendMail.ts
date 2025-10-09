@@ -211,6 +211,7 @@ export const sendVerifyEmail = (
 </html>
     `,
   };
+
   console.log(verifyLink);
   globalTransporter?.sendMail(mailOptions, (error, info) => {
     if (error) {
@@ -222,5 +223,157 @@ export const sendVerifyEmail = (
         console.log("Preview URL:", previewUrl);
       }
     }
+  });
+};
+
+/**
+ * İletişim formu mesajını admin e-postasına gönderir
+ * @param {string} fullName - Gönderenin adı soyadı
+ * @param {string} email - Gönderenin e-posta adresi
+ * @param {string} phone - Gönderenin telefon numarası (opsiyonel)
+ * @param {string} message - Mesaj içeriği
+ */
+export const sendContactEmail = async (
+  fullName: string,
+  email: string,
+  phone: string | undefined,
+  message: string
+): Promise<void> => {
+  const mailOptions = {
+    from:
+      config.email.from || `"otuzaltıpoz" <${config.email.smtp.auth.username}>`,
+    to: "cihanyyuksel@gmail.com",
+    replyTo: email,
+    subject: `Yeni İletişim Formu Mesajı - ${fullName}`,
+    html: `
+    <!DOCTYPE html>
+    <html lang="tr">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Yeni İletişim Formu Mesajı</title>
+        <style>
+          body { margin: 0; padding: 0; background-color: #f4f7f6; font-family: Arial, sans-serif; }
+          table, td { border-collapse: collapse; }
+          
+          @media only screen and (max-width: 600px) {
+            .full-width { width: 100% !important; }
+            .content-padding { padding: 20px !important; }
+          }
+        </style>
+      </head>
+      <body style="margin: 0; padding: 0; background-color: #f4f7f6;">
+        <center>
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f7f6;">
+            <tr>
+              <td align="center" style="padding: 20px 0;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #dddddd; border-radius: 4px;">
+                  
+                  <!-- Header -->
+                  <tr>
+                    <td align="left" style="padding: 20px 30px; border-bottom: 1px solid #eeeeee; background-color: #108c40;">
+                      <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: bold;">
+                        Yeni İletişim Formu Mesajı
+                      </h1>
+                    </td>
+                  </tr>
+                  
+                  <!-- Content -->
+                  <tr>
+                    <td style="padding: 30px; color: #333333;">
+                      <h2 style="color: #108c40; margin: 0 0 20px 0; font-size: 18px;">
+                        Gönderen Bilgileri
+                      </h2>
+                      
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px;">
+                        <tr>
+                          <td style="padding: 8px 0; color: #666; font-weight: bold; width: 120px;">Ad Soyad:</td>
+                          <td style="padding: 8px 0; color: #333;">${fullName}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #666; font-weight: bold;">E-posta:</td>
+                          <td style="padding: 8px 0;">
+                            <a href="mailto:${email}" style="color: #108c40; text-decoration: none;">
+                              ${email}
+                            </a>
+                          </td>
+                        </tr>
+                        ${
+                          phone
+                            ? `
+                        <tr>
+                          <td style="padding: 8px 0; color: #666; font-weight: bold;">Telefon:</td>
+                          <td style="padding: 8px 0; color: #333;">
+                            <a href="tel:${phone}" style="color: #108c40; text-decoration: none;">
+                              ${phone}
+                            </a>
+                          </td>
+                        </tr>
+                        `
+                            : ""
+                        }
+                      </table>
+                      
+                      <h2 style="color: #108c40; margin: 0 0 15px 0; font-size: 18px;">
+                        Mesaj İçeriği
+                      </h2>
+                      
+                      <div style="background-color: #f9f9f9; border-left: 4px solid #108c40; padding: 15px 20px; margin-bottom: 25px; border-radius: 4px;">
+                        <p style="color: #333; line-height: 1.6; font-size: 15px; margin: 0; white-space: pre-wrap;">
+${message}
+                        </p>
+                      </div>
+                      
+                      <p style="color: #999; font-size: 12px; margin: 0; font-style: italic;">
+                        💡 Bu mesaja cevap vermek için yukarıdaki e-posta adresine tıklayabilir veya "Yanıtla" butonunu kullanabilirsiniz.
+                      </p>
+                    </td>
+                  </tr>
+                  
+                  <!-- Footer -->
+                  <tr>
+                    <td style="border-top: 1px solid #eeeeee; padding: 20px 30px; background-color: #fcfcfc;">
+                      <p style="color: #999; font-size: 12px; margin: 0; text-align: center;">
+                        Bu mesaj otuzaltıpoz iletişim formu üzerinden gönderilmiştir.
+                      </p>
+                      <p style="color: #999; font-size: 11px; margin: 5px 0 0 0; text-align: center;">
+                        Gönderim Zamanı: ${new Date().toLocaleString("tr-TR", {
+                          timeZone: "Europe/Istanbul",
+                        })}
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </center>
+      </body>
+    </html>
+    `,
+  };
+
+  console.log(`Sending contact form message from: ${email}`);
+
+  return new Promise((resolve, reject) => {
+    if (!globalTransporter) {
+      console.error("Email transporter not initialized");
+      reject(new Error("Email service is not available"));
+      return;
+    }
+
+    globalTransporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending contact email:", error);
+        reject(error);
+      } else {
+        console.log("Contact email sent successfully:", info.response);
+        const previewUrl = nodemailer.getTestMessageUrl(info);
+        if (previewUrl) {
+          console.log("Preview URL:", previewUrl);
+        }
+        resolve();
+      }
+    });
   });
 };

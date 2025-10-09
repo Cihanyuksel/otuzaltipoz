@@ -78,11 +78,11 @@ const PhotoDetail = () => {
 
   return (
     <section
-      className="w-full flex justify-center py-5 bg-neutral-100 text-gray-800 min-h-screen px-4 md:px-0"
+      className="w-full flex justify-center py-5 bg-neutral-100 text-gray-800 min-h-screen 2xl:min-h-4/5 px-4 md:px-0"
       style={{ fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif' }}
     >
-      <div className="w-full max-w-5xl">
-        <div className="bg-white shadow-sm">
+      <div className="w-full  max-w-6xl 2xl:max-w-4/5">
+        <div className="bg-white p-10 shadow-sm">
           <PhotoImage photoUrl={photo.photo_url} title={photo.title} />
           <div className="w-full px-4 md:pt-5  md:px-10">
             <div className="grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-3">

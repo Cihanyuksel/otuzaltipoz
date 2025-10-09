@@ -42,11 +42,7 @@ export const authService = {
   //--------------------------------------------------------------------------------------------\\
   refresh: async (): Promise<AuthResponse['data']> => {
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}${AUTH_PATHS.REFRESH}`,
-        {},
-        { withCredentials: true }
-      );
+      const response = await axios.post(`${API_BASE_URL}${AUTH_PATHS.REFRESH}`, {}, { withCredentials: true });
       return response.data;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Token yenilenemedi';
@@ -84,6 +80,16 @@ export const authService = {
       return response.data;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Şifre sıfırlama başarısız oldu.';
+      throw new Error(errorMessage);
+    }
+  },
+  //--------------------------------------------------------------------------------------------\\
+  contactMail: async (data: any): Promise<AuthResponse> => {
+    try {
+      const response = await axiosInstance.post(AUTH_PATHS.CONTACT, data);
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Mesaj gönderilemedi, lütfen tekrar deneyin.';
       throw new Error(errorMessage);
     }
   },

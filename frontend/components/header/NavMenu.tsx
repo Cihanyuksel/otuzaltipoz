@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { IoIosInformationCircleOutline as InformationCircleIcon } from 'react-icons/io';
+import { IoIosInformationCircleOutline as InformationCircleIcon, IoIosContacts as ContactIcon } from 'react-icons/io';
 import { IoHomeOutline as HomeIcon } from 'react-icons/io5';
 
 import { MdMonochromePhotos as PhotoIcon } from 'react-icons/md';
@@ -17,6 +17,7 @@ export default function HeaderNavbar({ isScrolled }: HeaderNavbarProps) {
     { name: 'Anasayfa', href: '/', icon: HomeIcon },
     { name: 'Fotoğraflar', href: '/photos', icon: PhotoIcon },
     { name: 'Hakkımızda', href: '/about', icon: InformationCircleIcon },
+    { name: 'İletişim', href: '/contact', icon: ContactIcon },
   ];
 
   return (

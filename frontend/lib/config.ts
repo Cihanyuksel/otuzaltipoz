@@ -1,11 +1,15 @@
 export const API_BASE_URL: string = 'http://localhost:4000/api/v1';
 
+//----------------------------------------------------------------//
+//----------------------------TYPES-------------------------------//
+//----------------------------------------------------------------//
 interface AuthPaths {
   LOGIN: string;
   LOGOUT: string;
   SIGNUP: string;
   REFRESH: string;
   FORGOT_PASSWORD: string;
+  CONTACT: string;
   RESET_PASSWORD: (token: string) => string;
   VERIFY_EMAIL: (token: string) => string;
 }
@@ -33,12 +37,16 @@ interface CommentPaths {
   DELETE_COMMENT: (id: string) => string;
 }
 
+//----------------------------------------------------------------//
+//----------------------------PATH-------------------------------//
+//----------------------------------------------------------------//
 export const AUTH_PATHS: AuthPaths = {
   LOGIN: '/auth/login',
   LOGOUT: '/auth/logout',
   SIGNUP: '/auth/signup',
   REFRESH: '/auth/refresh',
   FORGOT_PASSWORD: '/auth/forgot-password',
+  CONTACT: '/auth/contact',
   RESET_PASSWORD: (token: string) => `/auth/reset-password?token=${token}`,
   VERIFY_EMAIL: (token: string) => `/auth/verify-email?token=${token}`,
 };

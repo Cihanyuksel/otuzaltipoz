@@ -100,7 +100,7 @@ export default function CommentItem({
         alt={`${comment.user.username} Profil Resmi`}
         width={40}
         height={40}
-        className="h-10 w-10 object-cover flex-shrink-0 rounded-full"
+        className="h-8 w-8 lg:h-12 lg:w-12  object-cover flex-shrink-0 rounded-full"
       />
       <div className="flex-1">
         <div className="bg-gray-100 rounded-lg p-3">

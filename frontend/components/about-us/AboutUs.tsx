@@ -23,8 +23,8 @@ export default function AboutUs() {
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-3">Hikayemiz</h2>
                   <p>
-                    2020'de bir grup tutkulu fotoğrafçı ve teknoloji meraklısı tarafından kurulan
-                    PhotoShare, ortak bir vizyondan doğdu: görsel ifade için daha kapsayıcı ve
+                    2025'de bir grup tutkulu fotoğrafçı ve teknoloji meraklısı tarafından kurulan
+                    Otuzaltıpoz, ortak bir vizyondan doğdu: görsel ifade için daha kapsayıcı ve
                     dinamik bir platform oluşturmak. Sadece olağanüstü fotoğrafları sergilemekle
                     kalmayıp, aynı zamanda yaratıcılar arasında anlamlı etkileşimleri ve
                     işbirliklerini teşvik eden bir alana olan ihtiyacı fark ettik.
@@ -67,7 +67,7 @@ export default function AboutUs() {
             <div className="bg-gray-50 rounded-lg p-8 md:p-12 text-center">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Size Neler Sunuyoruz?</h2>
               <p className="max-w-3xl mx-auto text-gray-600 mb-8">
-                PhotoShare, fotoğrafçılık yolculuğunuzu bir üst seviyeye taşımak için tasarlanmış
+                Otuzaltıpoz, fotoğrafçılık yolculuğunuzu bir üst seviyeye taşımak için tasarlanmış
                 bir dizi araç ve özellik sunar:
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

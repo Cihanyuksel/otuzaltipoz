@@ -12,9 +12,7 @@ const photoEditSchema = z.object({
     .min(10, { message: 'Açıklama en az 10 karakter olmalıdır.' })
     .max(300, { message: 'Açıklama en fazla 300 karakter olabilir.' }),
 
-  tags: z
-    .string()
-    .optional(),
+  tags: z.string().optional(),
 });
 
 type PhotoEditFormValues = z.infer<typeof photoEditSchema>;
@@ -30,9 +28,7 @@ const photoUploadSchema = z.object({
     .min(10, { message: 'Açıklama en az 10 karakter olmalıdır.' })
     .max(300, { message: 'Açıklama en fazla 300 karakter olabilir.' }),
 
-  tags: z
-    .string()
-    .optional(),
+  tags: z.string().optional(),
 
   photo: z.any().refine((files) => files?.length === 1, 'Bir fotoğraf yüklemeniz gerekmektedir.'),
 });
@@ -88,5 +84,14 @@ const registerSchema = z
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export { photoEditSchema, photoUploadSchema, loginSchema, registerSchema };
-export type { PhotoEditFormValues, PhotoUploadFormValues, LoginFormValues, RegisterFormValues };
+const contactSchema = z.object({
+  fullName: z.string().min(2, 'Ad Soyad en az 2 karakter olmalı.').max(50, 'Ad Soyad en fazla 50 karakter olabilir.'),
+  email: z.string().email('Geçerli bir e-posta adresi girin.'),
+  phone: z.string().optional(),
+  message: z.string().min(10, 'Mesaj en az 10 karakter olmalı.').max(500, 'Mesaj en fazla 500 karakter olabilir.'),
+});
+
+type ContactFormValues = z.infer<typeof contactSchema>;
+
+export { photoEditSchema, photoUploadSchema, loginSchema, registerSchema, contactSchema };
+export type { PhotoEditFormValues, PhotoUploadFormValues, LoginFormValues, RegisterFormValues, ContactFormValues };

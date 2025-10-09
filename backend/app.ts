@@ -1,25 +1,29 @@
+//third-party
 import dotenv from "dotenv";
 dotenv.config();
 import express, { type Application } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
-//routes
-import userRouter from "./routes/userRoutes";
-import authRouter from "./routes/authRoutes";
-import photoRouter from "./routes/photoRoutes";
-import commentRouter from "./routes/commentRoutes";
-import likeRouter from "./routes/likeRoutes";
-import ratingRouter from "./routes/ratingRoutes";
-import categoryRouter from "./routes/categoryRoutes";
-//middleware and config
-import { globalErrorHandler } from "./middleware/errorHandler";
-import { config } from "./config/config";
+//routes and limiter
 import {
   maxRefreshTokenRotations,
   maxForgetPasswordRotations,
   maxLoginRotations,
+  maxContactRotations,
 } from "./middleware/authLimiter";
+import {
+  authRouter,
+  categoryRouter,
+  commentRouter,
+  likeRouter,
+  photoRouter,
+  ratingRouter,
+  userRouter,
+} from "./routes";
+//middleware and config
+import { globalErrorHandler } from "./middleware/errorHandler";
+import { config } from "./config/config";
 
 const app: Application = express();
 
@@ -40,6 +44,7 @@ if (config.node_env === "production") {
   app.use("/api/v1/auth/refresh", maxRefreshTokenRotations);
   app.use("/api/v1/auth/login", maxLoginRotations);
   app.use("/api/v1/auth/forgot-password", maxForgetPasswordRotations);
+  app.use("/api/v1/auth/contact", maxContactRotations);
 }
 
 // Routes
