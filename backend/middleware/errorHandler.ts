@@ -1,16 +1,45 @@
 import { Request, Response, NextFunction } from "express";
+import { MulterError } from "multer";
 import { AppError } from "../utils/AppError";
 
 export const globalErrorHandler = (
-  err: Error | AppError,
+  err: Error | MulterError | AppError,
   _req: Request,
   res: Response,
   _next: NextFunction
 ) => {
-  const isAppError = err instanceof AppError;
+  let statusCode = 500;
+  let message = "Sunucu hatası! Lütfen tekrar deneyin.";
 
-  const statusCode = isAppError ? err.statusCode : 500;
-  const message = isAppError ? err.message : "Something went wrong";
+  if (err instanceof AppError) {
+    statusCode = err.statusCode;
+    message = err.message;
+  }
+  else if (err instanceof MulterError) {
+    statusCode = 400;
+    
+    if (err.code === "LIMIT_FILE_SIZE") {
+      message = "Dosya boyutu çok büyük! Maksimum 5MB yüklenebilir.";
+    } else if (err.code === "LIMIT_FILE_COUNT") {
+      message = "Çok fazla dosya yüklendi!";
+    } else if (err.code === "LIMIT_UNEXPECTED_FILE") {
+      message = "Beklenmeyen dosya alanı!";
+    } else {
+      message = `Dosya yükleme hatası: ${err.message}`;
+    }
+  }
+  else if (err instanceof Error) {
+    message = err.message;
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    return res.status(statusCode).json({
+      status: "error",
+      message,
+      error: err,
+      stack: err.stack,
+    });
+  }
 
   res.status(statusCode).json({
     status: "error",

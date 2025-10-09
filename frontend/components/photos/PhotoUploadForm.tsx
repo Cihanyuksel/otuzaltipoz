@@ -33,9 +33,8 @@ export default function PhotoUploadForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     reset,
-    setValue,
   } = useForm<PhotoUploadFormValues>({
     resolver: zodResolver(photoUploadSchema),
   });
@@ -118,7 +117,6 @@ export default function PhotoUploadForm() {
     if (data.tags) {
       formData.append('tags', data.tags);
     }
-    // Kategorileri virgülle ayırarak ekle
     formData.append('categories', selectedCategories.join(','));
     formData.append('photo', data.photo[0]);
 

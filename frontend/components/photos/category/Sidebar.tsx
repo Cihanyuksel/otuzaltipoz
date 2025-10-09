@@ -42,19 +42,19 @@ export default function Sidebar({
         }`}
       >
         {isSidebarOpen && selectedCategories.length > 0 && (
-          <span className="bg-green-500 text-white text-xs font-medium tracking-wider px-3 py-1.5 rounded-md shadow-md">
+          <span className="bg-[#ef7464] text-white text-xs font-medium tracking-wider px-3 py-1.5 rounded-md shadow-md">
             {selectedCategories.length}/{MAX_CATEGORIES}
           </span>
         )}
 
         <div
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="cursor-pointer p-1 rounded-full hover:bg-gray-100 transition duration-150"
+          className="cursor-pointer p-1"
         >
           {isSidebarOpen ? (
-            <CloseIcon size={32} className="text-green-600 hover:text-green-700" />
+            <CloseIcon size={32} className="text-[#ef7464] hover:text-[#ef7464]/60" />
           ) : (
-            <MenuIcon size={20} className="text-green-600 hover:text-green-700" />
+            <MenuIcon size={20} className="text-gray-500 hover:text-gray-500/60" />
           )}
         </div>
       </div>
@@ -64,7 +64,7 @@ export default function Sidebar({
           {selectedCategories.map((category) => (
             <div
               key={category}
-              className="flex items-center bg-green-500 text-white text-xs px-2 py-1 rounded-full shadow-sm"
+              className="flex items-center bg-[#ef7464] text-white text-xs px-2 py-1 rounded-full shadow-sm"
             >
               {category}
               <button
