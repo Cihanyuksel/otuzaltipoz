@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
+import AnimatedSection from '../common/animated-section';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -76,9 +77,13 @@ export default function Header() {
 
   return (
     <header className={headerClasses}>
-      <Logo isScrolled={isScrolled}  />
+      <Logo isScrolled={isScrolled} />
       <NavMenu isScrolled={isScrolled} />
-      {pathname === '/photos' && <SearchBar isScrolled={isScrolled} />}
+      {pathname === '/photos' && (
+        <AnimatedSection delay={10}>
+          <SearchBar isScrolled={isScrolled} />
+        </AnimatedSection>
+      )}
       <UserSection {...userProps} />
       <MobileMenu {...mobileMenuProps} />
     </header>

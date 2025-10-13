@@ -1,588 +1,588 @@
-[
-  {
-    "id": "1",
-    "name": "Ara Güler",
-    "slug": "ara-guler",
-    "turu": "Gazeteci foto muhabiri ve sokak fotoğrafçısı",
-    "short_biography": "1928 doğumlu Ara Güler, Türkiye'nin en ünlü foto muhabirlerinden biridir. \"İstanbul'un Gözü\" olarak da anılmıştır.",
-    "biography": "Ara Güler (1928-2018), ulusal ve uluslararası alanda tanınmış bir foto muhabiri ve fotoğraf sanatçısıdır. İstanbul’da doğan Güler, genç yaşta sinema ve tiyatro ile ilgilenmiş, ardından foto muhabiri olmaya karar vererek gazeteciliğe başlamıştır. 1950’lerden itibaren Time, Life, Paris Match ve Magnum Photos gibi prestijli yayınlarda çalışmış, Nuh’un Gemisi, Nemrut Dağı ve Aphrodisias gibi önemli röportajlarla tanınmıştır. İngiltere’de dünyanın en iyi fotoğrafçılarından biri olarak gösterilmiş, uluslararası sergiler açmış ve birçok ünlü kişiyle çalışmıştır. Sanat, mimari ve kültürel konulardaki fotoğrafları dünya çapında yayınlanmıştır. Ara Güler, sayısız ödül almış ve 2018’de İstanbul’da 90 yaşında vefat etmiştir.",
-    "photos": [
-      {
-        "id": "1",
-        "title": "Afrika Karnavalı",
-        "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
-        "url": "/photographers-portfolio/ara-guler/african-carnaval.jpg"
-      },
-      {
-        "id": "2",
-        "title": "Yasar Kemal",
-        "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
-        "url": "/photographers-portfolio/ara-guler/yasar-kemal.jpg"
-      },
-      {
-        "id": "3",
-        "title": "İstanbul-1",
-        "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
-        "url": "/photographers-portfolio/ara-guler/istanbul-1.jpg"
-      },
-      {
-        "id": "4",
-        "title": "Nazım Hikmet",
-        "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
-        "url": "/photographers-portfolio/ara-guler/nazim-hikmet.jpg"
-      },
-      {
-        "id": "5",
-        "title": "İstanbul-2",
-        "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
-        "url": "/photographers-portfolio/ara-guler/istanbul-2.jpg"
-      },
-      {
-        "id": "6",
-        "title": "İstanbul-3",
-        "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
-        "url": "/photographers-portfolio/ara-guler/istanbul-3.jpg"
-      },
-      {
-        "id": "7",
-        "title": "Afrodisias",
-        "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
-        "url": "/photographers-portfolio/ara-guler/afrodisias.jpg"
-      },
-      {
-        "id": "8",
-        "title": "Anadolu'dan İnsan Manzaları",
-        "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
-        "url": "/photographers-portfolio/ara-guler/anatolian-people.jpg"
-      },
-      {
-        "id": "9",
-        "title": "Hindistan'dan İnsan Manzaları",
-        "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
-        "url": "/photographers-portfolio/ara-guler/indian-people.jpg"
-      },
-      {
-        "id": "10",
-        "title": "Aşık Veysel",
-        "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
-        "url": "/photographers-portfolio/ara-guler/asik-veysel.jpg"
-      },
-      {
-        "id": "11",
-        "title": "İstanbul-4",
-        "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
-        "url": "/photographers-portfolio/ara-guler/istanbul-4.jpg"
-      },
-      {
-        "id": "12",
-        "title": "İstanbul-5",
-        "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
-        "url": "/photographers-portfolio/ara-guler/istanbul-5.jpg"
-      }
-    ],
-    "avatar": "/photographers/ara-guler.jpeg",
-    "birthdate": 1928,
-    "deathdate": 2018
-  },
-  {
-    "id": "3",
-    "name": "Semiha Es",
-    "slug": "semiha-es",
-    "turu": "Savaş muhabiri ve fotoğrafçı",
-    "short_biography": "1912-2012 yılları arasında yaşamış Semiha Es, Türkiye'nin ilk kadın savaş muhabiri ve fotoğrafçısıdır. Kore Savaşı sırasında Türkiye adına görev yaparak tarihe geçmiştir.",
-    "biography": "Semiha Es, ünlü gazeteci Hikmet Feridun Es'in eşidir. Eşinin röportaj gezilerine katılarak fotoğrafçılığı öğrenmeye başladı ve 1950'de Hürriyet Gazetesi için Kore Savaşı'nı belgeledi. Daha sonra Tokyo'daki binicilik şampiyonasını ve diğer uluslararası spor etkinliklerini fotoğrafladı. 99 yaşında İstanbul'da vefat eden Es, öncü çalışmalarıyla hafızalarda kalmıştır.",
-    "photos": [
-      {
-        "id": "1",
-        "title": "Kore Savaşı-1",
-        "url": "/photographers-portfolio/semiha-es/1.jpg"
-      },
-      {
-        "id": "2",
-        "title": "Kore Savaşı-2",
-        "url": "/photographers-portfolio/semiha-es/2.jpg"
-      },
-      {
-        "id": "3",
-        "title": "Kore Savaşı-3",
-        "url": "/photographers-portfolio/semiha-es/3.jpg"
-      }
-    ],
-    "avatar": "/photographers/semiha-es.jpg",
-    "birthdate": 1912,
-    "deathdate": 2012
-  },
-  {
-    "id": "4",
-    "name": "Coşkun Aral",
-    "slug": "coskun-aral",
-    "turu": "Savaş muhabiri ve belgesel fotoğrafçısı",
-    "short_biography": "1956 doğumlu Coşkun Aral, uluslararası savaş bölgelerinde çalışmış ünlü bir Türk foto muhabiridir. Günaydın, Milliyet gibi gazetelerde çalıştıktan sonra pek çok çatışmayı belgeledi.",
-    "biography": "Coşkun Aral, 1956 yılında Siirt’te doğan ünlü Türk basın fotoğrafçısı ve savaş muhabiridir. Kariyerine 1974’te Günaydın ve Gün gazetelerinde başlayan Aral, 1977’deki kanlı 1 Mayıs olaylarını belgeleyerek Sipa Press aracılığıyla uluslararası basında tanınmıştır. Bu fotoğrafları Time ve Newsweek dergilerinde yayımlanmıştır. 1980’lerden itibaren Lübnan, İran, Irak, Afganistan, Kuzey İrlanda, Çad ve Uzakdoğu’daki savaşları görüntüleyen Aral, Time, Newsweek, Paris-Match, Stern ve Epoca gibi önde gelen dergiler için çalışmıştır.",
-    "photos": [
-      {
-        "id": "1",
-        "title": "Yemen'in Meşhur Çamurdan Gökdelenlerinde Çalışan Genç Bir Yemenli, Yemen.",
-        "url": "/photographers-portfolio/coskun-aral/1.png"
-      },
-      {
-        "id": "2",
-        "title": "Kulak Genişletme Uzak Kabilelerde Hala Sürdürülüyor, Borneo.",
-        "url": "/photographers-portfolio/coskun-aral/2.png"
-      },
-      {
-        "id": "3",
-        "title": "Kuzey Irak, 1990-1991 Göç.",
-        "url": "/photographers-portfolio/coskun-aral/3.png"
-      },
-      {
-        "id": "4",
-        "title": "Lübnan, 1982-1997",
-        "url": "/photographers-portfolio/coskun-aral/4.png"
-      },
-      {
-        "id": "5",
-        "title": "Afganistan, 1983-1996",
-        "url": "/photographers-portfolio/coskun-aral/5.png"
-      },
-      {
-        "id": "6",
-        "title": "Harablerin Arasında Koşuşan Çocuklu Bir Kadın, Lübnan, 1982-1997",
-        "url": "/photographers-portfolio/coskun-aral/6.png"
-      },
-      {
-        "id": "7",
-        "title": "Lübnan, 1982-1997 İsyan, Dua, Yakarış, Öfke.",
-        "url": "/photographers-portfolio/coskun-aral/7.png"
-      },
-      {
-        "id": "8",
-        "title": "Lübnan, 1982-1997 Kan.",
-        "url": "/photographers-portfolio/coskun-aral/8.png"
-      }
-    ],
-    "avatar": "/photographers/coskun-aral.jpg",
-    "birthdate": 1956,
-    "deathdate": null
-  },
-  {
-    "id": "5",
-    "name": "Sabit Kalfagil",
-    "slug": "sabit-kalfagil",
-    "turu": "Fotoğrafcı ve akademisyen",
-    "short_biography": "1934-1993 yılları arasında yaşamış Sabit Kalfagil, tanınmış bir Türk foto muhabiri ve fotoğraf eğitimcisidir. Balkanlar ve Çeçenistan gibi çatışma bölgelerinde çektiği karelerle bilinir.",
-    "biography": "Kalfagil, savaş ve belgesel fotoğrafçılığı konusunda uzun yıllar çalıştı. Çektiği savaş fotoğrafları dünya basınında yayımlandı, Türkiye'de fotoğrafçılık dersleri verdi. \"Fotoğrafın Yapısal Öğeleri\" gibi eserleri olan Kalfagil, Afganistan'da görev yaparken vefat etmiştir.",
-    "photos": [
-      {
-        "id": "1",
-        "title": "",
-        "url": "/photographers-portfolio/sabit-kalfagil/2.jpg"
-      },
-      {
-        "id": "2",
-        "title": "",
-        "url": "/photographers-portfolio/sabit-kalfagil/3.jpeg"
-      },
-      {
-        "id": "3",
-        "title": "",
-        "url": "/photographers-portfolio/sabit-kalfagil/4.jpeg"
-      },
-      {
-        "id": "4",
-        "title": "",
-        "url": "/photographers-portfolio/sabit-kalfagil/5.jpeg"
-      },
-      {
-        "id": "5",
-        "title": "",
-        "url": "/photographers-portfolio/sabit-kalfagil/6.jpeg"
-      },
-      {
-        "id": "6",
-        "title": "",
-        "url": "/photographers-portfolio/sabit-kalfagil/7.jpeg"
-      },
-      {
-        "id": "7",
-        "title": "",
-        "url": "/photographers-portfolio/sabit-kalfagil/8.jpg"
-      },
-      {
-        "id": "8",
-        "title": "",
-        "url": "/photographers-portfolio/sabit-kalfagil/9.jpg"
-      },
-      {
-        "id": "9",
-        "title": "",
-        "url": "/photographers-portfolio/sabit-kalfagil/10.jpg"
-      },
-      {
-        "id": "10",
-        "title": "",
-        "url": "/photographers-portfolio/sabit-kalfagil/1.jpg"
-      }
-    ],
-    "avatar": "/photographers/sabit-kalfagil.jpeg",
-    "birthdate": 1934,
-    "deathdate": 2017
-  },
-  {
-    "id": "6",
-    "name": "İzzet Keribar",
-    "slug": "izzet-keribar",
-    "turu": "Sanat fotoğrafçısı",
-    "short_biography": "1936 doğumlu İzzet Keribar, mimari ve kültürel miras fotoğrafçılığıyla tanınan köklü bir Türk sanatçısıdır. Genellikle şehir panoramaları ve mimari yapıların çekimleriyle bilinir.",
-    "biography": "Keribar, gençliğinde Kore'de Türk Tugayı ile fotoğraf çalışmaları yaparak ilk deneyimlerini kazandı. 1980 sonrasında fotoğraf dünyasına dönüş yaparak İstanbul ve Bursa gibi şehirlerin tarihi eserlerini belgeleyen projeler gerçekleştirdi. Uluslararası birçok sergi açan sanatçı, pek çok ödül kazanmış ve İstanbul Fotoğraf ve Sinema Amatörleri Derneği'nde onur üyeliği almıştır.",
-    "photos": [],
-    "avatar": "/photographers/izzet-keribar.jpg",
-    "birthdate": 1934,
-    "deathdate": 2017
-  },
-  {
-    "id": "7",
-    "name": "Robert Capa",
-    "slug": "robert-capa",
-    "turu": "Savaş fotoğrafçısı",
-    "short_biography": "1913-1954 yılları arasında yaşamış Robert Capa, ünlü bir Macar asıllı savaş foto muhabiridir. İspanya İç Savaşı, II. Dünya Savaşı ve Kore Savaşı gibi önemli çatışmaları belgeledi.",
-    "biography": "Gerçek adı Endre Ernö Friedmann olan Capa, Magnum Photos ajansının kurucularındandır. İspanya İç Savaşı'nda çektiği bir askerin ölüm anı fotoğrafı dünya çapında ikonik hale geldi. Normandiya Çıkarması'nı da belgeleyen Capa, 1954'te Vietnam'da çekim yaparken bir kara mayınına basarak yaşamını yitirdi.",
-    "photos": [
-      {
-        "id": "1",
-        "title": "İspanya İç Savaşı",
-        "url": "/photographers-portfolio/robert-capa/1.jpg"
-      },
-      {
-        "id": "2",
-        "title": "İspanya İç Savaşı",
-        "url": "/photographers-portfolio/robert-capa/2.jpg"
-      },
-      {
-        "id": "3",
-        "title": "Duvarda Kitap Okuyan Cumhuriyetçi Askerler, Madrid, İspanya",
-        "url": "/photographers-portfolio/robert-capa/3.jpg"
-      },
-      {
-        "id": "4",
-        "title": "Savaşın 1. Yıldönümü Kutlamaları, Hankou, Çin ",
-        "url": "/photographers-portfolio/robert-capa/4.jpg"
-      },
-      {
-        "id": "5",
-        "title": "Hava Saldırısı Sireni Esnasında Siviller, Bilbao, İspanya",
-        "url": "/photographers-portfolio/robert-capa/5.jpg"
-      },
-      {
-        "id": "6",
-        "title": "Aragón Cephesinde Trende El Sallayan Birlikler, Barcelona, İspanya",
-        "url": "/photographers-portfolio/robert-capa/6.jpg"
-      },
-      {
-        "id": "7",
-        "title": "İki Cumhuriyetçi Asker Birbirini Selamlıyor, Madrid, İspanya",
-        "url": "/photographers-portfolio/robert-capa/7.jpg"
-      },
-      {
-        "id": "8",
-        "title": "Mısır değirmeni önünde yumruklarını kaldıran tarım işçileri, Barcelona, İspanya",
-        "url": "/photographers-portfolio/robert-capa/8.jpg"
-      },
-      {
-        "id": "9",
-        "title": "Málaga’dan bir mülteci yatakların üzerinde oturuyor, Almería, İspanya",
-        "url": "/photographers-portfolio/robert-capa/9.jpg"
-      }
-    ],
-    "avatar": "/photographers/robert-capa.jpg",
-    "birthdate": 1913,
-    "deathdate": 1954
-  },
-  {
-    "id": "8",
-    "name": "Steve McCurry",
-    "slug": "steve-mccurry",
-    "turu": "Gazeteci fotoğrafçısı",
-    "short_biography": "1950 doğumlu Steve McCurry, National Geographic ve Time için çalışan ünlü bir Amerikalı foto muhabiridir. \"Afgan Kızı\" olarak bilinen ikonik portresiyle dünyaca tanınır.",
-    "biography": "McCurry, özellikle savaş ve çatışma bölgelerindeki insan portreleriyle bilinir. 1984'te Sovyetler Birliği'nin Afganistan işgalini belgeleyen fotoğraf ekibinin parçasıydı ve sınırı geçtikten sonra çektiği Afgan kızının fotoğrafı efsane oldu. Renkli insan portreleri ve etkileyici manzara kareleriyle birçok fotoğraf kitabı yayınlamıştır.",
-    "photos": [
-      
-      {
-        "id": "5",
-        "title": "",
-        "url": "/photographers-portfolio/steve-mccurry/5.jpg"
-      },
-      {
-        "id": "6",
-        "title": "",
-        "url": "/photographers-portfolio/steve-mccurry/6.jpg"
-      },
-      {
-        "id": "7",
-        "title": "",
-        "url": "/photographers-portfolio/steve-mccurry/7.jpg"
-      },
-      {
-        "id": "8",
-        "title": "",
-        "url": "/photographers-portfolio/steve-mccurry/8.jpg"
-      },
-      {
-        "id": "4",
-        "title": "",
-        "url": "/photographers-portfolio/steve-mccurry/4.jpg"
-      },
-      {
-        "id": "9",
-        "title": "",
-        "url": "/photographers-portfolio/steve-mccurry/9.jpg"
-      },
-      {
-        "id": "1",
-        "title": "",
-        "url": "/photographers-portfolio/steve-mccurry/1.jpg"
-      },
-      {
-        "id": "2",
-        "title": "",
-        "url": "/photographers-portfolio/steve-mccurry/2.jpg"
-      },
-      {
-        "id": "3",
-        "title": "",
-        "url": "/photographers-portfolio/steve-mccurry/3.jpg"
-      }
-    ],
-    "avatar": "/photographers/steve-mccurry.jpg",
-    "birthdate": 1950,
-    "deathdate": null
-  },
-  {
-    "id": "9",
-    "name": "Annie Leibovitz",
-    "slug": "annie-leibovitz",
-    "turu": "Portre ve moda fotoğrafçısı",
-    "short_biography": "1949 doğumlu Annie Leibovitz, Amerikalı ünlü bir portre fotoğrafçısıdır. Rolling Stone dergisi için çektiği müzisyen portreleri ile tanınmıştır.",
-    "biography": "Leibovitz, 1970'lerde Rolling Stone'un baş fotoğrafçısı olarak John Lennon ve Yoko Ono gibi ünlü çiftlerin unutulmaz portrelerini çekti. Daha sonra Vanity Fair için ünlülerin ve moda çekimlerinin portrelerini gerçekleştirdi. Dramatik pozları ve özenle kurgulanmış stüdyolarda çektiği fotoğrafları dünya çapında büyük beğeni topladı.",
-    "photos": [],
-    "avatar": "/photographers/annie-leibovitz.jpg",
-    "birthdate": 1949,
-    "deathdate": null
-  },
-  {
-    "id": "10",
-    "name": "Sebastião Salgado",
-    "slug": "sebastiao-salgado",
-    "turu": "Belgesel fotoğrafçısı",
-    "short_biography": "1944 doğumlu Sebastião Salgado, Brezilyalı ünlü belgesel fotoğrafçısıdır. Yoksulluk, göç gibi toplumsal konuları güçlü siyah beyaz karelerle yansıtır.",
-    "biography": "Salgado, 1970'lerde başladığı gazetecilik kariyerinden sonra belgesel fotoğrafçılığa yöneldi. \"Workers\" (İşçiler) adlı serisinde dünya işçilerinin yaşamını belgelemiş, \"Genesis\" adlı çalışmasıyla doğanın güzelliğine dikkat çekmiştir. Hasselblad Fotoğraf Ödülü gibi pek çok ödüle layık görülmüş, fotoğrafları uluslararası sergilerde yer almıştır.",
-    "photos": [],
-    "avatar": "/photographers/sebastião-salgado.jpg",
-    "birthdate": 1944,
-    "deathdate": 2025
-  },
-  {
-    "id": "11",
-    "name": "Henri Cartier-Bresson",
-    "slug": "henri-cartier-bresson",
-    "turu": "Sokak ve belgesel fotoğrafçısı",
-    "short_biography": "1908-2004 yılları arasında yaşamış Henri Cartier-Bresson, Fransız fotoğrafın efsane namelerinden biridir. \"Karar Anı\" kavramını ortaya atan sanatçı olarak bilinir.",
-    "biography": "Cartier-Bresson, 1947'de Magnum Photos'u kurarak fotoğraf dünyasına büyük katkı sağladı. İkinci Dünya Savaşı sırasında Normandiya Çıkarması'nı belgeleyen kareleri vardır. Seyahatleri boyunca insanın günlük yaşamdan anlık kareler yakalayan Cartier-Bresson, sessiz sedasız fakat derin etkili görüntüler ortaya koymuştur.",
-    "photos": [],
-    "avatar": "/photographers/henri-cartier-bresson.webp",
-    "birthdate": 1908,
-    "deathdate": 2004
-  },
-  {
-    "id": "12",
-    "name": "Dorothea Lange",
-    "slug": "dorothea-lange",
-    "turu": "Belgesel fotoğrafçısı",
-    "short_biography": "1895-1965 yılları arasında yaşamış Dorothea Lange, Amerikalı önemli bir belgesel fotoğrafçıdır. Büyük Buhran döneminin sembolü sayılan \"Göçmen Anne\" fotoğrafını çekmiştir.",
-    "biography": "Lange, özellikle 1930'larda Amerika'nın kırsal bölgelerinde çektiği dokunaklı fotoğraflarla tanındı. Farm Security Administration (FSA) için çalışarak göçmen ailelerin ve işçilerin yaşamlarını belgeledi. Eserleri, fotoğrafın toplumsal değişime tanıklık etme gücünü en iyi şekilde yansıtır.",
-    "photos": [],
-    "avatar": "/photographers/henri-cartier-bresson.jpeg",
-    "birthdate": 1895,
-    "deathdate": 1965
-  },
-  {
-    "id": "13",
-    "name": "Diane Arbus",
-    "slug": "diane-arbus",
-    "turu": "Portre fotoğrafçısı",
-    "short_biography": "1923-1971 yılları arasında yaşamış Diane Arbus, Amerikalı ünlü bir portre fotoğrafçısıdır. Özellikle toplumun marjinal gruplarını ve sıra dışı kişilerini fotoğraflamasıyla bilinir.",
-    "biography": "Arbus, New York sokaklarında egzotik karakterlerin portrelerini alarak dikkat çekti. Transseksüeller, sirkteki sanatçılar gibi normalin dışındaki insanları objektifine aldı. Çalışmaları, fotoğrafta empati ve cesaretli portre anlayışını vurgulayan önemli örnekler arasındadır.",
-    "photos": [],
-    "avatar": "/photographers/diane-arbus.jpg",
-    "birthdate": 1923,
-    "deathdate": 1971
-  },
-  {
-    "id": "14",
-    "name": "Helut Newton",
-    "slug": "helut-newton",
-    "turu": "Moda ve erotik fotoğrafçısı",
-    "short_biography": "1920-2004 yılları arasında yaşamış Helmut Newton, Alman asıllı moda fotoğrafçısıdır. Cesur, stilize ve biraz da erotik içeriğe sahip moda fotoğrafları ile ün kazanmıştır.",
-    "biography": "Newton, 1960'larda Paris'te Vogue için çalışarak ünlü modellik pozlarını yarattı. Fotoğraflarında genellikle yüksek kontrastlı siyah-beyaz tonlar ve güçlü kadın figürleri yer alır. \"Sie Kommen\" adlı fotoğraf serisi ona geniş şöhret kazandırdı ve moda dünyasında derin etkiler bıraktı.",
-    "photos": [],
-    "avatar": "/photographers/helmut-newton.webp",
-    "birthdate": 1920,
-    "deathdate": 2004
-  },
-  {
-    "id": "15",
-    "name": "Yousuf Karsh",
-    "slug": "yousuf-karsh",
-    "turu": "Portre fotoğrafçısı",
-    "short_biography": "1908-2002 yılları arasında yaşamış Yousuf Karsh, Ermeni asıllı Kanadalı portre fotoğrafçısıdır. Winston Churchill ve Albert Einstein gibi dünyaca ünlü liderlerin ikonik portrelerini çekmiştir.",
-    "biography": "Karsh, 20. yüzyılın en etkileyici portre sanatçılarından biridir. Stüdyosunda güçlü ışık ve gölge oyunlarıyla ünlülerin karakterlerini ortaya koydu. Churchill'in gravata saldırdığı o ikonik portresi gibi fotoğrafları, tarihî kişiliklerin unutulmaz imajını zihinlere kazımıştır.",
-    "photos": [],
-    "avatar": "/photographers/yousuf-karsh.jpg",
-    "birthdate": 1908,
-    "deathdate": 2002
-  },
-  {
-    "id": "16",
-    "name": "Malick Sidibé",
-    "slug": "malick-sidibe",
-    "turu": "Portre ve belgesel fotoğrafçısı",
-    "short_biography": "1935-2016 yılları arasında yaşamış Malili fotoğrafçı Malick Sidibé, özellikle 1960'lı yıllarda çektiği neşeli gençlik partisi ve gece hayatı fotoğraflarıyla tanınır.",
-    "biography": "Sidibé, Bamako'daki stüdyosunda gençlerin özgür ruhlu portrelerini çekti. Çektiği dans ve parti fotoğrafları dönemin sosyal atmosferini yansıttı. 2003'te Hasselblad Ödülü, 2007'de Venedik Bienali Altın Aslan'ını kazanarak sanat dünyasında prestijli başarılara imza attı.",
-    "photos": [],
-    "avatar": "/photographers/malick-sidibe.png",
-    "birthdate": 1935,
-    "deathdate": 2016
-  },
-  {
-    "id": "17",
-    "name": "Zanele Muholi",
-    "slug": "zanele-muholi",
-    "turu": "Görsel aktivist ve portre fotoğrafçısı",
-    "short_biography": "1972 doğumlu Zanele Muholi, Güney Afrikalı fotoğraf sanatçısı ve LGBT hakları aktivistidir. Siyah lezbiyen, gey ve trans bireylerin portrelerini çekerek görünürlük sağlamayı amaçlar.",
-    "biography": "Muholi, özellikle 'Faces and Phases' adlı projesiyle Güney Afrika'nın LGBT topluluğunu belgeledi. Çektiği portrelerde kişilerin kimlikleri ve hikayeleri ön planda tutulur. Fotoğrafları uluslararası sergilerde yer aldı ve insan haklarına dair farkındalığı artıran bir sanatçı olarak tanındı.",
-    "photos": [],
-    "avatar": "/photographers/zanele-muholi.jpeg",
-    "birthdate": 1972,
-    "deathdate": null
-  },
-  {
-    "id": "18",
-    "name": "Raghu Rai",
-    "slug": "raghu-rai",
-    "turu": "Gazeteci fotoğrafçısı",
-    "short_biography": "1942 doğumlu Raghu Rai, Hindistan'ın önde gelen fotoğraf sanatçılarındandır. Sokak fotoğrafçılığı ve belgesel tarzıyla Hindistan'ın günlük yaşamını yansıtır.",
-    "biography": "Rai, 1977'de Magnum Photos üyeliği kazanarak Hindistan'daki ilk foto muhabirlerinden oldu. Indira Gandhi'nin talimatıyla ülkedeki tüm bölgeleri fotoğrafladı. Çalışmalarında renkleri ustaca kullanır, Hindistan'ın çeşitliliğini ve insan hikâyelerini dünya çapında tanıttı.",
-    "photos": [],
-    "avatar": "/photographers/raghu-rai.jpeg",
-    "birthdate": 1942,
-    "deathdate": null
-  },
-  {
-    "id": "19",
-    "name": "Ansel Adams",
-    "slug": "ansel-adams",
-    "turu": "Doğa manzara fotoğrafçısı",
-    "short_biography": "1902-1984 yılları arasında yaşamış Ansel Adams, Amerikalı ünlü doğa fotoğrafçısıdır. Yosemite Ulusal Parkı'ndaki yüksek çözünürlüklü siyah-beyaz manzaralarıyla tanınır.",
-    "biography": "Adams, fotoğraf kompozisyonunda geliştirdiği \"Zone Sistemi\" ile ünlüdür. ABD Ulusal Parkları'nın doğal güzelliklerini etkileyici karelerle belgeledi. Çevre koruma hareketine de katkıda bulunan sanatçı, fotoğraflarıyla doğanın gücünü ve zarafetini izleyiciye aktardı.",
-    "photos": [],
-    "avatar": "/photographers/ansel-adams.jpg",
-    "birthdate": 1902,
-    "deathdate": 1984
-  },
-  {
-    "id": "20",
-    "name": "Mario Testino",
-    "slug": "mario-testino",
-    "turu": "Moda fotoğrafçısı",
-    "short_biography": "1954 doğumlu Mario Testino, Peru asıllı dünyaca ünlü moda fotoğrafçısıdır. Vogue ve Vanity Fair gibi büyük moda dergileri için çektiği kampanyalarla tanınır.",
-    "biography": "Testino, özellikle 1990'larda İngiliz kraliyet ailesinden Lady Diana dahil pek çok ünlünün portrelerini çekti. Cesur renk paleti ve dinamik kompozisyonları ile bilinir. Madonna, Kate Moss gibi ikonların stillerini fotoğrafik hale getiren Testino, moda dünyasında popüler kültürün simgeleri arasında yer aldı.",
-    "photos": [],
-    "avatar": "/photographers/mario-testino.webp",
-    "birthdate": 1954,
-    "deathdate": null
-  },
-  {
-    "id": "21",
-    "name": "Vivian Maier",
-    "slug": "vivian-maier",
-    "turu": "Sokak fotoğrafçısı",
-    "short_biography": "1926-2009 yılları arasında yaşamış Vivian Maier, Amerikalı sokak fotoğrafçısıdır. Çalışmaları ölümünden sonra ortaya çıkan ve büyük beğeni toplayan bir gizem olarak kalmıştır.",
-    "biography": "Maier, Chicago ve New York sokaklarını orta format kamerasıyla belgeledi. Çektiği siyah-beyaz fotoğraflarda sıradan günlük anların estetik bir yanı var. Hayatı boyunca fotoğraflarını hiç sergilemedi, 2000'lerde eve giren bir koleksiyoncu sayesinde eserleri keşfedildi ve dünya çapında tanındı.",
-    "photos": [],
-    "avatar": "/photographers/vivian-maier.jpg",
-    "birthdate": 1926,
-    "deathdate": 2009
-  },
-  {
-    "id": "22",
-    "name": "Margaret Bourke-White",
-    "slug": "margaret-bourke-white",
-    "turu": "Endüstri ve belgesel fotoğrafçısı",
-    "short_biography": "1904-1971 yılları arasında yaşamış Margaret Bourke-White, Amerikalı öncü bir fotoğrafçıdır. Ford fabrikaları ve Sovyet liderleri gibi önemli konuları belgeleyen çalışmalarıyla bilinir.",
-    "biography": "Bourke-White, Life dergisinin ilk foto muhabiri olarak görev yaptı. II. Dünya Savaşı sırasında cephede fotoğraflar çekti; Sovyet lideri Stalin'in fotoğrafını çekebilen tek yabancı sanatçı oldu. Endüstriyel ve savaş fotoğrafları dönemin ruhunu güçlü bir şekilde yansıtır.",
-    "photos": [],
-    "avatar": "/photographers/margaret-bourke-white.jpg",
-    "birthdate": 1904,
-    "deathdate": 1971
-  },
-  {
-    "id": "23",
-    "name": "Don McCullin",
-    "slug": "don-mccullin",
-    "turu": "Savaş muhabiri ve belgesel fotoğrafçısı",
-    "short_biography": "1935 doğumlu Don McCullin, İngiliz savaş fotoğrafçısıdır. Vietnam, Kuzey İrlanda gibi çatışma bölgelerindeki sert kareleriyle tanınır.",
-    "biography": "McCullin, işçi sınıfı mahallelerinde büyüdükten sonra gazeteciliğe fotoğrafla adım attı. 1960'larda Aden, Vietnam ve Orta Doğu savaşlarını belgeledi; siyah-beyaz karelerindeki insani ve çarpıcı anlatım gücüyle tanındı. Birçok prestijli ödül aldı ve günümüzde de insani konular üzerine fotoğraflar çekmeye devam ediyor.",
-    "photos": [],
-    "avatar": "/photographers/don-mccullin.webp",
-    "birthdate": 1935,
-    "deathdate": null
-  },
-  {
-    "id": "24",
-    "name": "Daidō Moriyama",
-    "slug": "diado-moriyama",
-    "turu": "Sanat ve sokak fotoğrafçısı",
-    "short_biography": "1938 doğumlu Daidō Moriyama, Japon sanatçı ve fotoğrafçıdır. Sokakların sıradan anlarını yüksek kontrastlı siyah-beyaz karelerle yakalamasıyla ünlüdür.",
-    "biography": "Moriyama, Tokyo'nun kaotik sokaklarında çektiği eserleriyle Japon fotoğrafında yeni bir akım başlattı. Çalışmaları genellikle grenli ve flu görünümüyle dikkat çeker. Fotoğrafları uluslararası sanat galerilerinde sergilenen Moriyama, erotik grotesk tarzında özgün bir üslup geliştirmiştir.",
-    "photos": [],
-    "avatar": "/photographers/diado-moriyama.jpg",
-    "birthdate": 1938,
-    "deathdate": null
-  },
-  {
-    "id": "25",
-    "name": "Jimmy Nelson",
-    "slug": "jimmy-nelson",
-    "turu": "Belgesel fotoğrafçısı",
-    "short_biography": "1967 doğumlu Jimmy Nelson, İngiliz gezgin ve fotoğrafçıdır. Uzak yerlerde yaşayan kabileleri çektiği etkileyici portre serileriyle tanınır.",
-    "biography": "Nelson, Amazon ormanlarından Himalaya Dağları'na kadar pek çok uzak bölgeye giderek izole toplulukların kültürünü belgelemiştir. \"Before They Pass Away\" adlı kitabı geleneksel kabilelerin yaşam tarzını detaylı biçimde aktarır. Canlı renkler ve büyük boyutlu fotoğraflar kullanan Nelson, unutulmaya yüz tutmuş kültürlere dikkat çekmeyi amaçlar.",
-    "photos": [],
-    "avatar": "/photographers/jimmy-nelson.jpg",
-    "birthdate": 1967,
-    "deathdate": null
-  },
-  {
-    "id": "26",
-    "name": "Nick Ut",
-    "slug": "nick-ut",
-    "turu": "Savaş muhabiri",
-    "short_biography": "1951 doğumlu Nick Ut, Vietnam doğumlu Amerikalı savaş foto muhabiridir. 1972'de çektiği \"Napalm Kızı\" fotoğrafıyla Pulitzer Ödülü kazanmıştır.",
-    "biography": "Ut, Vietnam Savaşı sırasında Associated Press için görev yaptı. Dünyaca ünlü 'Napalm Kızı' fotoğrafında, patlayan napalm gazından kaçan bir kız çocuğunun görüntüsünü yakaladı. Bu kare, savaşın dehşetini küresel çapta gösteren bir simge oldu. Ut daha sonra ABD vatandaşı olarak fotoğraflarına devam etti.",
-    "photos": [],
-    "avatar": "/photographers/nick-ut.jpeg",
-    "birthdate": 1951,
-    "deathdate": null
-  },
-  {
-    "id": "27",
-    "name": "Reza Deghati",
-    "slug": "reza-deghati",
-    "turu": "Belgesel fotoğrafçısı",
-    "short_biography": "1952 doğumlu Reza Deghati, İran doğumlu dünyaca ünlü bir belgesel fotoğrafçısıdır. Afganistan'daki mülteci kamplarını belgeleyen etkileyici fotoğrafları ile tanınır.",
-    "biography": "Reza, National Geographic için Orta Doğu ve Güney Asya'da pek çok projenin fotoğrafını çekti. Özellikle Afgan mültecilerin hayatına dair görselleriyle dikkat çekti. Aynı zamanda fotoğraf eğitimi organizasyonları kurarak, gelişmekte olan ülkelerde fotoğrafçılığı desteklemektedir.",
-    "photos": [],
-    "avatar": "/photographers/reza-deghati.jpg",
-    "birthdate": 1952,
-    "deathdate": null
-  }
-]
+  [
+    {
+      "id": "1",
+      "name": "Ara Güler",
+      "slug": "ara-guler",
+      "turu": "Gazeteci foto muhabiri ve sokak fotoğrafçısı",
+      "short_biography": "1928 doğumlu Ara Güler, Türkiye'nin en ünlü foto muhabirlerinden biridir. \"İstanbul'un Gözü\" olarak da anılmıştır.",
+      "biography": "Ara Güler (1928-2018), ulusal ve uluslararası alanda tanınmış bir foto muhabiri ve fotoğraf sanatçısıdır. İstanbul’da doğan Güler, genç yaşta sinema ve tiyatro ile ilgilenmiş, ardından foto muhabiri olmaya karar vererek gazeteciliğe başlamıştır. 1950’lerden itibaren Time, Life, Paris Match ve Magnum Photos gibi prestijli yayınlarda çalışmış, Nuh’un Gemisi, Nemrut Dağı ve Aphrodisias gibi önemli röportajlarla tanınmıştır. İngiltere’de dünyanın en iyi fotoğrafçılarından biri olarak gösterilmiş, uluslararası sergiler açmış ve birçok ünlü kişiyle çalışmıştır. Sanat, mimari ve kültürel konulardaki fotoğrafları dünya çapında yayınlanmıştır. Ara Güler, sayısız ödül almış ve 2018’de İstanbul’da 90 yaşında vefat etmiştir.",
+      "photos": [
+        {
+          "id": "1",
+          "title": "Afrika Karnavalı",
+          "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
+          "url": "/photographers-portfolio/ara-guler/african-carnaval.jpg"
+        },
+        {
+          "id": "2",
+          "title": "Yasar Kemal",
+          "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
+          "url": "/photographers-portfolio/ara-guler/yasar-kemal.jpg"
+        },
+        {
+          "id": "3",
+          "title": "İstanbul-1",
+          "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
+          "url": "/photographers-portfolio/ara-guler/istanbul-1.jpg"
+        },
+        {
+          "id": "4",
+          "title": "Nazım Hikmet",
+          "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
+          "url": "/photographers-portfolio/ara-guler/nazim-hikmet.jpg"
+        },
+        {
+          "id": "5",
+          "title": "İstanbul-2",
+          "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
+          "url": "/photographers-portfolio/ara-guler/istanbul-2.jpg"
+        },
+        {
+          "id": "6",
+          "title": "İstanbul-3",
+          "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
+          "url": "/photographers-portfolio/ara-guler/istanbul-3.jpg"
+        },
+        {
+          "id": "7",
+          "title": "Afrodisias",
+          "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
+          "url": "/photographers-portfolio/ara-guler/afrodisias.jpg"
+        },
+        {
+          "id": "8",
+          "title": "Anadolu'dan İnsan Manzaları",
+          "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
+          "url": "/photographers-portfolio/ara-guler/anatolian-people.jpg"
+        },
+        {
+          "id": "9",
+          "title": "Hindistan'dan İnsan Manzaları",
+          "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
+          "url": "/photographers-portfolio/ara-guler/indian-people.jpg"
+        },
+        {
+          "id": "10",
+          "title": "Aşık Veysel",
+          "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
+          "url": "/photographers-portfolio/ara-guler/asik-veysel.jpg"
+        },
+        {
+          "id": "11",
+          "title": "İstanbul-4",
+          "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
+          "url": "/photographers-portfolio/ara-guler/istanbul-4.jpg"
+        },
+        {
+          "id": "12",
+          "title": "İstanbul-5",
+          "description": "Ara Güler’in ikonik İstanbul sokak fotoğrafı",
+          "url": "/photographers-portfolio/ara-guler/istanbul-5.jpg"
+        }
+      ],
+      "avatar": "/photographers/ara-guler.jpeg",
+      "birthdate": 1928,
+      "deathdate": 2018
+    },
+    {
+      "id": "3",
+      "name": "Semiha Es",
+      "slug": "semiha-es",
+      "turu": "Savaş muhabiri ve fotoğrafçı",
+      "short_biography": "1912-2012 yılları arasında yaşamış Semiha Es, Türkiye'nin ilk kadın savaş muhabiri ve fotoğrafçısıdır. Kore Savaşı sırasında Türkiye adına görev yaparak tarihe geçmiştir.",
+      "biography": "Semiha Es, ünlü gazeteci Hikmet Feridun Es'in eşidir. Eşinin röportaj gezilerine katılarak fotoğrafçılığı öğrenmeye başladı ve 1950'de Hürriyet Gazetesi için Kore Savaşı'nı belgeledi. Daha sonra Tokyo'daki binicilik şampiyonasını ve diğer uluslararası spor etkinliklerini fotoğrafladı. 99 yaşında İstanbul'da vefat eden Es, öncü çalışmalarıyla hafızalarda kalmıştır.",
+      "photos": [
+        {
+          "id": "1",
+          "title": "Kore Savaşı-1",
+          "url": "/photographers-portfolio/semiha-es/1.jpg"
+        },
+        {
+          "id": "2",
+          "title": "Kore Savaşı-2",
+          "url": "/photographers-portfolio/semiha-es/2.jpg"
+        },
+        {
+          "id": "3",
+          "title": "Kore Savaşı-3",
+          "url": "/photographers-portfolio/semiha-es/3.jpg"
+        }
+      ],
+      "avatar": "/photographers/semiha-es.jpg",
+      "birthdate": 1912,
+      "deathdate": 2012
+    },
+    {
+      "id": "4",
+      "name": "Coşkun Aral",
+      "slug": "coskun-aral",
+      "turu": "Savaş muhabiri ve belgesel fotoğrafçısı",
+      "short_biography": "1956 doğumlu Coşkun Aral, uluslararası savaş bölgelerinde çalışmış ünlü bir Türk foto muhabiridir. Günaydın, Milliyet gibi gazetelerde çalıştıktan sonra pek çok çatışmayı belgeledi.",
+      "biography": "Coşkun Aral, 1956 yılında Siirt’te doğan ünlü Türk basın fotoğrafçısı ve savaş muhabiridir. Kariyerine 1974’te Günaydın ve Gün gazetelerinde başlayan Aral, 1977’deki kanlı 1 Mayıs olaylarını belgeleyerek Sipa Press aracılığıyla uluslararası basında tanınmıştır. Bu fotoğrafları Time ve Newsweek dergilerinde yayımlanmıştır. 1980’lerden itibaren Lübnan, İran, Irak, Afganistan, Kuzey İrlanda, Çad ve Uzakdoğu’daki savaşları görüntüleyen Aral, Time, Newsweek, Paris-Match, Stern ve Epoca gibi önde gelen dergiler için çalışmıştır.",
+      "photos": [
+        {
+          "id": "1",
+          "title": "Yemen'in Meşhur Çamurdan Gökdelenlerinde Çalışan Genç Bir Yemenli, Yemen.",
+          "url": "/photographers-portfolio/coskun-aral/1.png"
+        },
+        {
+          "id": "2",
+          "title": "Kulak Genişletme Uzak Kabilelerde Hala Sürdürülüyor, Borneo.",
+          "url": "/photographers-portfolio/coskun-aral/2.png"
+        },
+        {
+          "id": "3",
+          "title": "Kuzey Irak, 1990-1991 Göç.",
+          "url": "/photographers-portfolio/coskun-aral/3.png"
+        },
+        {
+          "id": "4",
+          "title": "Lübnan, 1982-1997",
+          "url": "/photographers-portfolio/coskun-aral/4.png"
+        },
+        {
+          "id": "5",
+          "title": "Afganistan, 1983-1996",
+          "url": "/photographers-portfolio/coskun-aral/5.png"
+        },
+        {
+          "id": "6",
+          "title": "Harablerin Arasında Koşuşan Çocuklu Bir Kadın, Lübnan, 1982-1997",
+          "url": "/photographers-portfolio/coskun-aral/6.png"
+        },
+        {
+          "id": "7",
+          "title": "Lübnan, 1982-1997 İsyan, Dua, Yakarış, Öfke.",
+          "url": "/photographers-portfolio/coskun-aral/7.png"
+        },
+        {
+          "id": "8",
+          "title": "Lübnan, 1982-1997 Kan.",
+          "url": "/photographers-portfolio/coskun-aral/8.png"
+        }
+      ],
+      "avatar": "/photographers/coskun-aral.jpg",
+      "birthdate": 1956,
+      "deathdate": null
+    },
+    {
+      "id": "5",
+      "name": "Sabit Kalfagil",
+      "slug": "sabit-kalfagil",
+      "turu": "Fotoğrafcı ve akademisyen",
+      "short_biography": "1934-1993 yılları arasında yaşamış Sabit Kalfagil, tanınmış bir Türk foto muhabiri ve fotoğraf eğitimcisidir. Balkanlar ve Çeçenistan gibi çatışma bölgelerinde çektiği karelerle bilinir.",
+      "biography": "Kalfagil, savaş ve belgesel fotoğrafçılığı konusunda uzun yıllar çalıştı. Çektiği savaş fotoğrafları dünya basınında yayımlandı, Türkiye'de fotoğrafçılık dersleri verdi. \"Fotoğrafın Yapısal Öğeleri\" gibi eserleri olan Kalfagil, Afganistan'da görev yaparken vefat etmiştir.",
+      "photos": [
+        {
+          "id": "1",
+          "title": "",
+          "url": "/photographers-portfolio/sabit-kalfagil/2.jpg"
+        },
+        {
+          "id": "2",
+          "title": "",
+          "url": "/photographers-portfolio/sabit-kalfagil/3.jpeg"
+        },
+        {
+          "id": "3",
+          "title": "",
+          "url": "/photographers-portfolio/sabit-kalfagil/4.jpeg"
+        },
+        {
+          "id": "4",
+          "title": "",
+          "url": "/photographers-portfolio/sabit-kalfagil/5.jpeg"
+        },
+        {
+          "id": "5",
+          "title": "",
+          "url": "/photographers-portfolio/sabit-kalfagil/6.jpeg"
+        },
+        {
+          "id": "6",
+          "title": "",
+          "url": "/photographers-portfolio/sabit-kalfagil/7.jpeg"
+        },
+        {
+          "id": "7",
+          "title": "",
+          "url": "/photographers-portfolio/sabit-kalfagil/8.jpg"
+        },
+        {
+          "id": "8",
+          "title": "",
+          "url": "/photographers-portfolio/sabit-kalfagil/9.jpg"
+        },
+        {
+          "id": "9",
+          "title": "",
+          "url": "/photographers-portfolio/sabit-kalfagil/10.jpg"
+        },
+        {
+          "id": "10",
+          "title": "",
+          "url": "/photographers-portfolio/sabit-kalfagil/1.jpg"
+        }
+      ],
+      "avatar": "/photographers/sabit-kalfagil.jpeg",
+      "birthdate": 1934,
+      "deathdate": 2017
+    },
+    {
+      "id": "6",
+      "name": "İzzet Keribar",
+      "slug": "izzet-keribar",
+      "turu": "Sanat fotoğrafçısı",
+      "short_biography": "1936 doğumlu İzzet Keribar, mimari ve kültürel miras fotoğrafçılığıyla tanınan köklü bir Türk sanatçısıdır. Genellikle şehir panoramaları ve mimari yapıların çekimleriyle bilinir.",
+      "biography": "Keribar, gençliğinde Kore'de Türk Tugayı ile fotoğraf çalışmaları yaparak ilk deneyimlerini kazandı. 1980 sonrasında fotoğraf dünyasına dönüş yaparak İstanbul ve Bursa gibi şehirlerin tarihi eserlerini belgeleyen projeler gerçekleştirdi. Uluslararası birçok sergi açan sanatçı, pek çok ödül kazanmış ve İstanbul Fotoğraf ve Sinema Amatörleri Derneği'nde onur üyeliği almıştır.",
+      "photos": [],
+      "avatar": "/photographers/izzet-keribar.jpg",
+      "birthdate": 1934,
+      "deathdate": 2017
+    },
+    {
+      "id": "7",
+      "name": "Robert Capa",
+      "slug": "robert-capa",
+      "turu": "Savaş fotoğrafçısı",
+      "short_biography": "1913-1954 yılları arasında yaşamış Robert Capa, ünlü bir Macar asıllı savaş foto muhabiridir. İspanya İç Savaşı, II. Dünya Savaşı ve Kore Savaşı gibi önemli çatışmaları belgeledi.",
+      "biography": "Gerçek adı Endre Ernö Friedmann olan Capa, Magnum Photos ajansının kurucularındandır. İspanya İç Savaşı'nda çektiği bir askerin ölüm anı fotoğrafı dünya çapında ikonik hale geldi. Normandiya Çıkarması'nı da belgeleyen Capa, 1954'te Vietnam'da çekim yaparken bir kara mayınına basarak yaşamını yitirdi.",
+      "photos": [
+        {
+          "id": "1",
+          "title": "İspanya İç Savaşı",
+          "url": "/photographers-portfolio/robert-capa/1.jpg"
+        },
+        {
+          "id": "2",
+          "title": "İspanya İç Savaşı",
+          "url": "/photographers-portfolio/robert-capa/2.jpg"
+        },
+        {
+          "id": "3",
+          "title": "Duvarda Kitap Okuyan Cumhuriyetçi Askerler, Madrid, İspanya",
+          "url": "/photographers-portfolio/robert-capa/3.jpg"
+        },
+        {
+          "id": "4",
+          "title": "Savaşın 1. Yıldönümü Kutlamaları, Hankou, Çin ",
+          "url": "/photographers-portfolio/robert-capa/4.jpg"
+        },
+        {
+          "id": "5",
+          "title": "Hava Saldırısı Sireni Esnasında Siviller, Bilbao, İspanya",
+          "url": "/photographers-portfolio/robert-capa/5.jpg"
+        },
+        {
+          "id": "6",
+          "title": "Aragón Cephesinde Trende El Sallayan Birlikler, Barcelona, İspanya",
+          "url": "/photographers-portfolio/robert-capa/6.jpg"
+        },
+        {
+          "id": "7",
+          "title": "İki Cumhuriyetçi Asker Birbirini Selamlıyor, Madrid, İspanya",
+          "url": "/photographers-portfolio/robert-capa/7.jpg"
+        },
+        {
+          "id": "8",
+          "title": "Mısır değirmeni önünde yumruklarını kaldıran tarım işçileri, Barcelona, İspanya",
+          "url": "/photographers-portfolio/robert-capa/8.jpg"
+        },
+        {
+          "id": "9",
+          "title": "Málaga’dan bir mülteci yatakların üzerinde oturuyor, Almería, İspanya",
+          "url": "/photographers-portfolio/robert-capa/9.jpg"
+        }
+      ],
+      "avatar": "/photographers/robert-capa.jpg",
+      "birthdate": 1913,
+      "deathdate": 1954
+    },
+    {
+      "id": "8",
+      "name": "Steve McCurry",
+      "slug": "steve-mccurry",
+      "turu": "Gazeteci fotoğrafçısı",
+      "short_biography": "1950 doğumlu Steve McCurry, National Geographic ve Time için çalışan ünlü bir Amerikalı foto muhabiridir. \"Afgan Kızı\" olarak bilinen ikonik portresiyle dünyaca tanınır.",
+      "biography": "McCurry, özellikle savaş ve çatışma bölgelerindeki insan portreleriyle bilinir. 1984'te Sovyetler Birliği'nin Afganistan işgalini belgeleyen fotoğraf ekibinin parçasıydı ve sınırı geçtikten sonra çektiği Afgan kızının fotoğrafı efsane oldu. Renkli insan portreleri ve etkileyici manzara kareleriyle birçok fotoğraf kitabı yayınlamıştır.",
+      "photos": [
+        
+        {
+          "id": "5",
+          "title": "",
+          "url": "/photographers-portfolio/steve-mccurry/5.jpg"
+        },
+        {
+          "id": "6",
+          "title": "",
+          "url": "/photographers-portfolio/steve-mccurry/6.jpg"
+        },
+        {
+          "id": "7",
+          "title": "",
+          "url": "/photographers-portfolio/steve-mccurry/7.jpg"
+        },
+        {
+          "id": "8",
+          "title": "",
+          "url": "/photographers-portfolio/steve-mccurry/8.jpg"
+        },
+        {
+          "id": "4",
+          "title": "",
+          "url": "/photographers-portfolio/steve-mccurry/4.jpg"
+        },
+        {
+          "id": "9",
+          "title": "",
+          "url": "/photographers-portfolio/steve-mccurry/9.jpg"
+        },
+        {
+          "id": "1",
+          "title": "",
+          "url": "/photographers-portfolio/steve-mccurry/1.jpg"
+        },
+        {
+          "id": "2",
+          "title": "",
+          "url": "/photographers-portfolio/steve-mccurry/2.jpg"
+        },
+        {
+          "id": "3",
+          "title": "",
+          "url": "/photographers-portfolio/steve-mccurry/3.jpg"
+        }
+      ],
+      "avatar": "/photographers/steve-mccurry.jpg",
+      "birthdate": 1950,
+      "deathdate": null
+    },
+    {
+      "id": "9",
+      "name": "Annie Leibovitz",
+      "slug": "annie-leibovitz",
+      "turu": "Portre ve moda fotoğrafçısı",
+      "short_biography": "1949 doğumlu Annie Leibovitz, Amerikalı ünlü bir portre fotoğrafçısıdır. Rolling Stone dergisi için çektiği müzisyen portreleri ile tanınmıştır.",
+      "biography": "Leibovitz, 1970'lerde Rolling Stone'un baş fotoğrafçısı olarak John Lennon ve Yoko Ono gibi ünlü çiftlerin unutulmaz portrelerini çekti. Daha sonra Vanity Fair için ünlülerin ve moda çekimlerinin portrelerini gerçekleştirdi. Dramatik pozları ve özenle kurgulanmış stüdyolarda çektiği fotoğrafları dünya çapında büyük beğeni topladı.",
+      "photos": [],
+      "avatar": "/photographers/annie-leibovitz.jpg",
+      "birthdate": 1949,
+      "deathdate": null
+    },
+    {
+      "id": "10",
+      "name": "Sebastião Salgado",
+      "slug": "sebastiao-salgado",
+      "turu": "Belgesel fotoğrafçısı",
+      "short_biography": "1944 doğumlu Sebastião Salgado, Brezilyalı ünlü belgesel fotoğrafçısıdır. Yoksulluk, göç gibi toplumsal konuları güçlü siyah beyaz karelerle yansıtır.",
+      "biography": "Salgado, 1970'lerde başladığı gazetecilik kariyerinden sonra belgesel fotoğrafçılığa yöneldi. \"Workers\" (İşçiler) adlı serisinde dünya işçilerinin yaşamını belgelemiş, \"Genesis\" adlı çalışmasıyla doğanın güzelliğine dikkat çekmiştir. Hasselblad Fotoğraf Ödülü gibi pek çok ödüle layık görülmüş, fotoğrafları uluslararası sergilerde yer almıştır.",
+      "photos": [],
+      "avatar": "/photographers/sebastião-salgado.jpg",
+      "birthdate": 1944,
+      "deathdate": 2025
+    },
+    {
+      "id": "11",
+      "name": "Henri Cartier-Bresson",
+      "slug": "henri-cartier-bresson",
+      "turu": "Sokak ve belgesel fotoğrafçısı",
+      "short_biography": "1908-2004 yılları arasında yaşamış Henri Cartier-Bresson, Fransız fotoğrafın efsane namelerinden biridir. \"Karar Anı\" kavramını ortaya atan sanatçı olarak bilinir.",
+      "biography": "Cartier-Bresson, 1947'de Magnum Photos'u kurarak fotoğraf dünyasına büyük katkı sağladı. İkinci Dünya Savaşı sırasında Normandiya Çıkarması'nı belgeleyen kareleri vardır. Seyahatleri boyunca insanın günlük yaşamdan anlık kareler yakalayan Cartier-Bresson, sessiz sedasız fakat derin etkili görüntüler ortaya koymuştur.",
+      "photos": [],
+      "avatar": "/photographers/henri-cartier-bresson.webp",
+      "birthdate": 1908,
+      "deathdate": 2004
+    },
+    {
+      "id": "12",
+      "name": "Dorothea Lange",
+      "slug": "dorothea-lange",
+      "turu": "Belgesel fotoğrafçısı",
+      "short_biography": "1895-1965 yılları arasında yaşamış Dorothea Lange, Amerikalı önemli bir belgesel fotoğrafçıdır. Büyük Buhran döneminin sembolü sayılan \"Göçmen Anne\" fotoğrafını çekmiştir.",
+      "biography": "Lange, özellikle 1930'larda Amerika'nın kırsal bölgelerinde çektiği dokunaklı fotoğraflarla tanındı. Farm Security Administration (FSA) için çalışarak göçmen ailelerin ve işçilerin yaşamlarını belgeledi. Eserleri, fotoğrafın toplumsal değişime tanıklık etme gücünü en iyi şekilde yansıtır.",
+      "photos": [],
+      "avatar": "/photographers/henri-cartier-bresson.jpeg",
+      "birthdate": 1895,
+      "deathdate": 1965
+    },
+    {
+      "id": "13",
+      "name": "Diane Arbus",
+      "slug": "diane-arbus",
+      "turu": "Portre fotoğrafçısı",
+      "short_biography": "1923-1971 yılları arasında yaşamış Diane Arbus, Amerikalı ünlü bir portre fotoğrafçısıdır. Özellikle toplumun marjinal gruplarını ve sıra dışı kişilerini fotoğraflamasıyla bilinir.",
+      "biography": "Arbus, New York sokaklarında egzotik karakterlerin portrelerini alarak dikkat çekti. Transseksüeller, sirkteki sanatçılar gibi normalin dışındaki insanları objektifine aldı. Çalışmaları, fotoğrafta empati ve cesaretli portre anlayışını vurgulayan önemli örnekler arasındadır.",
+      "photos": [],
+      "avatar": "/photographers/diane-arbus.jpg",
+      "birthdate": 1923,
+      "deathdate": 1971
+    },
+    {
+      "id": "14",
+      "name": "Helut Newton",
+      "slug": "helut-newton",
+      "turu": "Moda ve erotik fotoğrafçısı",
+      "short_biography": "1920-2004 yılları arasında yaşamış Helmut Newton, Alman asıllı moda fotoğrafçısıdır. Cesur, stilize ve biraz da erotik içeriğe sahip moda fotoğrafları ile ün kazanmıştır.",
+      "biography": "Newton, 1960'larda Paris'te Vogue için çalışarak ünlü modellik pozlarını yarattı. Fotoğraflarında genellikle yüksek kontrastlı siyah-beyaz tonlar ve güçlü kadın figürleri yer alır. \"Sie Kommen\" adlı fotoğraf serisi ona geniş şöhret kazandırdı ve moda dünyasında derin etkiler bıraktı.",
+      "photos": [],
+      "avatar": "/photographers/helmut-newton.webp",
+      "birthdate": 1920,
+      "deathdate": 2004
+    },
+    {
+      "id": "15",
+      "name": "Yousuf Karsh",
+      "slug": "yousuf-karsh",
+      "turu": "Portre fotoğrafçısı",
+      "short_biography": "1908-2002 yılları arasında yaşamış Yousuf Karsh, Ermeni asıllı Kanadalı portre fotoğrafçısıdır. Winston Churchill ve Albert Einstein gibi dünyaca ünlü liderlerin ikonik portrelerini çekmiştir.",
+      "biography": "Karsh, 20. yüzyılın en etkileyici portre sanatçılarından biridir. Stüdyosunda güçlü ışık ve gölge oyunlarıyla ünlülerin karakterlerini ortaya koydu. Churchill'in gravata saldırdığı o ikonik portresi gibi fotoğrafları, tarihî kişiliklerin unutulmaz imajını zihinlere kazımıştır.",
+      "photos": [],
+      "avatar": "/photographers/yousuf-karsh.jpg",
+      "birthdate": 1908,
+      "deathdate": 2002
+    },
+    {
+      "id": "16",
+      "name": "Malick Sidibé",
+      "slug": "malick-sidibe",
+      "turu": "Portre ve belgesel fotoğrafçısı",
+      "short_biography": "1935-2016 yılları arasında yaşamış Malili fotoğrafçı Malick Sidibé, özellikle 1960'lı yıllarda çektiği neşeli gençlik partisi ve gece hayatı fotoğraflarıyla tanınır.",
+      "biography": "Sidibé, Bamako'daki stüdyosunda gençlerin özgür ruhlu portrelerini çekti. Çektiği dans ve parti fotoğrafları dönemin sosyal atmosferini yansıttı. 2003'te Hasselblad Ödülü, 2007'de Venedik Bienali Altın Aslan'ını kazanarak sanat dünyasında prestijli başarılara imza attı.",
+      "photos": [],
+      "avatar": "/photographers/malick-sidibe.png",
+      "birthdate": 1935,
+      "deathdate": 2016
+    },
+    {
+      "id": "17",
+      "name": "Zanele Muholi",
+      "slug": "zanele-muholi",
+      "turu": "Görsel aktivist ve portre fotoğrafçısı",
+      "short_biography": "1972 doğumlu Zanele Muholi, Güney Afrikalı fotoğraf sanatçısı ve LGBT hakları aktivistidir. Siyah lezbiyen, gey ve trans bireylerin portrelerini çekerek görünürlük sağlamayı amaçlar.",
+      "biography": "Muholi, özellikle 'Faces and Phases' adlı projesiyle Güney Afrika'nın LGBT topluluğunu belgeledi. Çektiği portrelerde kişilerin kimlikleri ve hikayeleri ön planda tutulur. Fotoğrafları uluslararası sergilerde yer aldı ve insan haklarına dair farkındalığı artıran bir sanatçı olarak tanındı.",
+      "photos": [],
+      "avatar": "/photographers/zanele-muholi.jpeg",
+      "birthdate": 1972,
+      "deathdate": null
+    },
+    {
+      "id": "18",
+      "name": "Raghu Rai",
+      "slug": "raghu-rai",
+      "turu": "Gazeteci fotoğrafçısı",
+      "short_biography": "1942 doğumlu Raghu Rai, Hindistan'ın önde gelen fotoğraf sanatçılarındandır. Sokak fotoğrafçılığı ve belgesel tarzıyla Hindistan'ın günlük yaşamını yansıtır.",
+      "biography": "Rai, 1977'de Magnum Photos üyeliği kazanarak Hindistan'daki ilk foto muhabirlerinden oldu. Indira Gandhi'nin talimatıyla ülkedeki tüm bölgeleri fotoğrafladı. Çalışmalarında renkleri ustaca kullanır, Hindistan'ın çeşitliliğini ve insan hikâyelerini dünya çapında tanıttı.",
+      "photos": [],
+      "avatar": "/photographers/raghu-rai.jpeg",
+      "birthdate": 1942,
+      "deathdate": null
+    },
+    {
+      "id": "19",
+      "name": "Ansel Adams",
+      "slug": "ansel-adams",
+      "turu": "Doğa manzara fotoğrafçısı",
+      "short_biography": "1902-1984 yılları arasında yaşamış Ansel Adams, Amerikalı ünlü doğa fotoğrafçısıdır. Yosemite Ulusal Parkı'ndaki yüksek çözünürlüklü siyah-beyaz manzaralarıyla tanınır.",
+      "biography": "Adams, fotoğraf kompozisyonunda geliştirdiği \"Zone Sistemi\" ile ünlüdür. ABD Ulusal Parkları'nın doğal güzelliklerini etkileyici karelerle belgeledi. Çevre koruma hareketine de katkıda bulunan sanatçı, fotoğraflarıyla doğanın gücünü ve zarafetini izleyiciye aktardı.",
+      "photos": [],
+      "avatar": "/photographers/ansel-adams.jpg",
+      "birthdate": 1902,
+      "deathdate": 1984
+    },
+    {
+      "id": "20",
+      "name": "Mario Testino",
+      "slug": "mario-testino",
+      "turu": "Moda fotoğrafçısı",
+      "short_biography": "1954 doğumlu Mario Testino, Peru asıllı dünyaca ünlü moda fotoğrafçısıdır. Vogue ve Vanity Fair gibi büyük moda dergileri için çektiği kampanyalarla tanınır.",
+      "biography": "Testino, özellikle 1990'larda İngiliz kraliyet ailesinden Lady Diana dahil pek çok ünlünün portrelerini çekti. Cesur renk paleti ve dinamik kompozisyonları ile bilinir. Madonna, Kate Moss gibi ikonların stillerini fotoğrafik hale getiren Testino, moda dünyasında popüler kültürün simgeleri arasında yer aldı.",
+      "photos": [],
+      "avatar": "/photographers/mario-testino.webp",
+      "birthdate": 1954,
+      "deathdate": null
+    },
+    {
+      "id": "21",
+      "name": "Vivian Maier",
+      "slug": "vivian-maier",
+      "turu": "Sokak fotoğrafçısı",
+      "short_biography": "1926-2009 yılları arasında yaşamış Vivian Maier, Amerikalı sokak fotoğrafçısıdır. Çalışmaları ölümünden sonra ortaya çıkan ve büyük beğeni toplayan bir gizem olarak kalmıştır.",
+      "biography": "Maier, Chicago ve New York sokaklarını orta format kamerasıyla belgeledi. Çektiği siyah-beyaz fotoğraflarda sıradan günlük anların estetik bir yanı var. Hayatı boyunca fotoğraflarını hiç sergilemedi, 2000'lerde eve giren bir koleksiyoncu sayesinde eserleri keşfedildi ve dünya çapında tanındı.",
+      "photos": [],
+      "avatar": "/photographers/vivian-maier.jpg",
+      "birthdate": 1926,
+      "deathdate": 2009
+    },
+    {
+      "id": "22",
+      "name": "Margaret Bourke-White",
+      "slug": "margaret-bourke-white",
+      "turu": "Endüstri ve belgesel fotoğrafçısı",
+      "short_biography": "1904-1971 yılları arasında yaşamış Margaret Bourke-White, Amerikalı öncü bir fotoğrafçıdır. Ford fabrikaları ve Sovyet liderleri gibi önemli konuları belgeleyen çalışmalarıyla bilinir.",
+      "biography": "Bourke-White, Life dergisinin ilk foto muhabiri olarak görev yaptı. II. Dünya Savaşı sırasında cephede fotoğraflar çekti; Sovyet lideri Stalin'in fotoğrafını çekebilen tek yabancı sanatçı oldu. Endüstriyel ve savaş fotoğrafları dönemin ruhunu güçlü bir şekilde yansıtır.",
+      "photos": [],
+      "avatar": "/photographers/margaret-bourke-white.jpg",
+      "birthdate": 1904,
+      "deathdate": 1971
+    },
+    {
+      "id": "23",
+      "name": "Don McCullin",
+      "slug": "don-mccullin",
+      "turu": "Savaş muhabiri ve belgesel fotoğrafçısı",
+      "short_biography": "1935 doğumlu Don McCullin, İngiliz savaş fotoğrafçısıdır. Vietnam, Kuzey İrlanda gibi çatışma bölgelerindeki sert kareleriyle tanınır.",
+      "biography": "McCullin, işçi sınıfı mahallelerinde büyüdükten sonra gazeteciliğe fotoğrafla adım attı. 1960'larda Aden, Vietnam ve Orta Doğu savaşlarını belgeledi; siyah-beyaz karelerindeki insani ve çarpıcı anlatım gücüyle tanındı. Birçok prestijli ödül aldı ve günümüzde de insani konular üzerine fotoğraflar çekmeye devam ediyor.",
+      "photos": [],
+      "avatar": "/photographers/don-mccullin.webp",
+      "birthdate": 1935,
+      "deathdate": null
+    },
+    {
+      "id": "24",
+      "name": "Daidō Moriyama",
+      "slug": "diado-moriyama",
+      "turu": "Sanat ve sokak fotoğrafçısı",
+      "short_biography": "1938 doğumlu Daidō Moriyama, Japon sanatçı ve fotoğrafçıdır. Sokakların sıradan anlarını yüksek kontrastlı siyah-beyaz karelerle yakalamasıyla ünlüdür.",
+      "biography": "Moriyama, Tokyo'nun kaotik sokaklarında çektiği eserleriyle Japon fotoğrafında yeni bir akım başlattı. Çalışmaları genellikle grenli ve flu görünümüyle dikkat çeker. Fotoğrafları uluslararası sanat galerilerinde sergilenen Moriyama, erotik grotesk tarzında özgün bir üslup geliştirmiştir.",
+      "photos": [],
+      "avatar": "/photographers/diado-moriyama.jpg",
+      "birthdate": 1938,
+      "deathdate": null
+    },
+    {
+      "id": "25",
+      "name": "Jimmy Nelson",
+      "slug": "jimmy-nelson",
+      "turu": "Belgesel fotoğrafçısı",
+      "short_biography": "1967 doğumlu Jimmy Nelson, İngiliz gezgin ve fotoğrafçıdır. Uzak yerlerde yaşayan kabileleri çektiği etkileyici portre serileriyle tanınır.",
+      "biography": "Nelson, Amazon ormanlarından Himalaya Dağları'na kadar pek çok uzak bölgeye giderek izole toplulukların kültürünü belgelemiştir. \"Before They Pass Away\" adlı kitabı geleneksel kabilelerin yaşam tarzını detaylı biçimde aktarır. Canlı renkler ve büyük boyutlu fotoğraflar kullanan Nelson, unutulmaya yüz tutmuş kültürlere dikkat çekmeyi amaçlar.",
+      "photos": [],
+      "avatar": "/photographers/jimmy-nelson.jpg",
+      "birthdate": 1967,
+      "deathdate": null
+    },
+    {
+      "id": "26",
+      "name": "Nick Ut",
+      "slug": "nick-ut",
+      "turu": "Savaş muhabiri",
+      "short_biography": "1951 doğumlu Nick Ut, Vietnam doğumlu Amerikalı savaş foto muhabiridir. 1972'de çektiği \"Napalm Kızı\" fotoğrafıyla Pulitzer Ödülü kazanmıştır.",
+      "biography": "Ut, Vietnam Savaşı sırasında Associated Press için görev yaptı. Dünyaca ünlü 'Napalm Kızı' fotoğrafında, patlayan napalm gazından kaçan bir kız çocuğunun görüntüsünü yakaladı. Bu kare, savaşın dehşetini küresel çapta gösteren bir simge oldu. Ut daha sonra ABD vatandaşı olarak fotoğraflarına devam etti.",
+      "photos": [],
+      "avatar": "/photographers/nick-ut.jpeg",
+      "birthdate": 1951,
+      "deathdate": null
+    },
+    {
+      "id": "27",
+      "name": "Reza Deghati",
+      "slug": "reza-deghati",
+      "turu": "Belgesel fotoğrafçısı",
+      "short_biography": "1952 doğumlu Reza Deghati, İran doğumlu dünyaca ünlü bir belgesel fotoğrafçısıdır. Afganistan'daki mülteci kamplarını belgeleyen etkileyici fotoğrafları ile tanınır.",
+      "biography": "Reza, National Geographic için Orta Doğu ve Güney Asya'da pek çok projenin fotoğrafını çekti. Özellikle Afgan mültecilerin hayatına dair görselleriyle dikkat çekti. Aynı zamanda fotoğraf eğitimi organizasyonları kurarak, gelişmekte olan ülkelerde fotoğrafçılığı desteklemektedir.",
+      "photos": [],
+      "avatar": "/photographers/reza-deghati.jpg",
+      "birthdate": 1952,
+      "deathdate": null
+    }
+  ]

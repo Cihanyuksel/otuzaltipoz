@@ -4,8 +4,8 @@ import photographers from '@/public/photographers.json';
 export default function PhotographerLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <aside className="hidden md:flex fixed left-0 top-0 h-full w-[220px] border-r-1 border-r-gray-400 bg-[#f5f1ea] text-gray-800 shadow-xl flex-col pt-24">
-        <nav className="flex-1 overflow-y-auto">
+      <aside className="hidden md:flex z-10 fixed left-0 top-0 bottom-0 w-[220px] border-r-1 border-r-gray-400 bg-[#f5f1ea] text-gray-800 flex-col pt-24">
+        <nav className="flex-1 overflow-y-auto pb-4">
           <ul>
             <li>
               <Link

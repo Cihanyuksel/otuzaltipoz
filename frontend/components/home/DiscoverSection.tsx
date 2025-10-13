@@ -10,7 +10,7 @@ function DiscoverSection() {
       description: 'Fotoğrafçılığın evrimine bir yolculuk.',
     },
     {
-      href: '#',
+      href: '/iconic-cameras',
       src: '/iconic_camera.jpg',
       alt: 'İkonik Kameralar',
       title: 'İkonik Kameralar',

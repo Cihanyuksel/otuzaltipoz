@@ -7,6 +7,7 @@ import { usePhotos } from '@/context/PhotoContext';
 import { useGetRatings } from '@/hooks/api/useRatingApi';
 import LikeButton from './LikeButton';
 import PhotoLikedUsers from './PhotoLikedUsers';
+import useOutsideClick from '@/hooks/ui/useOutsideClick';
 
 interface ILikeSection {
   photoId: string;
@@ -27,19 +28,7 @@ function LikeSection({ photoId }: ILikeSection) {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (likeButtonRef.current && !likeButtonRef.current.contains(event.target as Node)) {
-        closeModal();
-      }
-    };
-    if (isModalOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isModalOpen]);
+  useOutsideClick(likeButtonRef, closeModal, isModalOpen);
 
   const isLoggedIn = !!accessToken;
 
