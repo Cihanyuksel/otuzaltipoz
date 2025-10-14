@@ -1,6 +1,6 @@
 'use client';
 //nextjs and react
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 //project files
 import PhotoList from '@/components/photos/PhotoList';
@@ -54,10 +54,10 @@ const PhotoContainer = () => {
     } else if (selectedCategories.length > 0) {
       setSelectedCategories([]);
     }
-  }, [searchParams, selectedCategories]);
+  }, [searchParams, selectedCategories, searchParams]);
 
   const isDebouncing = searchQuery !== debouncedSearchValue;
-  const sections = getSections(categories);
+  const sections = useMemo(() => getSections(categories), [categories]);
 
   const handleSectionToggle = (title: string) => {
     setOpenSections((prev) => ({
@@ -71,34 +71,31 @@ const PhotoContainer = () => {
   };
 
   useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage) {
+    if (!hasNextPage || isFetchingNextPage || !loadMoreRef.current) {
       return;
     }
-
-    if (!loadMoreRef.current) {
-      return;
-    }
-
+  
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
           wrappedFetchNextPage();
         }
       },
-      {
-        root: null,
-        rootMargin: '0px 0px 200px 0px',
-        threshold: 0.1,
-      }
+      { root: null, rootMargin: '0px 0px 200px 0px', threshold: 0.1 }
     );
-
-    const currentRef = loadMoreRef.current;
-    observer.observe(currentRef);
-
+  
+    observer.observe(loadMoreRef.current);
+  
     return () => {
-      if (currentRef) observer.unobserve(currentRef);
+      if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
     };
-  }, [hasNextPage, isFetchingNextPage]);
+  }, [hasNextPage, isFetchingNextPage])
+
+  {photosError && (
+    <div className="col-span-full text-center py-8 text-red-500">
+      Fotoğraflar yüklenirken bir hata oluştu: {photosError.message}
+    </div>
+  )}
 
   return (
     <div className="flex flex-col min-h-screen">

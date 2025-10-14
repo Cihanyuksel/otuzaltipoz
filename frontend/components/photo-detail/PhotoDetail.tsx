@@ -14,6 +14,7 @@ import Button from '../common/button';
 import CommentSection from '../comments/CommentSection';
 import { useAuth } from '@/context/AuthContext';
 import { useGetPhoto, useDeletePhoto } from '@/hooks/api/usePhotoApi';
+import { canManage as canManagePhoto } from 'lib/permission';
 
 type ModalName = 'login' | 'edit' | 'delete';
 
@@ -38,7 +39,6 @@ const PhotoDetail = () => {
 
   const { data: photo, isLoading, isError } = useGetPhoto(photoId);
   const { mutate: deletePhoto, isPending, error } = useDeletePhoto(accessToken);
-
   const handleModalToggle = (modalStates: ModalName, isOpen: boolean) => {
     setModalStates((prevState) => ({
       ...prevState,
@@ -76,6 +76,8 @@ const PhotoDetail = () => {
   const isOwnerPhoto = user?.id === photo.user._id;
   const isLoggedIn = !!accessToken;
 
+  const canDeletePhoto = canManagePhoto(user?.role, isOwnerPhoto);
+
   return (
     <section
       className="w-full flex justify-center py-5 bg-neutral-100 text-gray-800 min-h-screen 2xl:min-h-4/5 px-4 md:px-0"
@@ -98,16 +100,12 @@ const PhotoDetail = () => {
                     likeCount={photo.likeCount}
                     onLoginRequired={() => handleModalToggle('login', true)}
                   />
-                  <PhotoActions
-                    userRole={user?.role}
-                    isOwnerPhoto={isOwnerPhoto}
-                    handleModalToggle={handleModalToggle}
-                  />
+
+                  {canDeletePhoto && <PhotoActions handleModalToggle={handleModalToggle} />}
                 </div>
               ) : (
                 <div className="flex flex-col justify-end items-end gap-5 mt-3 md:mt-5">
                   <div className="flex flex-col items-end justify-center p-4 rounded-xl text-right max-w-full w-full">
-                    {' '}
                     <p className="text-sm font-medium text-gray-800 mb-3">
                       Bu fotoğrafı oylamak ve beğenmek için aramıza katıl!
                     </p>

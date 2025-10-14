@@ -274,11 +274,23 @@ const createPhoto = async (
 };
 
 const updatePhoto = async (
-  req: Request,
+  req: IGetUserAuthInfoRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
+    const photo = await Photo.findById(req.params.id);
+
+    if (!photo) return next(new AppError("Photo not found", 404));
+
+    //role and owner check
+    if (
+      photo.user_id.toString() !== req.user!.id &&
+      req.user!.role !== "admin"
+    ) {
+      return next(new AppError("Bu işlemi yapmaya yetkiniz yok", 403));
+    }
+
     const updatedPhoto = await Photo.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -288,7 +300,6 @@ const updatePhoto = async (
       }
     );
 
-    if (!updatedPhoto) return next(new AppError("Photo not found", 404));
     res.status(200).json(updatedPhoto);
   } catch (error) {
     const errorMessage: string =
@@ -307,6 +318,14 @@ const deletePhoto = async (
       req.params.id
     ).lean<IPhotoDocument>();
     if (!deletedPhoto) return next(new AppError("Photo not found", 404));
+
+    //role and owner check
+    if (
+      deletedPhoto.user_id.toString() !== req.user!.id &&
+      req.user!.role !== "admin"
+    ) {
+      return next(new AppError("Bu işlemi yapmaya yetkiniz yok", 403));
+    }
 
     const urlParts: string[] = deletedPhoto.photo_url.split("/");
     const fileNameWithExt: string = urlParts[urlParts.length - 1];

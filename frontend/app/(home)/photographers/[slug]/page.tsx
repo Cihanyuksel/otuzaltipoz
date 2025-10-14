@@ -1,6 +1,29 @@
+import { Metadata } from 'next';
 import Image from 'next/image';
-import photographers from '@/public/photographers.json'
+import photographers from '@/public/photographers.json';
 import { notFound } from 'next/navigation';
+import { createPageMetadata } from 'lib/metadata';
+
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+  const { slug } = await params;
+  const photographer = photographers.find((p) => p.slug === slug);
+
+  if (!photographer) {
+    return createPageMetadata({
+      title: 'Fotoğrafçı Bulunamadı | otuzaltıpoz',
+      description: 'Aradığınız fotoğrafçı bilgisine ulaşılamadı.',
+      path: '/photographers/not-found',
+      image: '/og-default.jpg',
+    });
+  }
+
+  return createPageMetadata({
+    title: `${photographer.name} | otuzaltıpoz`,
+    description: photographer.short_biography,
+    path: `/photographers/${slug}`,
+    image: photographer.avatar,
+  });
+}
 
 export default async function PhotographerProfile({ params }: any) {
   const { slug } = await params;
@@ -15,9 +38,7 @@ export default async function PhotographerProfile({ params }: any) {
           <p className="text-4xl font-bold leading-tight tracking-tighter text-slate-900 dark:text-white">
             {photographer.name}
           </p>
-          <p className="mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
-            {photographer.short_biography}
-          </p>
+          <p className="mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-400">{photographer.short_biography}</p>
         </div>
 
         <div className="mb-12 flex flex-col gap-8 md:flex-row md:items-start">
@@ -31,33 +52,25 @@ export default async function PhotographerProfile({ params }: any) {
               />
             </div>
             <div className="flex flex-col">
-              <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                {photographer.name}
-              </p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">{photographer.name}</p>
               <p className="text-base text-slate-600 dark:text-slate-400">
                 {photographer.birthdate} - {photographer.deathdate ?? '...'}
               </p>
               <p className="text-base text-slate-600 dark:text-slate-400">{photographer.turu}</p>
             </div>
           </div>
+
           <div className="prose prose-lg max-w-none text-slate-700 dark:text-slate-300">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Biyografi
-            </h2>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Biyografi</h2>
             <p>{photographer.biography}</p>
           </div>
         </div>
 
         <div className="space-y-8">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            İkonik Fotoğraflar
-          </h2>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">İkonik Fotoğraflar</h2>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {photographer.photos.map((photo, index) => (
-              <div
-                key={index}
-                className="aspect-square w-full rounded-lg relative overflow-hidden group"
-              >
+              <div key={index} className="aspect-square w-full rounded-lg relative overflow-hidden group">
                 <Image
                   src={photo.url}
                   alt={photo.title}
@@ -70,9 +83,7 @@ export default async function PhotographerProfile({ params }: any) {
                    bg-[#d3deda] bg-opacity-75 opacity-0 transition-opacity duration-300
                    group-hover:opacity-100"
                 >
-                  <span className="text-center text-md font-semibold text-gray-50">
-                    {photo.title}
-                  </span>
+                  <span className="text-center text-md font-semibold text-gray-50">{photo.title}</span>
                 </div>
               </div>
             ))}

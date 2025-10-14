@@ -1,6 +1,15 @@
 import Image from 'next/image';
 import photographers from '@/public/photographers.json';
 import Link from 'next/link';
+import { createPageMetadata } from 'lib/metadata';
+
+export const metadata = createPageMetadata({
+  title: 'Ünlü Fotoğrafçılar | otuzaltıpoz',
+  description:
+    'Dünyaca ünlü fotoğrafçıların hayatını, eserlerini ve ikonlaşmış fotoğraflarını keşfedin. otuzaltıpoz topluluğunda fotoğrafçılığın efsane isimleri bir arada.',
+  path: '/photographers',
+  image: '/og-photographers.jpg',
+});
 
 export default function PhotographersList() {
   return (
@@ -21,8 +30,8 @@ export default function PhotographersList() {
                   <Image
                     src={photographer.avatar}
                     alt={photographer.name}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{ objectFit: 'cover' }}
                     className="rounded"
                   />
                 </div>

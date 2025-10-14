@@ -40,13 +40,13 @@ export const authService = {
     }
   },
   //--------------------------------------------------------------------------------------------\\
+
   refresh: async (): Promise<AuthResponse['data']> => {
     try {
       const response = await axios.post(`${API_BASE_URL}${AUTH_PATHS.REFRESH}`, {}, { withCredentials: true });
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Token yenilenemedi';
-      throw new Error(errorMessage);
+      throw error;
     }
   },
   //--------------------------------------------------------------------------------------------\\

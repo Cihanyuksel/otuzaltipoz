@@ -18,6 +18,7 @@ const PhotoGallery = ({ photosToShow, isOwner }: PhotoGalleryProps) => {
             key={photo._id}
             href={`/photos/${photo._id}`}
             className="group relative aspect-square block rounded-lg border border-gray-300 overflow-hidden"
+            prefetch={false}
           >
             <img src={photo.photo_url} alt="User Photo" className="h-full w-full object-contain bg-gray-100" />
             <div className="absolute inset-0 flex h-full w-full items-center justify-center gap-4 bg-[#d3deda] bg-opacity-50 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">

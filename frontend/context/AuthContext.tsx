@@ -18,6 +18,31 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const AUTH_SESSION_KEY = 'has_auth_session';
+
+const hasAuthSession = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  try {
+    return localStorage.getItem(AUTH_SESSION_KEY) === 'true';
+  } catch {
+    return false;
+  }
+};
+
+const setAuthSession = (exists: boolean) => {
+  if (typeof window === 'undefined') return;
+  try {
+    if (exists) {
+      localStorage.setItem(AUTH_SESSION_KEY, 'true');
+    } else {
+      localStorage.removeItem(AUTH_SESSION_KEY);
+    }
+  } catch {}
+};
+
+let globalRefreshAttempted = false;
+let globalRefreshPromise: Promise<AuthResponse['data'] | null> | null = null;
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -30,10 +55,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(authData.user);
       setAccessToken(authData.accessToken);
       setAxiosAccessToken(authData.accessToken);
+      setAuthSession(true);
     } else {
       setUser(null);
       setAccessToken(null);
       setAxiosAccessToken(null);
+      setAuthSession(false);
     }
   }, []);
 
@@ -66,7 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const payload = JSON.parse(atob(accessToken.split('.')[1]));
       const expiresAt = payload.exp * 1000;
       const now = Date.now();
-      const refreshTime = expiresAt - now - 5 * 60 * 1000; 
+      const refreshTime = expiresAt - now - 5 * 60 * 1000;
 
       if (refreshTime > 0) {
         refreshTimer.current = setTimeout(async () => {
@@ -92,13 +119,50 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      try {
-        const refreshData = await authService.refresh();
-        setAuth(refreshData);
-      } catch (error) {
+      if (!hasAuthSession()) {
         setAuth(null);
+        setLoading(false);
+        return;
+      }
+
+      if (globalRefreshAttempted) {
+        if (globalRefreshPromise) {
+          try {
+            const result = await globalRefreshPromise;
+            if (result) {
+              setAuth(result);
+            } else {
+              setAuth(null);
+            }
+          } catch (error) {
+            setAuth(null);
+          }
+        }
+        setLoading(false);
+        return;
+      }
+
+      globalRefreshAttempted = true;
+
+      globalRefreshPromise = (async () => {
+        try {
+          const refreshData = await authService.refresh();
+          return refreshData;
+        } catch (error: any) {
+          return null;
+        }
+      })();
+
+      try {
+        const result = await globalRefreshPromise;
+        if (result) {
+          setAuth(result);
+        } else {
+          setAuth(null);
+        }
       } finally {
         setLoading(false);
+        globalRefreshPromise = null;
       }
     };
 

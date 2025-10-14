@@ -16,6 +16,7 @@ function PhotoCardImage({ imageUrl, onPhotoClick, title, index }: IPhotoCardImag
           alt={title}
           fill
           className="object-contain bg-gray-100"
+          loading={index < 10 ? 'eager' : 'lazy'}
           priority={index < 10} 
         />
       </div>

@@ -14,10 +14,18 @@ interface IPhotoCardInfo {
   uploaderId: string;
 }
 
-function PhotoCardInfo({ description, created_at, uploader, profileImgUrl, photoId, title, uploaderId }: IPhotoCardInfo) {
+function PhotoCardInfo({
+  description,
+  created_at,
+  uploader,
+  profileImgUrl,
+  photoId,
+  title,
+  uploaderId,
+}: IPhotoCardInfo) {
   const [isHovered, setIsHovered] = useState(false);
   const [isLinkHovered, setIsLinkHovered] = useState(false);
-  
+
   const getInitial = (name: string) => {
     return name.charAt(0).toUpperCase();
   };
@@ -25,8 +33,9 @@ function PhotoCardInfo({ description, created_at, uploader, profileImgUrl, photo
   return (
     <div className="p-3 flex flex-col gap-1 bg-[#f5f1ea]">
       <div className="flex items-center justify-between gap-2 mt-1">
-        <Link 
-          href={`/photos/${photoId}`} 
+        <Link
+          href={`/photos/${photoId}`}
+          prefetch={false}
           className="flex-1 min-w-0 group"
           onMouseEnter={() => setIsLinkHovered(true)}
           onMouseLeave={() => setIsLinkHovered(false)}
@@ -36,7 +45,7 @@ function PhotoCardInfo({ description, created_at, uploader, profileImgUrl, photo
               <h2 className="text-sm font-semibold truncate group-hover:text-[#ef7464] transition-colors duration-200">
                 {title}
               </h2>
-              <HiArrowRight 
+              <HiArrowRight
                 className={`text-[#ef7464] flex-shrink-0 transition-all duration-200 font-bold ${
                   isLinkHovered ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2'
                 }`}
@@ -50,9 +59,9 @@ function PhotoCardInfo({ description, created_at, uploader, profileImgUrl, photo
           </div>
         </Link>
 
-        <Link 
-          href={`/biri/${uploaderId}`} 
-          prefetch={false} 
+        <Link
+          href={`/biri/${uploaderId}`}
+          prefetch={false}
           className="flex items-center gap-x-5 p-1 rounded-xl"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
@@ -73,7 +82,7 @@ function PhotoCardInfo({ description, created_at, uploader, profileImgUrl, photo
                 isHovered ? 'opacity-0' : 'opacity-100'
               }`}
             />
-            <div 
+            <div
               className={`w-[45px] h-[45px] rounded-full bg-[#ef7464] flex items-center justify-center text-white font-bold text-xl absolute inset-0 transition-opacity duration-300 ${
                 isHovered ? 'opacity-100' : 'opacity-0'
               }`}

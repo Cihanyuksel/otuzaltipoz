@@ -315,20 +315,28 @@ const login = async (
   }
 };
 
-//refresh endpoint
 const refresh = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   const refreshToken = req.cookies.refreshToken;
+
   if (!refreshToken) {
-    return next(new AppError("No token provided", 401));
+    res.status(401).json({
+      success: false,
+      message: "No token provided",
+    });
+    return;
   }
 
   const deviceId = generateDeviceId(req);
   if (!deviceId) {
-    return next(new AppError("Device ID is missing", 401));
+    res.status(401).json({
+      success: false,
+      message: "Device ID is missing",
+    });
+    return;
   }
 
   try {
@@ -340,24 +348,33 @@ const refresh = async (
     const storedToken = await RefreshToken.findOne({
       token: refreshToken,
       userId: payload.userId,
-      //deviceId: deviceId,
     });
 
     if (!storedToken) {
       await RefreshToken.deleteMany({ userId: payload.userId });
-      return next(
-        new AppError("Invalid refresh token or session revoked", 403)
-      );
+      res.status(403).json({
+        success: false,
+        message: "Invalid refresh token or session revoked",
+      });
+      return;
     }
 
     if (storedToken.expiresAt < new Date()) {
       await storedToken.deleteOne();
-      return next(new AppError("Token expired", 403));
+      res.status(403).json({
+        success: false,
+        message: "Token expired",
+      });
+      return;
     }
 
     const user = await User.findById(payload.userId);
     if (!user) {
-      return next(new AppError("User not found", 404));
+      res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+      return;
     }
 
     const newAccessToken = generateAccessToken({ _id: user._id as string });
@@ -366,13 +383,14 @@ const refresh = async (
     storedToken.token = newRefreshToken;
     storedToken.lastUsedAt = new Date();
     storedToken.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    storedToken.deviceId = deviceId; 
-    storedToken.device = req.headers["user-agent"] || "unknown"; 
+    storedToken.deviceId = deviceId;
+    storedToken.device = req.headers["user-agent"] || "unknown";
     await storedToken.save();
 
     res.cookie("refreshToken", newRefreshToken, refreshTokenCookieConfig);
 
     res.json({
+      success: true,
       accessToken: newAccessToken,
       user: {
         id: user._id,
@@ -385,7 +403,10 @@ const refresh = async (
       },
     });
   } catch (err: any) {
-    next(new AppError(err.message || "Token expired or invalid", 403));
+    res.status(403).json({
+      success: false,
+      message: "Token expired or invalid",
+    });
   }
 };
 

@@ -1,6 +1,6 @@
-import { useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "react-toastify";
+import { useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 export const useCategorySelection = (
   selectedCategories: string[],
@@ -8,19 +8,19 @@ export const useCategorySelection = (
   searchQuery: string,
   MAX_CATEGORIES = 3
 ) => {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const updateUrl = (newCategories: string[]) => {
     const params = new URLSearchParams(searchParams.toString());
-    newCategories.length > 0
-      ? params.set("categories", newCategories.join(","))
-      : params.delete("categories");
+    newCategories.length > 0 ? params.set('categories', newCategories.join(',')) : params.delete('categories');
 
-    searchQuery ? params.set("search", searchQuery) : params.delete("search");
-    router.replace(`?${params.toString()}`, { scroll: false });
+    searchQuery ? params.set('search', searchQuery) : params.delete('search');
+
+    const newUrl = params.toString() ? `?${params.toString()}` : window.location.pathname;
+    window.history.replaceState(null, '', newUrl);
   };
 
+  //router rsc'yi tetiklediği için window.history kullandık
   const handleCategoryClick = useCallback(
     (categoryName: string) => {
       let newCategories = [...selectedCategories];
@@ -36,7 +36,7 @@ export const useCategorySelection = (
       setSelectedCategories(newCategories);
       updateUrl(newCategories);
     },
-    [selectedCategories, setSelectedCategories, searchQuery, router, searchParams] 
+    [selectedCategories, setSelectedCategories, searchQuery, searchParams]
   );
 
   const handleRemoveCategory = useCallback(
@@ -45,7 +45,7 @@ export const useCategorySelection = (
       setSelectedCategories(newCategories);
       updateUrl(newCategories);
     },
-    [selectedCategories, setSelectedCategories, searchQuery, router, searchParams]
+    [selectedCategories, setSelectedCategories, searchQuery, searchParams]
   );
 
   return { handleCategoryClick, handleRemoveCategory };

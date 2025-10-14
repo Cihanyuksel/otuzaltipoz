@@ -1,4 +1,4 @@
-export const canManagePhoto = (userRole: string | null | undefined, isOwnerPhoto: boolean): boolean => {
+export const canManage = (userRole: string | null | undefined, isOwnerPhoto: boolean): boolean => {
   return userRole === 'admin' || isOwnerPhoto;
 };
 

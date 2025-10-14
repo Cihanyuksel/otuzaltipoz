@@ -14,7 +14,6 @@ export default function Header() {
   const router = useRouter();
 
   const { user, logout, loading, setAuth } = useAuth();
-
   const isLogoutPending = logout.isPending;
 
   useEffect(() => {
@@ -73,7 +72,7 @@ export default function Header() {
   };
 
   const headerClasses = `fixed top-0 2xl:text-3xl text- w-full text-gray-800 flex justify-between items-center z-50 shadow-xl transition-all duration-300 ease-in-out bg-[#f5f1ea]
-    ${isScrolled ? 'h-16 px-4 2xl:h-32 ' : 'h-24 px-8 2xl:h-44'}`;
+    ${isScrolled ? 'h-16 px-4 2xl:h-32 ' : 'h-25 px-8 2xl:h-44'}`;
 
   return (
     <header className={headerClasses}>

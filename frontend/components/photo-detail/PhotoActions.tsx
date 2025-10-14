@@ -4,17 +4,13 @@ import { RiDeleteBin6Line as DeleteIcon } from 'react-icons/ri'
 import { canManagePhoto } from 'lib/permission';
 
 interface PhotoActionsProps {
-  userRole?: string;
-  isOwnerPhoto: boolean;
   handleModalToggle: (type: 'edit' | 'delete', value: boolean) => void;
 }
 
 const PhotoActions: React.FC<PhotoActionsProps> = ({
-  userRole,
-  isOwnerPhoto,
   handleModalToggle,
 }) => {
-  if (!canManagePhoto(userRole, isOwnerPhoto)) return null;
+
 
   return (
     <div className="mt-4 md:mt-8 flex gap-3 justify-end w-full">

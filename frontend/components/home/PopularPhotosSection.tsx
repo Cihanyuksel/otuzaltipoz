@@ -48,24 +48,6 @@ const PopularPhotosSection = () => {
     return count.toString();
   };
 
-  if (!loading && photos.length === 0) {
-    return (
-      <section className="py-16 sm:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Popüler Fotoğraflar</h2>
-            <p className="mt-4 text-lg text-gray-600">
-              {activeTab === 'day' && 'Bugün popüler fotoğraf bulunmuyor.'}
-              {activeTab === 'week' && 'Bu hafta popüler fotoğraf bulunmuyor.'}
-              {activeTab === 'month' && 'Bu ay popüler fotoğraf bulunmuyor.'}
-              {activeTab === 'all' && 'Henüz popüler fotoğraf bulunmuyor.'}
-            </p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="py-16 sm:py-24 bg-gray-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -105,14 +87,26 @@ const PopularPhotosSection = () => {
           </div>
         )}
 
-        {/* FOTOĞRAFLAR */}
-        {!loading && (
+        {/* FOTOĞRAFLAR VEYA HATA MESAJI */}
+        {!loading && photos.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-lg text-gray-600">
+              {activeTab === 'day' && 'Bugün popüler fotoğraf bulunmuyor.'}
+              {activeTab === 'week' && 'Bu hafta popüler fotoğraf bulunmuyor.'}
+              {activeTab === 'month' && 'Bu ay popüler fotoğraf bulunmuyor.'}
+              {activeTab === 'all' && 'Henüz popüler fotoğraf bulunmuyor.'}
+            </p>
+          </div>
+        )}
+
+        {!loading && photos.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {photos.map((photo) => (
               <Link
                 key={photo._id}
                 href={`/photos/${photo._id}`}
                 className="group relative overflow-hidden rounded-lg aspect-square cursor-pointer block"
+                prefetch={false}
               >
                 <Image
                   alt={photo.title || `${photo.user.username}'in fotoğrafı`}

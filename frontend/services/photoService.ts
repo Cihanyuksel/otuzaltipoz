@@ -1,20 +1,24 @@
-import axios from 'axios';
 import { axiosInstance } from 'lib/axiosInstance';
-import { API_BASE_URL, PHOTO_PATHS } from 'lib/config';
+import { PHOTO_PATHS } from 'lib/config';
 import { ApiResponse, Photo, PopularPhoto } from 'types/photo';
 
 type Timeframe = 'all' | 'month' | 'week' | 'day';
 
 export const photoService = {
   //GET ALL PHOTO
-
-  getAllPhoto: async (
-    searchQuery?: string,
-    accessToken?: string | null,
-    categories?: string,
-    limit: number = 10,
-    offset: number = 0
-  ): Promise<ApiResponse<Photo[]>> => {
+  getAllPhoto: async ({
+    searchQuery = '',
+    accessToken = null,
+    categories = '',
+    limit = 10,
+    offset = 0,
+  }: {
+    searchQuery?: string;
+    accessToken?: string | null;
+    categories?: string;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<ApiResponse<Photo[]>> => {
     try {
       let path = PHOTO_PATHS.GETALL_PHOTOS;
       const params = new URLSearchParams();
@@ -28,7 +32,6 @@ export const photoService = {
       path += `?${params.toString()}`;
 
       const headers: Record<string, string> = {};
-
       if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
 
       const response = await axiosInstance.get<ApiResponse<Photo[]>>(path, { headers });
@@ -133,7 +136,9 @@ export const photoService = {
         headers['Authorization'] = `Bearer ${accessToken}`;
       }
 
-      const response = await axiosInstance.put<ApiResponse<Photo>>(PHOTO_PATHS.UPDATE_PHOTO(id), updatedData, { headers });
+      const response = await axiosInstance.put<ApiResponse<Photo>>(PHOTO_PATHS.UPDATE_PHOTO(id), updatedData, {
+        headers,
+      });
 
       return response.data;
     } catch (error: any) {

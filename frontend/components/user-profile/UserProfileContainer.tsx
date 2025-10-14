@@ -1,48 +1,60 @@
 'use client';
-//nextjs and react
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-//project-files
 import { useAuth } from '@/context/AuthContext';
 import { useGetUserPhotos, useGetLikedPhotos } from '@/hooks/api/usePhotoApi';
 import { useGetUser } from '@/hooks/api/useAuthApi';
 import Loader from '@/components/common/loader';
 import UserProfile from './UserProfile';
 
-const UserProfileContainer = () => {
+interface IUserProfileContainerProps {
+  userId?: string;
+}
+
+const UserProfileContainer = ({ userId: userIdFromServer }: IUserProfileContainerProps) => {
   const { user: currentUser } = useAuth();
   const params = useParams();
-  const userId = params?.id as string | undefined;
 
-  const profileOwnerId = userId || currentUser?.id;
-  const isOwner = !userId || currentUser?.id === userId;
+  const userIdFromParams = params?.id as string | undefined;
+
+  const profileOwnerId = userIdFromServer || userIdFromParams || currentUser?.id;
+  const isOwner = (!userIdFromServer && !userIdFromParams) || currentUser?.id === profileOwnerId;
 
   const [activeTab, setActiveTab] = useState<'uploaded' | 'liked'>('uploaded');
 
   useEffect(() => {
-    const storageKey = isOwner ? 'activeTab_owner' : `activeTab_${userId}`;
+    const storageKey = isOwner ? 'activeTab_owner' : `activeTab_${profileOwnerId}`;
     const savedTab = localStorage.getItem(storageKey) as 'uploaded' | 'liked';
-    if (savedTab) {
-      setActiveTab(savedTab);
-    } else {
-      setActiveTab('uploaded');
-    }
-  }, [userId, isOwner]);
+    setActiveTab(savedTab || 'uploaded');
+  }, [profileOwnerId, isOwner]);
 
   const handleTabChange = (tab: 'uploaded' | 'liked') => {
     setActiveTab(tab);
-    const storageKey = isOwner ? 'activeTab_owner' : `activeTab_${userId}`;
+    const storageKey = isOwner ? 'activeTab_owner' : `activeTab_${profileOwnerId}`;
     localStorage.setItem(storageKey, tab);
   };
 
-  const { data: profileOwnerData, isLoading: isUserLoading, isError: isUserError } = useGetUser(profileOwnerId as string);
-  const { data: uploadedData, isLoading: isUploadedLoading, isError: isUploadedError } = useGetUserPhotos(profileOwnerId as string);
-  const { data: likedData, isLoading: isLikedLoading, isError: isLikedError } = useGetLikedPhotos(profileOwnerId as string);
+  const {
+    data: profileOwnerData,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useGetUser(profileOwnerId as string);
+  const {
+    data: uploadedData,
+    isLoading: isUploadedLoading,
+    isError: isUploadedError,
+  } = useGetUserPhotos(profileOwnerId as string);
+  const {
+    data: likedData,
+    isLoading: isLikedLoading,
+    isError: isLikedError,
+  } = useGetLikedPhotos(profileOwnerId as string);
 
   const isLoading = isUserLoading || (activeTab === 'uploaded' ? isUploadedLoading : isLikedLoading);
   const isError = isUserError || (activeTab === 'uploaded' ? isUploadedError : isLikedError);
 
   const profileOwner = profileOwnerData;
+  console.log(profileOwner)
   const imageUrl = profileOwner?.profile_img_url || '/no_profile.png';
   const photosToShow = activeTab === 'uploaded' ? uploadedData?.data || [] : likedData?.data || [];
 

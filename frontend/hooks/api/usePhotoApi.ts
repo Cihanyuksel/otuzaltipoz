@@ -15,12 +15,18 @@ type PhotoResponse = {
     __v: number;
   };
 };
-
+//---------------------------------------------------------------------------------------------------------
 export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null, categories?: string) => {
   return useInfiniteQuery({
     queryKey: ['photos', { searchQuery, hasToken: !!accessToken, categories }],
     queryFn: async ({ pageParam = 0 }) => {
-      const response = await photoService.getAllPhoto(searchQuery, accessToken, categories, 10, pageParam);
+      const response = await photoService.getAllPhoto({
+        searchQuery: searchQuery || '',
+        accessToken,
+        categories: categories || '',
+        limit: 10,
+        offset: pageParam,
+      });
       return response;
     },
     getNextPageParam: (lastPage, allPages) => {
@@ -37,7 +43,7 @@ export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null
     refetchOnReconnect: false,
   });
 };
-
+//---------------------------------------------------------------------------------------------------------
 export const useGetPhoto = (id: string) =>
   useQuery<Photo | null>({
     queryKey: ['photos', id],
@@ -47,7 +53,7 @@ export const useGetPhoto = (id: string) =>
     refetchOnWindowFocus: false,
     retry: false,
   });
-
+//---------------------------------------------------------------------------------------------------------
 export const useAddPhoto = (accessToken: string) => {
   const queryClient = useQueryClient();
 
@@ -58,7 +64,7 @@ export const useAddPhoto = (accessToken: string) => {
     },
   });
 };
-
+//---------------------------------------------------------------------------------------------------------
 export const useGetUserPhotos = (userId: string, accessToken?: string | null) =>
   useQuery<ApiResponse<Photo[]>>({
     queryKey: ['userPhotos', userId],
@@ -68,6 +74,7 @@ export const useGetUserPhotos = (userId: string, accessToken?: string | null) =>
     refetchOnWindowFocus: false,
   });
 
+//---------------------------------------------------------------------------------------------------------
 export const useGetLikedPhotos = (userId: string, accessToken?: string | null) =>
   useQuery<ApiResponse<Photo[]>>({
     queryKey: ['likedPhotos', userId],
@@ -76,7 +83,7 @@ export const useGetLikedPhotos = (userId: string, accessToken?: string | null) =
     staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
   });
-
+//---------------------------------------------------------------------------------------------------------
 export const useUpdatePhoto = (accessToken?: string | null) => {
   const queryClient = useQueryClient();
 
@@ -91,7 +98,7 @@ export const useUpdatePhoto = (accessToken?: string | null) => {
     },
   });
 };
-
+//---------------------------------------------------------------------------------------------------------
 export const useDeletePhoto = (accessToken?: string | null) => {
   const queryClient = useQueryClient();
 
@@ -108,3 +115,4 @@ export const useDeletePhoto = (accessToken?: string | null) => {
     },
   });
 };
+//---------------------------------------------------------------------------------------------------------

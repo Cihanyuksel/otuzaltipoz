@@ -9,6 +9,7 @@ import Button from '../common/button';
 import SuccessModal from '../common/success-modal';
 import UserDeleteConfirmModal from '../common/confirm-modal';
 import { User } from 'types/auth';
+import { canManage as canManageUser } from 'lib/permission';
 
 interface IProfileHeader {
   user: User;
@@ -57,6 +58,8 @@ const ProfileHeader = ({ user, imageUrl, isOwner }: IProfileHeader) => {
     router.push('/');
   };
 
+  const canDeleteAccount = canManageUser(currentUser?.role, isOwner);
+
   return (
     <>
       <div className="relative flex flex-col items-center gap-6 md:flex-row md:gap-12">
@@ -71,7 +74,7 @@ const ProfileHeader = ({ user, imageUrl, isOwner }: IProfileHeader) => {
           </div>
         </div>
 
-        {isOwner && (
+        {canDeleteAccount && (
           <Button
             onClick={handleDeleteAccount}
             className="absolute top-0 right-0 px-4 py-2"
