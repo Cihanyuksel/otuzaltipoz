@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { FaAngleRight as ArrowRightIcon, FaTimes as CloseIcon } from 'react-icons/fa';
 
 interface SectionProps {
@@ -19,7 +20,6 @@ export const CategorySection: React.FC<SectionProps> = ({
   onToggle,
   isSidebarOpen,
   icon,
-  onCategoryClick,
   selectedCategories,
   onRemoveCategory,
 }) => {
@@ -60,16 +60,23 @@ export const CategorySection: React.FC<SectionProps> = ({
           {items.map((item) => {
             const isSelected = selectedCategories.includes(item);
             return (
-              <li key={item} onClick={() => !isSelected && onCategoryClick(item)} className="cursor-pointer">
-                <span
+              <li key={item}>
+                <Link
+                  href={`/photos?categories=${encodeURIComponent(
+                    isSelected
+                      ? selectedCategories.filter((c) => c !== item).join(',')
+                      : [...selectedCategories, item].slice(0, 3).join(',')
+                  )}`}
                   className={`flex items-center justify-between p-1 rounded-lg text-sm transition-colors ${
                     isSelected ? 'bg-[#f5f1ea] text-gray-500 font-semibold' : 'text-gray-500 hover:bg-[#f5f1ea]'
                   }`}
                 >
                   {item}
+
                   {isSelected && (
                     <button
                       onClick={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
                         onRemoveCategory(item);
                       }}
@@ -79,7 +86,7 @@ export const CategorySection: React.FC<SectionProps> = ({
                       <CloseIcon size={10} />
                     </button>
                   )}
-                </span>
+                </Link>
               </li>
             );
           })}

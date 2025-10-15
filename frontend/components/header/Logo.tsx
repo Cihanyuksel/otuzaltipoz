@@ -14,7 +14,7 @@ export default function Logo({ isScrolled }: LogoProps) {
       <Link href="/" className="font-bold text-[#ef7464]">
         <Image
           src={'/logo.png'}
-          alt="Focus HUB Logo"
+          alt="Otuzaltıpoz Logo"
           priority
           width={logoWidth}
           height={logoHeight}

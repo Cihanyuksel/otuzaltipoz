@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, FieldError } from 'react-hook-form';
 import { CiCloudOn as CloudIcon } from 'react-icons/ci';
 import { IoIosArrowDown as ArrowDown } from 'react-icons/io';
+import { FaCheckCircle as CheckIcon } from 'react-icons/fa';
 //project-files
 import { useAuth } from '@/context/AuthContext';
 import { useAddPhoto } from '@/hooks/api/usePhotoApi';
@@ -27,6 +28,7 @@ export default function PhotoUploadForm() {
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [showCheckmark, setShowCheckmark] = useState(false);
 
   const { accessToken, loading } = useAuth();
 
@@ -77,6 +79,16 @@ export default function PhotoUploadForm() {
     };
   }, []);
 
+  useEffect(() => {
+    if (fileName !== 'Dosya Seçilmedi') {
+      setShowCheckmark(true);
+      const timer = setTimeout(() => setShowCheckmark(false), 2500);
+      return () => clearTimeout(timer);
+    } else {
+      setShowCheckmark(false);
+    }
+  }, [fileName]);
+
   const handleDropdownToggle = async () => {
     if (!isDropdownOpen && categories.length === 0) {
       const success = await fetchCategories();
@@ -126,6 +138,7 @@ export default function PhotoUploadForm() {
         reset();
         setFileName('Dosya Seçilmedi');
         setSelectedCategories([]);
+        setShowCheckmark(false);
       },
       onError: (error) => {
         console.error('Upload failed:', error);
@@ -201,7 +214,6 @@ export default function PhotoUploadForm() {
             {errors.description && <p className="mt-2 text-sm text-red-500">{errors.description.message}</p>}
           </div>
 
-          {/* Kategori Açılır Menü (Dropdown) Alanı */}
           <div className="relative" ref={dropdownRef}>
             <label className="block pb-2 text-sm font-medium text-[#1b140e]">Kategoriler (1-3 adet)</label>
             <button
@@ -249,7 +261,6 @@ export default function PhotoUploadForm() {
 
             <p className="mt-3 text-xs text-gray-600">Seçili: {selectedCategories.length}/3</p>
           </div>
-          {/* Kategori Açılır Menü (Dropdown) Alanı Bitiş */}
 
           <div>
             <label className="block pb-2 text-sm font-medium text-[#1b140e]" htmlFor="tags">
@@ -265,19 +276,33 @@ export default function PhotoUploadForm() {
             <p className="mt-1 text-xs text-gray-500">Etiketleri virgülle ayırarak girebilirsiniz</p>
           </div>
 
-          <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#a6b8b1] bg-[#f5f1ea] px-6 py-10 text-center">
-            <span className="material-symbols-outlined text-5xl text-gray-400">
+          <div
+            className={`
+              flex flex-col items-center justify-center bg-[#f5f1ea] rounded-lg border-2 border-dashed px-6 py-10 text-center 
+              ${fileName !== 'Dosya Seçilmedi' ? 'border-[#ef7464]' : 'border-[#a6b8b1]'}
+            `}
+          >
+            <span
+              className={`material-symbols-outlined text-5xl ${fileName !== 'Dosya Seçilmedi' ? 'text-[#ef7464]' : 'text-gray-400'}`}
+            >
               <CloudIcon />
             </span>
             <p className="mt-4 text-lg font-semibold text-gray-500">Sürükleyip bırakın veya yüklemek için tıklayın</p>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className={`mt-1 text-sm ${fileName !== 'Dosya Seçilmedi' ? 'text-[#1b140e]' : 'text-gray-500'}`}>
               <span className="font-bold">{fileName}</span>
             </p>
             <label
               className="mt-6 flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-[#ef7464] h-10 px-6 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#ef7464df]"
               htmlFor="file-upload"
             >
-              <span className="truncate">Fotoğraf seç</span>
+              {showCheckmark ? (
+                <div className="flex items-center space-x-2 transition-transform duration-300 transform scale-110">
+                  <CheckIcon className="h-5 w-5" />
+                  <span className="truncate">Seçildi</span>
+                </div>
+              ) : (
+                <span className="truncate">Fotoğraf seç</span>
+              )}
             </label>
             <input id="file-upload" type="file" className="hidden" {...register('photo', { onChange: handleChange })} />
           </div>

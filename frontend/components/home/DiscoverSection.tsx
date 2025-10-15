@@ -3,7 +3,7 @@ import DiscoverCard from './DiscoverCard';
 function DiscoverSection() {
   const discoverCards = [
     {
-      href: '#',
+      href: '/photography-history',
       src: '/photography_history.jpg',
       alt: 'Fotoğrafın Tarihi',
       title: 'Fotoğrafın Tarihi',

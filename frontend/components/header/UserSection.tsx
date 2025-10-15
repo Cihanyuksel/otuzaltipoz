@@ -9,7 +9,9 @@ import {
   MdNotifications as NotificationsIcon,
   MdKeyboardArrowDown as ArrowDownIcon,
 } from 'react-icons/md';
+import { FiLogIn as LoginIcon, FiUserPlus as RegisterIcon } from 'react-icons/fi';
 import { User } from 'types/auth';
+import Link from 'next/link';
 
 interface IUserSection {
   setDropdownOpen: Dispatch<SetStateAction<boolean>>;
@@ -19,6 +21,7 @@ interface IUserSection {
   dropdownOpen: boolean;
   handleLogout: () => void;
   isLogoutPending: boolean;
+  isScrolled: boolean
 }
 
 interface DropdownItem {
@@ -39,6 +42,7 @@ function UserSection({
   dropdownOpen,
   handleLogout,
   isLogoutPending,
+  isScrolled,
 }: IUserSection) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -61,23 +65,34 @@ function UserSection({
 
   if (!user) {
     return !loading ? (
-      <div className="hidden lg:flex space-x-5 flex-shrink-0">
-        <li className="list-none w-28">
-          <a
-            href="/login"
-            className="px-4 py-1 font-semibold border border-[#d3deda] rounded hover:bg-[#d3deda] hover:text-white hover:font-semibold hover:border-white transition cursor-pointer"
-          >
-            Giriş Yap
-          </a>
-        </li>
-        <li className="list-none w-28">
-          <a
-            href="/register"
-            className="px-4 py-1 font-semibold border border-[#d3deda] rounded hover:bg-[#d3deda] hover:text-white hover:font-semibold hover:border-white transition cursor-pointer"
-          >
-            Kayıt Ol
-          </a>
-        </li>
+      <div className="hidden lg:flex items-center space-x-6 flex-shrink-0">
+        <Link
+          href="/login"
+          className="flex items-center space-x-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition duration-150 ease-in-out"
+        >
+          {isScrolled ? (
+            <LoginIcon className="w-5 h-5" aria-label='Giriş Yap' />
+          ) : (
+            <>
+              <LoginIcon className="w-5 h-5" />
+              <span>Giriş Yap</span>
+            </>
+          )}
+        </Link>
+
+        <Link
+          href="/register"
+          className="px-4 py-2 text-sm font-semibold bg-[#d3deda] text-gray-600 rounded-lg shadow-sm hover:bg-[#f5f1ea] transition duration-150 ease-in-out transform hover:scale-105"
+        >
+          {isScrolled ? (
+            <RegisterIcon className="w-4 h-4 inline-block mr-1 text-gray-600" aria-label='Kayıt Ol'  />
+          ) : (
+            <>
+              <RegisterIcon className="w-4 h-4 inline-block mr-1 text-gray-600" />
+              <span>Kayıt Ol</span>
+            </>
+          )}
+        </Link>
       </div>
     ) : null;
   }

@@ -91,7 +91,7 @@ const ContactForm = () => {
             rows={4}
             {...register('message')}
             disabled={isSubmitting}
-            className={`w-full px-3 py-2 border bg-[#f5f1ea] rounded-md shadow-sm focus:ring-2 focus:ring-[#e6994c] focus:border-[#e6994c] resize-none ${
+            className={`w-full px-3 py-2 border-2 bg-[#f5f1ea] rounded-md shadow-sm  focus:border-[#ef7464] focus:outline-none resize-none ${
               errors.message ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Mesajınızı yazın..."

@@ -42,7 +42,7 @@ function Input<T extends FieldValues>({ name, register, error, label, bgColor, .
       <input
         {...register(name)}
         {...rest}
-        className={`border-2 border-gray-300 p-3 rounded-md focus:border-[#ef7464] focus:outline-none ${
+        className={`border-2 border-gray-300 p-3 rounded-md focus:border-[#ef7464] focus:outline-none focus:shadow-none ${
           error ? 'border-red-500' : ''
         } ${bgColor ? bgColor : 'bg-white'}`} 
       />

@@ -13,9 +13,8 @@ const Contact = () => {
           <h1 className="text-5xl font-bold tracking-wide-">İletişim</h1>
           <ContactForm />
           <div className="my-12 flex justify-center">
-            <span className="material-symbols-outlined text-9xl text-[#d3deda]">
-              {' '}
-              <MailIcon />{' '}
+            <span className="text-9xl text-[#d3deda]">
+              <MailIcon />
             </span>
           </div>
         </div>

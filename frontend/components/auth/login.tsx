@@ -59,14 +59,15 @@ export default function LoginForm() {
           <p className="text-gray-400 text-sm text-center mt-1">Aşağıdaki bilgilerinizi girin veya ücretsiz kaydolun</p>
         </div>
         <div>
-          <label className="text-gray-700 font-bold">Email</label>
-          <Input name="email" register={register} error={errors.email?.message} placeholder="ornek@email.com" type="email" />
+          <label htmlFor='email' className="text-gray-700 font-bold">Email</label>
+          <Input id='email' name="email" register={register} error={errors.email?.message} placeholder="ornek@email.com" type="email" />
         </div>
 
         <div>
-          <label className="text-gray-700 font-bold">Şifre</label>
+          <label htmlFor='password' className="text-gray-700 font-bold">Şifre</label>
           <Input
             name="password"
+            id='password'
             register={register}
             error={errors.password?.message}
             placeholder="********"

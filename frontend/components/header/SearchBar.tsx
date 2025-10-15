@@ -37,7 +37,7 @@ export default function HeaderSearchBar({ isScrolled }: HeaderSearchBarProps) {
           onClick={handleSearchClick}
           aria-label="Aramaya git"
         >
-          <SearchIcon className="h-6 w-6" />
+          <SearchIcon className="h-6 w-6" aria-label="Ara" />
         </button>
       ) : (
         <>

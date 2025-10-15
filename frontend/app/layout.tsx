@@ -38,7 +38,7 @@ export default function RootLayout({
       <body className={`${plusJakarta.variable} ${notoSans.variable} antialiased`}>
         <Providers>
           <Header />
-          <main className="pt-23">{children}</main>
+          <main className='mt-25'>{children}</main>
           <ToastContainer position="top-right" autoClose={3000} aria-label="notification" />
         </Providers>
       </body>
