@@ -1,6 +1,6 @@
 'use client';
 //nextjs and react
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 //project-files
 import { useAuth } from '@/context/AuthContext';
 import { usePhotos } from '@/context/PhotoContext';
@@ -49,6 +49,7 @@ function LikeSection({ photoId }: ILikeSection) {
               likeCount={likeCount}
               isLikedByMe={isLikedByMe}
               onOpenModal={openModal}
+              useContext={true}
               ref={likeButtonRef}
             />
             <PhotoLikedUsers photoId={photoId} isOpen={isModalOpen} onClose={closeModal} />

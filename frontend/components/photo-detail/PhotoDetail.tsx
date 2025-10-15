@@ -14,7 +14,9 @@ import Button from '../common/button';
 import CommentSection from '../comments/CommentSection';
 import { useAuth } from '@/context/AuthContext';
 import { useGetPhoto, useDeletePhoto } from '@/hooks/api/usePhotoApi';
+import { useGetLikes } from '@/hooks/api/useLikeApi';
 import { canManage as canManagePhoto } from 'lib/permission';
+import LikeButton from '../photos/photo-card/LikeButton';
 
 type ModalName = 'login' | 'edit' | 'delete';
 
@@ -38,11 +40,15 @@ const PhotoDetail = () => {
   const photoId = params.id as string;
 
   const { data: photo, isLoading, isError } = useGetPhoto(photoId);
+  const { data: likeData } = useGetLikes(photoId, accessToken, {
+    enabled: !!photoId,
+  });
   const { mutate: deletePhoto, isPending, error } = useDeletePhoto(accessToken);
-  const handleModalToggle = (modalStates: ModalName, isOpen: boolean) => {
+
+  const handleModalToggle = (modalName: ModalName, isOpen: boolean) => {
     setModalStates((prevState) => ({
       ...prevState,
-      [modalStates]: !!isOpen,
+      [modalName]: !!isOpen,
     }));
   };
 
@@ -75,32 +81,40 @@ const PhotoDetail = () => {
 
   const isOwnerPhoto = user?.id === photo.user._id;
   const isLoggedIn = !!accessToken;
-
   const canDeletePhoto = canManagePhoto(user?.role, isOwnerPhoto);
+
+  const currentLikeCount = likeData?.likeCount ?? photo.likeCount;
+  const currentIsLikedByMe = likeData?.isLikedByMe ?? photo.isLikedByMe;
 
   return (
     <section
       className="w-full flex justify-center py-5 bg-neutral-100 text-gray-800 min-h-screen 2xl:min-h-4/5 px-4 md:px-0"
       style={{ fontFamily: '"Plus Jakarta Sans", "Noto Sans", sans-serif' }}
     >
-      <div className="w-full  max-w-6xl 2xl:max-w-4/5">
+      <div className="w-full max-w-6xl 2xl:max-w-4/5">
         <div className="bg-white p-10 shadow-sm">
           <PhotoImage photoUrl={photo.photo_url} title={photo.title} />
-          <div className="w-full px-4 md:pt-5  md:px-10">
+          <div className="w-full px-4 md:pt-5 md:px-10">
             <div className="grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-3">
               <div className="md:col-span-2">
                 <PhotoInfo title={photo.title} description={photo.description} tags={photo.tags} />
                 <UploaderInfo user={photo.user} photoCreatedAt={photo.created_at} photoUpdatedAt={photo.updated_at} />
+                <div className="mt-4"></div>
               </div>
               {isLoggedIn ? (
                 <div className="flex flex-col md:flex-col justify-end items-end gap-5">
                   <RatingSection
                     photoId={photo._id}
                     accessToken={accessToken}
-                    likeCount={photo.likeCount}
+                    likeCount={currentLikeCount}
                     onLoginRequired={() => handleModalToggle('login', true)}
                   />
-
+                  <LikeButton
+                    photoId={photo._id}
+                    likeCount={currentLikeCount}
+                    isLikedByMe={currentIsLikedByMe}
+                    onLoginRequired={() => handleModalToggle('login', true)}
+                  />
                   {canDeletePhoto && <PhotoActions handleModalToggle={handleModalToggle} />}
                 </div>
               ) : (

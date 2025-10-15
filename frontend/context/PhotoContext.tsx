@@ -1,6 +1,7 @@
 'use client';
 import { createContext, useContext, ReactNode, useCallback, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { Photo } from 'types/photo';
 import { useAuth } from './AuthContext';
 import { useSearch } from './SearchContext';
@@ -30,9 +31,11 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
   const { accessToken, user } = useAuth();
   const { searchValue } = useSearch();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
 
   const [debouncedSearchValue, setDebouncedSearchValue] = useState(searchValue);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [previousUserId, setPreviousUserId] = useState<string | null>(null);
 
   const {
     data: allPhotos,
@@ -49,6 +52,21 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
   );
 
   const toggleLikeMutation = useToggleLike();
+
+  useEffect(() => {
+    const currentUserId = user?.id || null;
+
+    if (previousUserId !== currentUserId) {
+      queryClient.invalidateQueries({ queryKey: ['likes'] });
+      queryClient.invalidateQueries({ queryKey: ['photos'] });
+      queryClient.invalidateQueries({ queryKey: ['likedPhotos'] });
+
+      queryClient.removeQueries({ queryKey: ['likes'] });
+      queryClient.removeQueries({ queryKey: ['likedPhotos'] });
+
+      setPreviousUserId(currentUserId);
+    }
+  }, [user?.id, previousUserId, queryClient]);
 
   useEffect(() => {
     const categoriesFromUrl = searchParams.get('categories');
@@ -71,31 +89,19 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
 
   useEffect(() => {
     if (user !== null && !allPhotos && !isLoading && !error) {
-      console.log('refetch çağrıldı, user:', user);
       refetch();
     }
   }, [user, refetch, allPhotos, isLoading, error]);
 
   const toggleLike = useCallback(
     (photoId: string) => {
-      console.log('toggleLike çağrıldı, photoId:', photoId);
-      toggleLikeMutation.mutate(
-        {
-          photoId,
-          accessToken,
-          searchQuery: debouncedSearchValue,
-          hasToken: !!accessToken,
-          categories: selectedCategories.join(',') || undefined,
-        },
-        {
-          onSuccess: () => {
-            console.log('toggleLike başarılı, photoId:', photoId);
-          },
-          onError: (error) => {
-            console.log('toggleLike hata, photoId:', photoId, 'error:', error);
-          },
-        }
-      );
+      toggleLikeMutation.mutate({
+        photoId,
+        accessToken,
+        searchQuery: debouncedSearchValue,
+        hasToken: !!accessToken,
+        categories: selectedCategories.join(',') || undefined,
+      });
     },
     [accessToken, toggleLikeMutation, debouncedSearchValue, selectedCategories]
   );
@@ -121,4 +127,3 @@ export const usePhotos = () => {
   if (!context) throw new Error('usePhotos must be used within a PhotosProvider');
   return context;
 };
-

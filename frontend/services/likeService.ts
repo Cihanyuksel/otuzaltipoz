@@ -19,7 +19,7 @@ export const likeService = {
     }
   },
 
-  getLikes: async (photoId: string, accessToken?: string) => {
+  getLikes: async (photoId: string, accessToken?: string | null) => {
     try {
       const headers: Record<string, string> = {};
 

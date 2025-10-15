@@ -1,51 +1,36 @@
 'use client';
-
 //nextjs and react
-
 import { useEffect, useRef, useState } from 'react';
-
 //third-party
-
 import { FiCheck as CheckIcon } from 'react-icons/fi';
-
 import { AnimatePresence, motion } from 'framer-motion';
-
-import {
-  IoIosStar as StarFilledIcon,
-  IoIosStarOutline as StarOutlineIcon,
-  IoMdHeartEmpty as HeartEmptyIcon,
-} from 'react-icons/io';
-
+import { IoIosStar as StarFilledIcon, IoIosStarOutline as StarOutlineIcon } from 'react-icons/io';
 //project-files
-
 import { useGetRatings, useRatePhoto } from '@/hooks/api/useRatingApi';
-
 import Loader from '../common/loader';
 
 interface IPhotoRatings {
   photoId: string;
-
   accessToken: string | null;
-
   likeCount: number;
-
   onLoginRequired: () => void;
 }
 
-export default function PhotoRatings({ photoId, accessToken, likeCount, onLoginRequired }: IPhotoRatings) {
+export default function PhotoRatings({ photoId, accessToken, onLoginRequired }: IPhotoRatings) {
+  //state
   const [rating, setRating] = useState(0);
-
   const [showMessage, setShowMessage] = useState(false);
-
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+  //ref
   const starRef = useRef<HTMLDivElement>(null);
-
+  //api
   const { data: ratingsData, isLoading, error } = useGetRatings(photoId);
-
   const ratePhotoMutation = useRatePhoto();
-
+  //constant
   const IsLoggedIn = !!accessToken;
+  const averageRating = ratingsData?.averageRating || 0;
+  const totalVotes = ratingsData?.totalVotes || 0;
+  const ratingOptions = [5, 4, 3, 2, 1];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -61,36 +46,27 @@ export default function PhotoRatings({ photoId, accessToken, likeCount, onLoginR
 
   const handleSubmit = () => {
     if (rating === 0) return;
-
     setErrorMessage(null);
-
     if (!IsLoggedIn) {
       onLoginRequired();
-
       return;
     }
-
     ratePhotoMutation.mutate(
       {
         photoId,
-
         rating,
-
         accessToken,
       },
 
       {
         onSuccess: () => {
           setShowMessage(true);
-
           setTimeout(() => setShowMessage(false), 1500);
-
           setRating(0);
         },
 
         onError: (error: any) => {
           const backendMessage = error?.message || error?.response?.data?.message;
-
           if (backendMessage?.includes('already rated')) {
             setErrorMessage('Bu fotoğrafı zaten oyladınız.');
           } else {
@@ -111,31 +87,15 @@ export default function PhotoRatings({ photoId, accessToken, likeCount, onLoginR
     );
   }
 
-  const averageRating = ratingsData?.averageRating || 0;
-
-  const totalVotes = ratingsData?.totalVotes || 0;
-
-  const ratingOptions = [5, 4, 3, 2, 1];
-
   return (
     <div className="flex flex-col gap-3 w-full  md:items-end">
       <div className="flex items-baseline gap-2">
         <span className="text-md md:text-2xl font-bold text-gray-900">{averageRating.toFixed(2)}</span>
         <span className="text-sm text-gray-500">/ 5</span>
-        <div className="flex items-center justify-between gap-4">
-          <button className="flex items-center gap-1 rounded-md bg-gray-100 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-200">
-            <span className="material-symbols-outlined text-base">
-              <HeartEmptyIcon />
-            </span>
-            {likeCount}
-          </button>
-        </div>
       </div>
-
       <p className="hidden md:block text-sm text-gray-500">{totalVotes} kişi oy verdi</p>
 
       {/* Star Rating Input */}
-
       <div ref={starRef} className="mt-2 flex flex-row-reverse items-center justify-end mr-10 flex-shrink-0">
         <div className="relative flex items-center">
           {rating > 0 && (
@@ -226,7 +186,6 @@ export default function PhotoRatings({ photoId, accessToken, likeCount, onLoginR
             ))}
           </div>
         </div>
-
         <p className="mr-4 flex-shrink-0 text-md font-medium text-gray-600">Fotoğrafı Oyla</p>
       </div>
 

@@ -24,8 +24,7 @@ export const metadata: Metadata = {
     ],
     shortcut: '/favicon.ico',
     apple: '/apple-touch-icon.png',
-  },
-  manifest: '/site.webmanifest',
+  }
 };
 
 export default function RootLayout({
@@ -38,7 +37,7 @@ export default function RootLayout({
       <body className={`${plusJakarta.variable} ${notoSans.variable} antialiased`}>
         <Providers>
           <Header />
-          <main className='mt-25'>{children}</main>
+          <main className="mt-25">{children}</main>
           <ToastContainer position="top-right" autoClose={3000} aria-label="notification" />
         </Providers>
       </body>
