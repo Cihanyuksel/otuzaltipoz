@@ -29,6 +29,21 @@ const processQueue = (error: AxiosError | null, token: string | null = null) => 
   failedQueue = [];
 };
 
+// Token refresh yapılmaması gereken endpoint'ler
+const PUBLIC_ENDPOINTS = [
+  '/auth/login',
+  '/auth/signup',
+  '/auth/refresh',
+  '/auth/forgot-password',
+  '/auth/reset-password',
+  '/auth/verify-email',
+];
+
+const isPublicEndpoint = (url?: string): boolean => {
+  if (!url) return false;
+  return PUBLIC_ENDPOINTS.some((endpoint) => url.includes(endpoint));
+};
+
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -43,15 +58,17 @@ axiosInstance.interceptors.request.use(
 // Response interceptor
 axiosInstance.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) => {
+  async (
+    error: AxiosError<{
+      message?: string;
+      errors?: Array<{ field: string; message: string }>;
+    }>
+  ) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    // ==================== TOKEN REFRESH LOGIC ====================
+    const isPublic = isPublicEndpoint(originalRequest?.url);
 
-    if (
-      error.response?.status === 401 &&
-      originalRequest &&
-      !originalRequest._retry &&
-      !originalRequest.url?.includes('/auth/refresh')
-    ) {
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isPublic) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -69,19 +86,15 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // accestoken refresh
-        const response = await axios.post(
-          `${API_BASE_URL}${AUTH_PATHS.REFRESH}`,
-          {},
-          { withCredentials: true }
-        );
+        // Access token refresh
+        const response = await axios.post(`${API_BASE_URL}${AUTH_PATHS.REFRESH}`, {}, { withCredentials: true });
 
         const newAccessToken = response.data.accessToken;
 
-        // token update
+        // Token update
         currentAccessToken = newAccessToken;
 
-        // header update
+        // Header update
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         }
@@ -105,10 +118,43 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    if (error.response?.status === 401) {
+    // ==================== ERROR HANDLING ====================
+    if (error.response?.status === 401 && !isPublic) {
       window.dispatchEvent(new CustomEvent('auth:unauthorized'));
     }
 
-    return Promise.reject(error);
+    const errorMessage = error.response?.data?.message || 'Bir hata oluştu';
+    const errorDetails = error.response?.data?.errors;
+    const statusCode = error.response?.status;
+
+    if (process.env.NODE_ENV === 'development') {
+      console.error('🔴 API Error:', {
+        url: originalRequest?.url,
+        method: originalRequest?.method,
+        status: statusCode,
+        message: errorMessage,
+        details: errorDetails,
+        isPublic,
+      });
+    }
+
+    const apiError = {
+      message: errorMessage,
+      status: statusCode,
+      details: errorDetails,
+      isNetworkError: !error.response,
+      isServerError: statusCode ? statusCode >= 500 : false,
+      isClientError: statusCode ? statusCode >= 400 && statusCode < 500 : false,
+    };
+
+    if (!error.response) {
+      apiError.message = 'İnternet bağlantınızı kontrol edin';
+    }
+
+    if (apiError.isServerError) {
+      apiError.message = errorMessage || 'Sunucu hatası. Lütfen daha sonra tekrar deneyin.';
+    }
+
+    return Promise.reject(apiError);
   }
 );

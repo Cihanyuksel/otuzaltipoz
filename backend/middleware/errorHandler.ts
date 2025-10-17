@@ -33,8 +33,14 @@ export const globalErrorHandler = (
   }
 
   if (process.env.NODE_ENV === "development") {
+    console.log('🔴 Backend Error:', {
+      statusCode,
+      message,
+      stack: err.stack,
+    });
+    
     return res.status(statusCode).json({
-      status: "error",
+      success: false, 
       message,
       error: err,
       stack: err.stack,
@@ -42,7 +48,7 @@ export const globalErrorHandler = (
   }
 
   res.status(statusCode).json({
-    status: "error",
+    success: false, 
     message,
   });
 };

@@ -23,7 +23,7 @@ export interface IPhotoDocument {
   tags?: string[];
   categories: Types.ObjectId[];
   created_at: Date;
-  updated_at: Date; 
+  updated_at: Date;
 }
 
 export interface ILikeDocument {
@@ -66,7 +66,7 @@ export interface IPhotoResponse {
   tags?: string[];
   categories: ICategory[];
   created_at: Date;
-  updated_at: Date; 
+  updated_at: Date;
   user: IUser;
   likeCount: number;
   isLikedByMe: boolean;

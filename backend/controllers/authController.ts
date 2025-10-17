@@ -323,11 +323,9 @@ const refresh = async (
   const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken) {
-    res.status(401).json({
-      success: false,
-      message: "No token provided",
-    });
-    return;
+    return next(
+      new AppError("Oturum süresi dolmuş. Lütfen tekrar giriş yapın.", 401)
+    );
   }
 
   const deviceId = generateDeviceId(req);
@@ -444,8 +442,8 @@ const logout = async (
 
 export { login, logout, signup, refresh, verifyEmail };
 
-/*
-if (req.file?.buffer) {
+
+/*if (req.file?.buffer) {
       const uploadResult: any = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: "photos_app" },

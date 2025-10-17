@@ -27,7 +27,7 @@ const photoSchema = new Schema<IPhoto>({
     required: true,
     trim: true,
     minlength: [3, "Başlık en az 3 karakter olmalıdır."],
-    maxlength: [25, "Başlık en fazla 25 karakter olmalıdır."],
+    maxlength: [50, "Başlık en fazla 25 karakter olmalıdır."],
   },
   description: {
     type: String,

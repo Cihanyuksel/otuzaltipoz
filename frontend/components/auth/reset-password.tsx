@@ -40,15 +40,32 @@ const ResetPassword = () => {
       return;
     }
 
+    // ✅ Şifre eşleşme kontrolü ekle
+    if (newPassword !== confirmPassword) {
+      setError('Şifreler eşleşmiyor. Lütfen her iki alana da aynı şifreyi girin.');
+      setLoading(false);
+      return;
+    }
+
+    // ✅ Minimum şifre uzunluğu kontrolü
+    if (newPassword.length < 6) {
+      setError('Şifre en az 6 karakter olmalıdır.');
+      setLoading(false);
+      return;
+    }
+
     try {
+      // ✅ confirmPassword'u de gönder
       const response = await authService.resetPassword({
         token,
         newPassword,
+        confirmPassword, // ← Bu eksikti!
       });
 
       if (response.success) {
         setMessage(response.message || 'Şifreniz başarıyla sıfırlandı. Artık yeni şifrenizle giriş yapabilirsiniz.');
         setNewPassword('');
+        setConfirmPassword('');
         setTimeout(() => {
           router.push('/login');
         }, 2000);
@@ -91,6 +108,7 @@ const ResetPassword = () => {
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="En az 6 karakter"
                 required
+                minLength={6}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition"
               />
               <button
@@ -115,6 +133,7 @@ const ResetPassword = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Şifreni tekrar gir"
               required
+              minLength={6}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition"
             />
           </div>

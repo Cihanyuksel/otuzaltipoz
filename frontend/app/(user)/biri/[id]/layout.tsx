@@ -1,11 +1,11 @@
 import { ReactNode } from 'react';
 import Footer from '@/components/common/footer';
 
-interface UserLayoutProps {
+interface ProfileLayoutProps {
   children: ReactNode;
 }
 
-const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
+const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children }) => {
   return (
     <>
       {children}
@@ -14,4 +14,4 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
   );
 };
 
-export default UserLayout;
+export default ProfileLayout;

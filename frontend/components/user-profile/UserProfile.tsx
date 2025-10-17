@@ -39,7 +39,7 @@ const UserProfile = ({isLoading, isError, profileOwner, imageUrl, isOwner, photo
   }
 
   return (
-    <section className="flex-1">
+    <section className="flex-1 min-h-screen">
       <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <ProfileHeader user={profileOwner} imageUrl={imageUrl} isOwner={isOwner} />
         <div className="mt-12">

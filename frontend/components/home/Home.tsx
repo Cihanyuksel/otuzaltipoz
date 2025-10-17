@@ -6,7 +6,7 @@ import PopularPhotosSection from './PopularPhotosSection';
 
 export default function Home() {
   return (
-    <>
+    <div className='overflow-x-hidden'>
       <AnimatedSection delay={0}>
         <HomeUserSection />
       </AnimatedSection>
@@ -22,6 +22,6 @@ export default function Home() {
       <AnimatedSection delay={500}>
         <DiscoverSection />
       </AnimatedSection>
-    </>
+    </div>
   );
 }

@@ -1,3 +1,4 @@
+// services/authService.ts
 import axios from 'axios';
 import { API_BASE_URL, AUTH_PATHS } from '../lib/config';
 import { AuthResponse, LoginRequest, MessageResponse } from '../types/auth';
@@ -10,8 +11,7 @@ export const authService = {
       const response = await axiosInstance.post(AUTH_PATHS.SIGNUP, formData);
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'API request failed';
-      throw new Error(errorMessage);
+      throw new Error(error.message || 'Kayıt başarısız');
     }
   },
   //--------------------------------------------------------------------------------------------\\
@@ -24,8 +24,7 @@ export const authService = {
       });
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'API request failed';
-      throw new Error(errorMessage);
+      throw new Error(error.message || 'Giriş başarısız');
     }
   },
 
@@ -35,8 +34,7 @@ export const authService = {
       const response = await axiosInstance.post(AUTH_PATHS.LOGOUT);
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'API request failed';
-      throw new Error(errorMessage);
+      throw new Error(error.message || 'Çıkış başarısız');
     }
   },
   //--------------------------------------------------------------------------------------------\\
@@ -55,8 +53,7 @@ export const authService = {
       const response = await axiosInstance.get(AUTH_PATHS.VERIFY_EMAIL(token));
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'API request failed';
-      throw new Error(errorMessage);
+      throw new Error(error.message || 'Token doğrulama başarısız');
     }
   },
   //--------------------------------------------------------------------------------------------\\
@@ -65,22 +62,25 @@ export const authService = {
       const response = await axiosInstance.post(AUTH_PATHS.FORGOT_PASSWORD, data);
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'API request failed';
-      throw new Error(errorMessage);
+      throw new Error(error.message || 'İşlem başarısız');
     }
   },
   //--------------------------------------------------------------------------------------------\\
-  resetPassword: async (data: { token: string; newPassword: string }): Promise<AuthResponse> => {
+  resetPassword: async (data: {
+    token: string;
+    newPassword: string;
+    confirmPassword: string;
+  }): Promise<AuthResponse> => {
     try {
       const response = await axiosInstance.post(AUTH_PATHS.RESET_PASSWORD(data.token), {
         token: data.token,
-        newPassword: data.newPassword,
+        password: data.newPassword,
+        confirm_password: data.confirmPassword,
       });
 
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Şifre sıfırlama başarısız oldu.';
-      throw new Error(errorMessage);
+      throw new Error(error.message || 'Şifre sıfırlama başarısız');
     }
   },
   //--------------------------------------------------------------------------------------------\\
@@ -89,8 +89,7 @@ export const authService = {
       const response = await axiosInstance.post(AUTH_PATHS.CONTACT, data);
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Mesaj gönderilemedi, lütfen tekrar deneyin.';
-      throw new Error(errorMessage);
+      throw new Error(error.message || 'Mesaj gönderilemedi');
     }
   },
   //--------------------------------------------------------------------------------------------\\

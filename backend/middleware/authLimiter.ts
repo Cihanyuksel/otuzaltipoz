@@ -30,7 +30,7 @@ export const maxLoginRotations = createLimiter({
 
 export const maxRefreshTokenRotations = createLimiter({
   windowMs: 5 * 60 * 1000,
-  max: 5,
+  max: 30,
   message: "Çok fazla token yenileme denemesi yaptınız. Lütfen biraz sonra tekrar deneyin.",
 });
 

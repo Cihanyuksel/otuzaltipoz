@@ -13,16 +13,6 @@ export const forgotPassword = async (
   try {
     const { email } = req.body;
 
-    // Email validation
-    if (!email) {
-      return next(new AppError("Email adresi gereklidir.", 400));
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return next(new AppError("Geçerli bir email adresi giriniz.", 400));
-    }
-
     // find user
     const user = await User.findOne({ email: email.toLowerCase() });
 
@@ -82,21 +72,16 @@ export const forgotPassword = async (
   }
 };
 
-
 export const resetPassword = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { token, newPassword } = req.body;
-   
-    if (!token || !newPassword) {
-      return next(new AppError("Token ve yeni şifre gereklidir.", 400));
-    }
+    const { token, password } = req.body;
 
-    if (newPassword.length < 6) {
-      return next(new AppError("Şifre en az 6 karakter olmalıdır.", 400));
+    if (!token || !password) {
+      return next(new AppError("Token ve yeni şifre gereklidir", 400));
     }
 
     // find token
@@ -120,11 +105,11 @@ export const resetPassword = async (
       return next(new AppError("Kullanıcı bulunamadı.", 404));
     }
 
-    // save new passowrd
-    user.password = newPassword.trim();
+    // save new password
+    user.password = password.trim();
     await user.save();
 
-    //delete password
+    // delete token
     await Token.deleteOne({ _id: tokenDoc._id });
 
     const RefreshToken = (await import("../models/refreshToken")).default;
@@ -132,7 +117,8 @@ export const resetPassword = async (
 
     res.status(200).json({
       success: true,
-      message: "✅ Şifreniz başarıyla değiştirildi. Artık giriş yapabilirsiniz.",
+      message:
+        "✅ Şifreniz başarıyla değiştirildi. Artık giriş yapabilirsiniz.",
       redirect: "/login",
     });
   } catch (err: any) {
