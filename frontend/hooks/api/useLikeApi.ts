@@ -24,8 +24,10 @@ const useToggleLike = () => {
     mutationFn: ({ photoId, accessToken }) => likeService.toggleLike(photoId, accessToken),
 
     onMutate: async ({ photoId, searchQuery, hasToken, categories }) => {
+      await queryClient.cancelQueries({ queryKey: ['likes', photoId] });
+
       const previousLikes = queryClient.getQueryData<LikeData>(['likes', photoId]);
-      
+
       if (previousLikes) {
         const newData = {
           ...previousLikes,
@@ -59,33 +61,27 @@ const useToggleLike = () => {
     },
 
     onSuccess: (_data, { photoId }) => {
-      queryClient.invalidateQueries({ queryKey: ['likes', photoId] });
       queryClient.invalidateQueries({ queryKey: ['likedPhotos'] });
     },
 
     onError: (_err, { photoId, searchQuery, hasToken, categories }, context) => {
-      
       if (context?.previousLikes) {
         queryClient.setQueryData(['likes', photoId], context.previousLikes);
       }
-      
+
       const queryKey = ['photos', { searchQuery, hasToken, categories }];
       queryClient.invalidateQueries({ queryKey });
-    },
-
-    onSettled: (_data, _error, { photoId }) => {
-      queryClient.invalidateQueries({ queryKey: ['likes', photoId] });
     },
   });
 };
 
 const useGetLikes = (
-  photoId: string, 
-  accessToken: string | null, 
+  photoId: string,
+  accessToken: string | null,
   options?: Omit<UseQueryOptions<LikeData, Error>, 'queryKey' | 'queryFn'>
 ) => {
   return useQuery<LikeData, Error>({
-    queryKey: ['likes', photoId, accessToken ? 'authenticated' : 'anonymous'],
+    queryKey: ['likes', photoId],
     queryFn: async () => {
       try {
         const result = await likeService.getLikes(photoId, accessToken);
@@ -94,11 +90,11 @@ const useGetLikes = (
         throw error;
       }
     },
-    enabled: !!photoId, 
-    staleTime: 1000 * 30, 
-    gcTime: 1000 * 60 * 5, 
-    refetchOnWindowFocus: true, 
-    refetchOnMount: true,
+    enabled: !!photoId,
+    staleTime: 1000 * 30,
+    gcTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
     retry: 1,
     ...options,
   });

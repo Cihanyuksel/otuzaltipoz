@@ -12,9 +12,9 @@ import DeleteConfirmPhotoModal from '../common/confirm-modal';
 import Loader from '../common/loader';
 import Button from '../common/button';
 import CommentSection from '../comments/CommentSection';
+import { useGetLikes } from '@/hooks/api/useLikeApi';
 import { useAuth } from '@/context/AuthContext';
 import { useGetPhoto, useDeletePhoto } from '@/hooks/api/usePhotoApi';
-import { useGetLikes } from '@/hooks/api/useLikeApi';
 import { canManage as canManagePhoto } from 'lib/permission';
 import LikeButton from '../photos/photo-card/LikeButton';
 
@@ -39,9 +39,11 @@ const PhotoDetail = () => {
   const params = useParams();
   const photoId = params.id as string;
 
-  const { data: photo, isLoading, isError } = useGetPhoto(photoId);
+  const { data: photo, isLoading, isError } = useGetPhoto(photoId, {
+    enabled: !isDeleting,
+  });
   const { data: likeData } = useGetLikes(photoId, accessToken, {
-    enabled: !!photoId,
+    enabled: !!photoId && !isDeleting,
   });
   const { mutate: deletePhoto, isPending, error } = useDeletePhoto(accessToken);
 
@@ -64,13 +66,13 @@ const PhotoDetail = () => {
         toast.success('Fotoğraf başarıyla silindi!', {
           autoClose: 1500,
         });
-        setTimeout(() => {
-          router.push('/photos');
-        }, 2000);
+        
+        router.push('/photos');
       },
       onError: (err) => {
         setIsDeleting(false);
         console.error(`Fotoğraf silinirken hata oluştu: ${photo._id}`, err);
+        toast.error('Fotoğraf silinirken bir hata oluştu.');
       },
     });
   };

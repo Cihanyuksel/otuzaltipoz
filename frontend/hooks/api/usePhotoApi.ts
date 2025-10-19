@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { photoService } from '../../services/photoService';
 import { Photo, ApiResponse } from 'types/photo';
 
@@ -44,14 +44,18 @@ export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null
   });
 };
 //---------------------------------------------------------------------------------------------------------
-export const useGetPhoto = (id: string) =>
-  useQuery<Photo | null>({
+export const useGetPhoto = (
+  id: string,
+  options?: Omit<UseQueryOptions<Photo | null, Error>, 'queryKey' | 'queryFn'>
+) =>
+  useQuery<Photo | null, Error>({
     queryKey: ['photos', id],
     queryFn: () => photoService.getPhoto(id),
     enabled: !!id,
     staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
     retry: false,
+    ...options,
   });
 //---------------------------------------------------------------------------------------------------------
 export const useAddPhoto = (accessToken: string) => {
@@ -108,6 +112,8 @@ export const useDeletePhoto = (accessToken?: string | null) => {
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: ['photos', id] });
       queryClient.invalidateQueries({ queryKey: ['photos'] });
+      queryClient.invalidateQueries({ queryKey: ['userPhotos'] });
+      queryClient.invalidateQueries({ queryKey: ['likedPhotos'] });
     },
 
     onError: (error, id) => {
