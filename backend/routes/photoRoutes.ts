@@ -25,36 +25,36 @@ import { validate, validateFile } from "../middleware/validate";
 const router = Router();
 
 router.get(
-  "/photos",
+  "/",
   authenticateOptional,
   validate({ query: getAllPhotosQuerySchema }),
   getAllPhotos
 );
 
 router.get(
-  "/photos/popular",
+  "/popular",
   validate({ query: getPopularPhotosQuerySchema }),
   getPopularPhotos
 );
 
 router.get(
-  "/photos/liked/:userId",
+  "/liked/:userId",
   authenticateOptional,
   validate({ params: userIdParamsSchema }),
   getLikedPhotos
 );
 
 router.get(
-  "/photos/user/:userId",
+  "/user/:userId",
   authenticateOptional,
   validate({ params: userIdParamsSchema }),
   getPhotoByUserId
 );
 
-router.get("/photos/:id", validate({ params: photoIdParamsSchema }), getPhoto);
+router.get("/:id", validate({ params: photoIdParamsSchema }), getPhoto);
 
 router.post(
-  "/photos/upload",
+  "/upload",
   authenticate,
   upload.single("photo"),
   validateFile({
@@ -67,7 +67,7 @@ router.post(
 );
 
 router.put(
-  "/photos/:id",
+  "/:id",
   authenticate,
   validate({
     params: photoIdParamsSchema,
@@ -77,7 +77,7 @@ router.put(
 );
 
 router.delete(
-  "/photos/:id",
+  "/:id",
   authenticate,
   validate({ params: photoIdParamsSchema }),
   deletePhoto

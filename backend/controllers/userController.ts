@@ -124,8 +124,9 @@ const deleteUser = async (
       return next(new AppError("Admins cannot delete other admins", 403));
     }
 
-    if (userToDelete.role === "admin") {
+    if (isOwner && currentUser.role === "admin") {
       const adminCount = await User.countDocuments({ role: "admin" });
+      console.log(adminCount)
       if (adminCount <= 1) {
         return next(new AppError("Cannot delete the last admin user", 403));
       }

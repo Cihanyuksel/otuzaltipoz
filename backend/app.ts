@@ -48,13 +48,13 @@ if (config.node_env === "production") {
 }
 
 // Routes
-app.use("/api/v1", userRouter);
+app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1", photoRouter);
-app.use("/api/v1", commentRouter);
-app.use("/api/v1", likeRouter);
-app.use("/api/v1", ratingRouter);
-app.use("/api/v1", categoryRouter);
+app.use("/api/v1/photos", photoRouter);
+app.use("/api/v1/photos", commentRouter);
+app.use("/api/v1/photos", likeRouter);
+app.use("/api/v1/photos", ratingRouter);
+app.use("/api/v1/categories", categoryRouter);
 
 //error handler
 app.use(globalErrorHandler);

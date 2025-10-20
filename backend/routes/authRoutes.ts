@@ -19,6 +19,7 @@ import {
 import { authenticate } from "../middleware/authMiddleware";
 import { verifyEmailScheme } from "../validators/verifyEmail.validator";
 import { validate, validateFile } from "../middleware/validate";
+import { sendContactMessage } from "../controllers/contactController";
 
 const router = Router();
 
@@ -51,6 +52,11 @@ router.get(
   "/verify-email",
   validate({ query: verifyEmailScheme }),
   verifyEmail
+);
+
+router.post(
+  "/contact",
+  sendContactMessage
 );
 
 export default router;

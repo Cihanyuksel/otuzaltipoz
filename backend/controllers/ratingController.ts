@@ -31,7 +31,7 @@ export const ratePhoto = async (
     });
 
     if (existingRating) {
-      return res.status(400).json({
+      return res.status(409).json({
         message: "Bu fotoğrafı zaten oyladınız.",
         code: "ALREADY_RATED",
       });
