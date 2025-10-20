@@ -8,9 +8,7 @@ import { CiCloudOn as CloudIcon } from 'react-icons/ci';
 import { IoIosArrowDown as ArrowDown } from 'react-icons/io';
 import { FaCheckCircle as CheckIcon } from 'react-icons/fa';
 //project-files
-import { useAuth } from '@/context/AuthContext';
 import { useAddPhoto } from '@/hooks/api/usePhotoApi';
-import Loader from '@/components/common/loader';
 import Button from '../common/button';
 import { PhotoUploadFormValues, photoUploadSchema } from 'lib/schemas';
 
@@ -27,10 +25,8 @@ export default function PhotoUploadForm() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const [showCheckmark, setShowCheckmark] = useState(false);
-
-  const { accessToken, loading } = useAuth();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const {
     register,
@@ -41,7 +37,7 @@ export default function PhotoUploadForm() {
     resolver: zodResolver(photoUploadSchema),
   });
 
-  const { mutate, isPending } = useAddPhoto(accessToken as string);
+  const { mutate, isPending } = useAddPhoto();
 
   const fetchCategories = async () => {
     if (categories.length > 0) {
@@ -165,16 +161,6 @@ export default function PhotoUploadForm() {
       })
       .join(' | ');
   };
-
-  if (loading) {
-    return (
-      <div className="flex flex-1 justify-center py-10 px-4">
-        <div className="text-center text-xl font-semibold text-gray-700">
-          <Loader />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-1 justify-center py-10 px-4 bg-cover bg-center bg-[#f5f1ea]">

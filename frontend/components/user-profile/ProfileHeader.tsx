@@ -30,35 +30,31 @@ const ProfileHeader = ({ user, imageUrl, isOwner }: IProfileHeader) => {
     if (isSuccess) {
       setShowSuccessModal(true);
       const timer = setTimeout(() => {
-        setAuth(null);
+        if (isOwner) {
+          setAuth(null);
+        }
         router.push('/');
       }, 2000);
 
       return () => clearTimeout(timer);
     }
-  }, [isSuccess, setAuth, router]);
+  }, [isSuccess, isOwner, setAuth, router]);
 
-  const handleDeleteAccount = () => {
-    setShowConfirmModal(true);
-  };
-
-  const handleConfirmDelete = () => {
-    deleteUser({ userId: currentUser!.id, token: accessToken });
-  };
+  const handleDeleteAccount = () => setShowConfirmModal(true);
+  const handleConfirmDelete = () => deleteUser({ userId: user._id });
+  const canDeleteAccount = canManageUser(currentUser?.role, isOwner);
 
   const handleCloseConfirmModal = () => {
-    if (!isPending) {
-      setShowConfirmModal(false);
-    }
+    if (!isPending) setShowConfirmModal(false);
   };
 
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
-    setAuth(null);
+    if (isOwner) {
+      setAuth(null);
+    }
     router.push('/');
   };
-
-  const canDeleteAccount = canManageUser(currentUser?.role, isOwner);
 
   return (
     <>
@@ -93,10 +89,10 @@ const ProfileHeader = ({ user, imageUrl, isOwner }: IProfileHeader) => {
         message={
           <div>
             <p className="mb-2">
-              <strong>@{user.username}</strong> hesabınızı silmek istediğinizden emin misiniz?
+              <strong>@{user.username}</strong> hesabını silmek istediğinizden emin misiniz?
             </p>
             <p className="text-red-600 font-medium">
-              Bu işlem geri alınamaz ve tüm verileriniz kalıcı olarak silinecektir.
+              Bu işlem geri alınamaz ve tüm veriler kalıcı olarak silinecektir.
             </p>
           </div>
         }
@@ -111,8 +107,8 @@ const ProfileHeader = ({ user, imageUrl, isOwner }: IProfileHeader) => {
         isOpen={showSuccessModal}
         onClose={handleCloseSuccessModal}
         title="Hesap Başarıyla Silindi"
-        message={`@${user.username} hesabınız ve tüm verileriniz başarıyla silindi. 2 saniye sonra ana sayfaya yönlendirileceksiniz.`}
-        buttonText="Hemen Ana Sayfaya Git"
+        message={`@${user.username} hesabı ve tüm verileri başarıyla silindi.${isOwner ? ' 2 saniye sonra ana sayfaya yönlendirileceksiniz.' : ''}`}
+        buttonText={isOwner ? 'Hemen Ana Sayfaya Git' : 'Ana Sayfaya Dön'}
       />
     </>
   );

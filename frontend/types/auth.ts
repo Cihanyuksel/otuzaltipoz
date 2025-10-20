@@ -1,5 +1,5 @@
 export type User = {
-  id: string;
+  _id: string;
   username: string;
   full_name?: string;
   email: string;
@@ -28,5 +28,12 @@ export interface AuthResponse {
   message: string;
   data: AuthData;
 }
+
+export type ContactData = {
+  fullName: string;
+  email: string;
+  phone?: string;
+  message: string;
+};
 
 export type MessageResponse = { success: false; message: string };

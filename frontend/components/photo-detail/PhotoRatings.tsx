@@ -6,8 +6,8 @@ import { FiCheck as CheckIcon } from 'react-icons/fi';
 import { AnimatePresence, motion } from 'framer-motion';
 import { IoIosStar as StarFilledIcon, IoIosStarOutline as StarOutlineIcon } from 'react-icons/io';
 //project-files
-import { useGetRatings, useRatePhoto } from '@/hooks/api/useRatingApi';
 import Loader from '../common/loader';
+import { useGetRatings, useRatePhoto } from '@/hooks/api/useRatingApi';
 
 interface IPhotoRatings {
   photoId: string;
@@ -55,7 +55,6 @@ export default function PhotoRatings({ photoId, accessToken, onLoginRequired }: 
       {
         photoId,
         rating,
-        accessToken,
       },
 
       {
@@ -66,11 +65,12 @@ export default function PhotoRatings({ photoId, accessToken, onLoginRequired }: 
         },
 
         onError: (error: any) => {
-          const backendMessage = error?.message || error?.response?.data?.message;
-          if (backendMessage?.includes('already rated')) {
-            setErrorMessage('Bu fotoğrafı zaten oyladınız.');
+          const apiErrorMessage = error?.message;
+
+          if (apiErrorMessage) {
+            setErrorMessage(apiErrorMessage);
           } else {
-            setErrorMessage(backendMessage || 'Oylama başarısız oldu.');
+            setErrorMessage('Oylama başarısız oldu. Beklenmeyen hata.');
           }
         },
       }

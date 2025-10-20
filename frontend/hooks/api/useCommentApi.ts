@@ -11,12 +11,12 @@ export const useCommentApi = (photoId: string, accessToken?: string) => {
     error,
   } = useQuery({
     queryKey: ['comments', photoId],
-    queryFn: () => commentService.getComments(photoId, accessToken),
+    queryFn: () => commentService.getComments(photoId),
     staleTime: 1000 * 60 * 5,
   });
 
   const addCommentMutation = useMutation({
-    mutationFn: (commentText: string) => commentService.addComment(photoId, commentText, accessToken || null),
+    mutationFn: (commentText: string) => commentService.addComment(photoId, commentText),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', photoId] });
@@ -29,7 +29,7 @@ export const useCommentApi = (photoId: string, accessToken?: string) => {
 
   const addReplyMutation = useMutation({
     mutationFn: (data: { parentCommentId: string; replyText: string }) =>
-      commentService.addComment(photoId, data.replyText, accessToken || null, data.parentCommentId),
+      commentService.addComment(photoId, data.replyText, data.parentCommentId),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', photoId] });
@@ -41,7 +41,7 @@ export const useCommentApi = (photoId: string, accessToken?: string) => {
   });
 
   const deleteCommentMutation = useMutation({
-    mutationFn: (commentId: string) => commentService.deleteComment(commentId, accessToken || null),
+    mutationFn: (commentId: string) => commentService.deleteComment(commentId),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', photoId] });

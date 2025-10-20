@@ -21,7 +21,7 @@ const useToggleLike = () => {
   const queryClient = useQueryClient();
 
   return useMutation<any, Error, ToggleLikeVariables, { previousLikes?: LikeData }>({
-    mutationFn: ({ photoId, accessToken }) => likeService.toggleLike(photoId, accessToken),
+    mutationFn: ({ photoId }) => likeService.toggleLike(photoId),
 
     onMutate: async ({ photoId, searchQuery, hasToken, categories }) => {
       await queryClient.cancelQueries({ queryKey: ['likes', photoId] });
@@ -75,16 +75,12 @@ const useToggleLike = () => {
   });
 };
 
-const useGetLikes = (
-  photoId: string,
-  accessToken: string | null,
-  options?: Omit<UseQueryOptions<LikeData, Error>, 'queryKey' | 'queryFn'>
-) => {
+const useGetLikes = (photoId: string, options?: Omit<UseQueryOptions<LikeData, Error>, 'queryKey' | 'queryFn'>) => {
   return useQuery<LikeData, Error>({
     queryKey: ['likes', photoId],
     queryFn: async () => {
       try {
-        const result = await likeService.getLikes(photoId, accessToken);
+        const result = await likeService.getLikes(photoId);
         return result;
       } catch (error: any) {
         throw error;

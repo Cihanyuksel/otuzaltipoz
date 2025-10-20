@@ -5,14 +5,13 @@ import { useEffect } from 'react';
 interface RatePhotoVariables {
   photoId: string;
   rating: number;
-  accessToken: string;
 }
 
 const useRatePhoto = () => {
   const queryClient = useQueryClient();
 
   return useMutation<IRatePhotoResponse, Error, RatePhotoVariables, { previousRatings?: IGetRatingsResponse }>({
-    mutationFn: ({ photoId, rating, accessToken }) => ratingService.ratePhoto(photoId, rating, accessToken),
+    mutationFn: ({ photoId, rating }) => ratingService.ratePhoto(photoId, rating),
 
     onMutate: async ({ photoId, rating }) => {
       await queryClient.cancelQueries({ queryKey: ['ratings', photoId] });
@@ -32,7 +31,10 @@ const useRatePhoto = () => {
   });
 };
 
-const useGetRatings = (photoId: string, options?: Omit<UseQueryOptions<IGetRatingsResponse, Error>, 'queryKey' | 'queryFn'>) => {
+const useGetRatings = (
+  photoId: string,
+  options?: Omit<UseQueryOptions<IGetRatingsResponse, Error>, 'queryKey' | 'queryFn'>
+) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {

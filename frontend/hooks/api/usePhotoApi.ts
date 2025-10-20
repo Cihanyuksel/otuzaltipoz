@@ -22,7 +22,6 @@ export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null
     queryFn: async ({ pageParam = 0 }) => {
       const response = await photoService.getAllPhoto({
         searchQuery: searchQuery || '',
-        accessToken,
         categories: categories || '',
         limit: 10,
         offset: pageParam,
@@ -58,41 +57,41 @@ export const useGetPhoto = (
     ...options,
   });
 //---------------------------------------------------------------------------------------------------------
-export const useAddPhoto = (accessToken: string) => {
+export const useAddPhoto = () => {
   const queryClient = useQueryClient();
 
   return useMutation<PhotoResponse, any, FormData>({
-    mutationFn: (formData: FormData) => photoService.addPhoto(formData, accessToken),
+    mutationFn: (formData: FormData) => photoService.addPhoto(formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['photos'] });
     },
   });
 };
 //---------------------------------------------------------------------------------------------------------
-export const useGetUserPhotos = (userId: string, accessToken?: string | null) =>
+export const useGetUserPhotos = (userId: string) =>
   useQuery<ApiResponse<Photo[]>>({
     queryKey: ['userPhotos', userId],
-    queryFn: () => photoService.getPhotoByUserId(userId, accessToken),
+    queryFn: () => photoService.getPhotoByUserId(userId),
     enabled: !!userId,
     staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
   });
 
 //---------------------------------------------------------------------------------------------------------
-export const useGetLikedPhotos = (userId: string, accessToken?: string | null) =>
+export const useGetLikedPhotos = (userId: string) =>
   useQuery<ApiResponse<Photo[]>>({
     queryKey: ['likedPhotos', userId],
-    queryFn: () => photoService.getLikedPhotos(userId, accessToken),
+    queryFn: () => photoService.getLikedPhotos(userId),
     enabled: !!userId,
     staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
   });
 //---------------------------------------------------------------------------------------------------------
-export const useUpdatePhoto = (accessToken?: string | null) => {
+export const useUpdatePhoto = () => {
   const queryClient = useQueryClient();
 
   return useMutation<ApiResponse<Photo>, Error, { id: string; updatedData: Partial<Photo> }>({
-    mutationFn: ({ id, updatedData }) => photoService.updatePhoto(id, updatedData, accessToken),
+    mutationFn: ({ id, updatedData }) => photoService.updatePhoto(id, updatedData),
     onSuccess: (updatedPhoto) => {
       queryClient.invalidateQueries({ queryKey: ['photos'] });
       if (updatedPhoto.data?._id) {
@@ -103,11 +102,11 @@ export const useUpdatePhoto = (accessToken?: string | null) => {
   });
 };
 //---------------------------------------------------------------------------------------------------------
-export const useDeletePhoto = (accessToken?: string | null) => {
+export const useDeletePhoto = () => {
   const queryClient = useQueryClient();
 
   return useMutation<ApiResponse<null>, Error, string>({
-    mutationFn: (id: string) => photoService.deletePhoto(id, accessToken),
+    mutationFn: (id: string) => photoService.deletePhoto(id),
 
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: ['photos', id] });

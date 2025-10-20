@@ -37,6 +37,16 @@ interface CommentPaths {
   DELETE_COMMENT: (id: string) => string;
 }
 
+interface LikePaths {
+  GET_LIKES: (id: string) => string;
+  TOGGLE_LIKE: (id: string) => string;
+}
+
+interface RatingPaths {
+  GET_RATINGS: (id: string) => string;
+  RATE_PHOTO: (id: string) => string;
+}
+
 //----------------------------------------------------------------//
 //----------------------------PATH-------------------------------//
 //----------------------------------------------------------------//
@@ -72,4 +82,14 @@ export const COMMENTS_PATH: CommentPaths = {
   GET_COMMENTS: (id) => `/photos/${id}/comments`,
   ADD_COMMENT: (id) => `/photos/${id}/comments`,
   DELETE_COMMENT: (id) => `/photos/${id}/comments`,
+};
+
+export const LIKE_PATH: LikePaths = {
+  GET_LIKES: (id) => `/photos/${id}/likes`,
+  TOGGLE_LIKE: (id) => `/photos/${id}/like`,
+};
+
+export const RATING_PATH: RatingPaths = {
+  GET_RATINGS: (id) => `/photos/${id}/ratings`,
+  RATE_PHOTO: (id) => `/photos/${id}/rate`,
 };

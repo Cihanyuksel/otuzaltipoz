@@ -37,7 +37,7 @@ export default function Header() {
       onSuccess: async () => {
         setAuth(null);
 
-        router.push('/');
+        router.push('/login');
       },
 
       onError: (error) => {

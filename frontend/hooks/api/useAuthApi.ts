@@ -24,9 +24,8 @@ const useDeleteUser = () => {
   const keysToClean = ['photos', 'likes', 'comments', 'ratings', 'users'];
 
   return useMutation({
-    mutationFn: ({ userId, token }: { userId: string; token: string | null }) => {
-      if (!token) throw new Error('Token bulunamadı');
-      return userService.deleteUser(userId, token);
+    mutationFn: ({ userId }: { userId: string }) => {
+      return userService.deleteUser(userId);
     },
     onSuccess: () => {
       keysToClean.forEach((key) => {

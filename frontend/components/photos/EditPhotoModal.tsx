@@ -1,20 +1,21 @@
+//third-pary
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IoClose as CloseIcon } from 'react-icons/io5';
+//project files
 import Button from '../common/button';
-import { Photo } from 'types/photo';
-import { useUpdatePhoto } from '@/hooks/api/usePhotoApi';
-import { PhotoEditFormValues, photoEditSchema } from 'lib/schemas';
 import Input from '../common/input';
+import { useUpdatePhoto } from '@/hooks/api/usePhotoApi';
+import { Photo } from 'types/photo';
+import { PhotoEditFormValues, photoEditSchema } from 'lib/schemas';
 
 interface IEditPhotoModal {
   isOpen: boolean;
   onClose: () => void;
   photo: Photo;
-  accessToken: string | null;
 }
 
-const EditPhotoModal = ({ onClose, photo, accessToken }: IEditPhotoModal) => {
+const EditPhotoModal = ({ onClose, photo }: IEditPhotoModal) => {
   const {
     register,
     handleSubmit,
@@ -30,7 +31,7 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: IEditPhotoModal) => {
     mode: 'onChange',
   });
 
-  const { mutate, isPending, error } = useUpdatePhoto(accessToken);
+  const { mutate, isPending, error } = useUpdatePhoto();
 
   const onSubmit = (data: PhotoEditFormValues) => {
     const transformedData = {
@@ -91,9 +92,7 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: IEditPhotoModal) => {
         <div className="p-6">
           {error && (
             <div className="mb-4 text-red-600 text-sm p-3 bg-red-50 rounded-md border border-red-200">
-              {error instanceof Error
-                ? error.message
-                : 'Güncelleme sırasında bir hata oluştu. Lütfen tekrar deneyin.'}
+              {error instanceof Error ? error.message : 'Güncelleme sırasında bir hata oluştu. Lütfen tekrar deneyin.'}
             </div>
           )}
 
@@ -123,9 +122,7 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: IEditPhotoModal) => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ef7464] focus:border-[#ef7464] disabled:bg-gray-50 disabled:cursor-not-allowed resize-none"
                 placeholder="Fotoğraf açıklaması (isteğe bağlı)"
               />
-              {errors.description && (
-                <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
-              )}
+              {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
             </div>
 
             {/* Etiketler */}
@@ -139,19 +136,11 @@ const EditPhotoModal = ({ onClose, photo, accessToken }: IEditPhotoModal) => {
               disabled={isLoading}
               placeholder="doğa, manzara, güneş (virgülle ayırın)"
             />
-            <p className="mt-1 text-xs text-gray-500">
-              Etiketleri virgülle ayırarak girebilirsiniz
-            </p>
+            <p className="mt-1 text-xs text-gray-500">Etiketleri virgülle ayırarak girebilirsiniz</p>
 
             {/* Footer */}
             <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-              <Button
-                onClick={handleClose}
-                type="button"
-                variant="tertiary"
-                size="medium"
-                disabled={isLoading}
-              >
+              <Button onClick={handleClose} type="button" variant="tertiary" size="medium" disabled={isLoading}>
                 İptal
               </Button>
               <Button disabled={isPending} type="submit" variant="primary" size="medium">

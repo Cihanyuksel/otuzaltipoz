@@ -5,18 +5,18 @@ import { notFound, useParams, useRouter } from 'next/navigation';
 //third-party
 import { toast } from 'react-toastify';
 //project files
-import { PhotoImage, PhotoInfo, RatingSection, UploaderInfo, PhotoActions } from '@/components/photo-detail';
 import LoginModal from '../auth/login-modal';
 import EditPhotoModal from '../photos/EditPhotoModal';
 import DeleteConfirmPhotoModal from '../common/confirm-modal';
 import Loader from '../common/loader';
 import Button from '../common/button';
-import CommentSection from '../comments/CommentSection';
-import { useGetLikes } from '@/hooks/api/useLikeApi';
-import { useAuth } from '@/context/AuthContext';
-import { useGetPhoto, useDeletePhoto } from '@/hooks/api/usePhotoApi';
-import { canManage as canManagePhoto } from 'lib/permission';
 import LikeButton from '../photos/photo-card/LikeButton';
+import CommentSection from '../comments/CommentSection';
+import { PhotoImage, PhotoInfo, RatingSection, UploaderInfo, PhotoActions } from '@/components/photo-detail';
+import { useGetLikes } from '@/hooks/api/useLikeApi';
+import { useGetPhoto, useDeletePhoto } from '@/hooks/api/usePhotoApi';
+import { useAuth } from '@/context/AuthContext';
+import { canManage as canManagePhoto } from 'lib/permission';
 
 type ModalName = 'login' | 'edit' | 'delete';
 
@@ -39,13 +39,17 @@ const PhotoDetail = () => {
   const params = useParams();
   const photoId = params.id as string;
 
-  const { data: photo, isLoading, isError } = useGetPhoto(photoId, {
+  const {
+    data: photo,
+    isLoading,
+    isError,
+  } = useGetPhoto(photoId, {
     enabled: !isDeleting,
   });
-  const { data: likeData } = useGetLikes(photoId, accessToken, {
+  const { data: likeData } = useGetLikes(photoId, {
     enabled: !!photoId && !isDeleting,
   });
-  const { mutate: deletePhoto, isPending, error } = useDeletePhoto(accessToken);
+  const { mutate: deletePhoto, isPending, error } = useDeletePhoto();
 
   const handleModalToggle = (modalName: ModalName, isOpen: boolean) => {
     setModalStates((prevState) => ({
@@ -66,7 +70,7 @@ const PhotoDetail = () => {
         toast.success('Fotoğraf başarıyla silindi!', {
           autoClose: 1500,
         });
-        
+
         router.push('/photos');
       },
       onError: (err) => {
@@ -81,7 +85,8 @@ const PhotoDetail = () => {
   if (isLoading) return <Loader text={'Yükleniyor...'} />;
   if (isError || !photo) return notFound();
 
-  const isOwnerPhoto = user?.id === photo.user._id;
+  //kontrol edilecek
+  const isOwnerPhoto = user?._id === photo.user._id;
   const isLoggedIn = !!accessToken;
   const canDeletePhoto = canManagePhoto(user?.role, isOwnerPhoto);
 
@@ -144,12 +149,7 @@ const PhotoDetail = () => {
       <LoginModal isOpen={modalStates.login} onClose={() => handleModalToggle('login', false)} />
 
       {modalStates.edit && (
-        <EditPhotoModal
-          isOpen={modalStates.edit}
-          onClose={() => handleModalToggle('edit', false)}
-          photo={photo}
-          accessToken={accessToken}
-        />
+        <EditPhotoModal isOpen={modalStates.edit} onClose={() => handleModalToggle('edit', false)} photo={photo} />
       )}
 
       <DeleteConfirmPhotoModal

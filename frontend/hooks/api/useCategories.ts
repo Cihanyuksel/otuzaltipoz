@@ -1,4 +1,11 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
+import { API_BASE_URL } from "lib/config";
+
+type Category = {
+  _id: string;
+  name: string;
+};
 
 export const useCategories = () => {
   const [categories, setCategories] = useState<string[]>([]);
@@ -7,10 +14,9 @@ export const useCategories = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/v1/categories');
-        const rawData = await response.json();
-        const data = rawData.data || rawData.categories || rawData;
-        setCategories(Array.isArray(data) ? data.map((cat: any) => cat.name) : []);
+        const response = await axios.get<{ data: Category[] }>(`${API_BASE_URL}/categories`);
+        const data = response.data.data || [];
+        setCategories(data.map((cat) => cat.name));
       } catch (err) {
         console.error("Kategori API hatası:", err);
       } finally {

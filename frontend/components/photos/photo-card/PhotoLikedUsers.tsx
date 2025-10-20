@@ -9,7 +9,6 @@ import { CgProfile as ProfileIcon } from 'react-icons/cg';
 import { FaCrown as CrownIcon } from 'react-icons/fa6';
 //project-files
 import { useGetLikes } from '@/hooks/api/useLikeApi';
-import { useAuth } from '@/context/AuthContext';
 import { isAdmin } from 'lib/permission';
 
 interface PhotoLikedUsersProps {
@@ -19,9 +18,7 @@ interface PhotoLikedUsersProps {
 }
 
 export default function PhotoLikedUsers({ photoId, isOpen, onClose }: PhotoLikedUsersProps) {
-  const { accessToken } = useAuth();
-
-  const { data, isLoading, isFetching } = useGetLikes(photoId, accessToken, {
+  const { data, isLoading, isFetching } = useGetLikes(photoId, {
     enabled: isOpen,
   });
 
@@ -46,10 +43,7 @@ export default function PhotoLikedUsers({ photoId, isOpen, onClose }: PhotoLiked
         >
           <div className="bg-white rounded-lg p-4 shadow-xl w-96 max-h-[250px] overflow-y-auto relative border border-gray-200">
             <h4 className="text-sm font-bold mb-2 pr-6">Beğenen Kullanıcılar ({likeCount})</h4>
-            <button
-              onClick={onClose}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
-            >
+            <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-800">
               <CloseIcon />
             </button>
             <ul className="space-y-2">
@@ -58,11 +52,7 @@ export default function PhotoLikedUsers({ photoId, isOpen, onClose }: PhotoLiked
               ) : usersWhoLiked.length > 0 ? (
                 usersWhoLiked.map((user: any) => (
                   <li key={user._id}>
-                    <Link
-                      href={`/biri/${user._id}`}
-                      className="flex items-center gap-2"
-                      onClick={onClose}
-                    >
+                    <Link href={`/biri/${user._id}`} className="flex items-center gap-2" onClick={onClose}>
                       <div className="relative w-8 h-8 rounded-full flex-shrink-0">
                         {user.profile_img_url ? (
                           <Image
@@ -76,7 +66,7 @@ export default function PhotoLikedUsers({ photoId, isOpen, onClose }: PhotoLiked
                         )}
                       </div>
                       <span className="text-sm font-medium truncate">{user.username}</span>
-                      <span className='text-[#ef7464]'> {isAdmin(user) && <CrownIcon />}</span>
+                      <span className="text-[#ef7464]"> {isAdmin(user) && <CrownIcon />}</span>
                     </Link>
                   </li>
                 ))
