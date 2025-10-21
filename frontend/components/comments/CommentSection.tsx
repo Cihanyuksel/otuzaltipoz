@@ -5,10 +5,11 @@ import { useState, useEffect } from 'react';
 import { PiDotsThreeCircle as ThreeDot } from 'react-icons/pi';
 //project-files
 import CommentForm from './CommentForm';
-import CommentItem, { Comment } from './CommentItem';
+import CommentItem from './CommentItem';
 import Button from '../common/button';
 import { useAuth } from '@/context/AuthContext';
 import { useCommentApi } from '@/hooks/api/useCommentApi';
+import { IComment } from 'types/comment';
 
 export default function CommentSection({
   userPhoto,
@@ -31,7 +32,7 @@ export default function CommentSection({
     isAddingReply,
     deleteComment,
     isDeletingComment,
-  } = useCommentApi(photoId, accessToken || undefined);
+  } = useCommentApi(photoId);
 
   useEffect(() => {
     if (!isLoadingComments) {
@@ -86,7 +87,7 @@ export default function CommentSection({
           `}
           >
             {commentCount > 0 ? (
-              comments.map((comment: Comment) => (
+              comments?.map((comment: IComment) => (
                 <CommentItem
                   key={comment._id}
                   comment={comment}

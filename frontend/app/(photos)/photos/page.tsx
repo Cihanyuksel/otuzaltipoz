@@ -22,7 +22,6 @@ async function prefetchPhotos() {
           searchQuery: '',
           categories: '',
           offset: pageParam,
-          accessToken: null,
         });
 
         return data;

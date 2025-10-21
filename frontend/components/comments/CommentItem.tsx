@@ -10,25 +10,13 @@ import DeleteConfirmCommentModal from '../common/confirm-modal';
 import ReplyForm from './ReplyForm';
 import { commentFormatDate } from 'lib/commentFormatDate';
 import { truncateText } from 'lib/truncateText';
+import { IComment } from 'types/comment';
 
-export interface Comment {
-  _id: string;
-  text: string;
-  created_at: string;
-  user: {
-    _id?: string;
-    username: string;
-    profile_img_url: string;
-  };
-  replies?: Comment[];
-  parentComment?: string | null;
-}
-
-interface CommentItemProps {
-  comment: Comment;
+interface ICommentItem {
+  comment: IComment;
   photoId: string;
   accessToken: string | null;
-  currentUser?: { id: string; username: string } | null;
+  currentUser?: { _id: string; username: string } | null;
   userPhoto?: string;
   depth?: number;
   onReply: (parentId: string, replyText: string) => void;
@@ -48,7 +36,7 @@ export default function CommentItem({
   onDelete,
   isReplying,
   isDeleting,
-}: CommentItemProps) {
+}: ICommentItem) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [isVisible, setIsVisible] = useState(false);

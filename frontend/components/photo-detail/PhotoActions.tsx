@@ -2,11 +2,11 @@ import React from 'react';
 import { CiEdit as EditIcon } from 'react-icons/ci';
 import { RiDeleteBin6Line as DeleteIcon } from 'react-icons/ri';
 
-interface PhotoActionsProps {
+interface IPhotoActions {
   handleModalToggle: (type: 'edit' | 'delete', value: boolean) => void;
 }
 
-const PhotoActions: React.FC<PhotoActionsProps> = ({ handleModalToggle }) => {
+const PhotoActions: React.FC<IPhotoActions> = ({ handleModalToggle }) => {
   return (
     <div className="mt-4 md:mt-8 flex gap-3 justify-end w-full">
       <button

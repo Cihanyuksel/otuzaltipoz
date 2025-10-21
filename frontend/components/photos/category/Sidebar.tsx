@@ -2,12 +2,13 @@
 import { IoIosClose as CloseIcon } from 'react-icons/io';
 import { FiMenu as MenuIcon } from 'react-icons/fi';
 import { CategorySection } from './CategorySection';
+import { Section } from './SectionConfig';
 
 interface SidebarProps {
   isSidebarOpen: boolean;
   setIsSidebarOpen: (value: boolean) => void;
-  categorySection: { title: string; icon: React.ReactNode; items: string[] }[];
-  openSections: { [key: string]: boolean };
+  categorySection: Section[];
+  openSections: Record<string, boolean>;
   handleSectionToggle: (title: string) => void;
   selectedCategories: string[];
   handleCategoryClick: (categoryName: string) => void;
@@ -29,11 +30,10 @@ export default function Sidebar({
   return (
     <div
       className={`
-        hidden top-20 lg:block md:sticky md:top-0 2xl:top-44  md:self-start md:h-screen md:overflow-y-auto
+        hidden top-20 lg:block md:sticky md:top-0 2xl:top-44 md:self-start md:h-screen md:overflow-y-auto
         bg-white border-r border-gray-200 shadow-xl shadow-gray-200/50 
-        
         transition-all duration-300 ease-in-out z-20 
-        ${isSidebarOpen ? 'w-1/6 p-4' : 'w-1/12 pt-5 '}
+        ${isSidebarOpen ? 'w-1/6 p-4' : 'w-1/12 pt-5'}
       `}
     >
       <div
@@ -47,16 +47,17 @@ export default function Sidebar({
           </span>
         )}
 
-        <div
+        <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="cursor-pointer p-1"
+          className="cursor-pointer p-1 hover:opacity-70 transition-opacity"
+          aria-label={isSidebarOpen ? 'Sidebar\'ı kapat' : 'Sidebar\'ı aç'}
         >
           {isSidebarOpen ? (
-            <CloseIcon size={32} className="text-[#ef7464] hover:text-[#ef7464]/60" />
+            <CloseIcon size={32} className="text-[#ef7464]" />
           ) : (
-            <MenuIcon size={20} className="text-gray-500 hover:text-gray-500/60" />
+            <MenuIcon size={20} className="text-gray-500" />
           )}
-        </div>
+        </button>
       </div>
 
       {isSidebarOpen && selectedCategories.length > 0 && (
@@ -66,10 +67,11 @@ export default function Sidebar({
               key={category}
               className="flex items-center bg-[#ef7464] text-white text-xs px-2 py-1 rounded-full shadow-sm"
             >
-              {category}
+              <span className="truncate max-w-[120px]">{category}</span>
               <button
                 onClick={() => handleRemoveCategory(category)}
-                className="ml-1 text-white hover:text-gray-100 transition"
+                className="ml-1 text-white hover:text-gray-100 transition flex-shrink-0"
+                aria-label={`${category} kategorisini kaldır`}
               >
                 <CloseIcon size={18} />
               </button>
@@ -77,7 +79,8 @@ export default function Sidebar({
           ))}
         </div>
       )}
-      <div className={`overflow-y-auto transition-all duration-300`}>
+
+      <div className="overflow-y-auto transition-all duration-300">
         <ul className="space-y-1">
           {categorySection.map((section) => (
             <CategorySection

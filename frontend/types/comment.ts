@@ -2,6 +2,7 @@ export interface IUser {
   _id: string;
   username: string;
   avatar?: string;
+  profile_img_url?: string;
 }
 
 export interface IComment {
@@ -16,11 +17,12 @@ export interface IComment {
   replies?: IComment[];
 }
 
+
 export type CommentUser = {
   _id: string;
   fullName: string;
   username: string;
-  avatar?: string; // opsiyonel
+  avatar?: string;
 };
 
 export type AddCommentResponse = {

@@ -1,24 +1,45 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { API_BASE_URL } from "lib/config";
+import { API_BASE_URL } from 'lib/config';
+import { useEffect, useState } from 'react';
 
-type Category = {
+export interface Category {
   _id: string;
   name: string;
+}
+
+export function useCategories(options: { returnType: 'full' }): {
+  categories: Category[];
+  isLoading: boolean;
+  error: string | null;
+};
+export function useCategories(options?: { returnType?: 'names' }): {
+  categories: string[];
+  isLoading: boolean;
+  error: string | null;
 };
 
-export const useCategories = () => {
-  const [categories, setCategories] = useState<string[]>([]);
+export function useCategories(options: { returnType?: 'names' | 'full' } = { returnType: 'names' }) {
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get<{ data: Category[] }>(`${API_BASE_URL}/categories`);
-        const data = response.data.data || [];
-        setCategories(data.map((cat) => cat.name));
+        const response = await fetch(`${API_BASE_URL}/categories`);
+
+        if (!response.ok) {
+          throw new Error('Kategoriler yüklenemedi');
+        }
+
+        const rawData = await response.json();
+        const data = rawData.data || rawData.categories || rawData;
+
+        const categoriesArray = Array.isArray(data) ? data : [];
+        setCategories(categoriesArray);
       } catch (err) {
-        console.error("Kategori API hatası:", err);
+        const errorMessage = err instanceof Error ? err.message : 'Kategori API hatası';
+        console.error('Kategori API hatası:', err);
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -27,5 +48,13 @@ export const useCategories = () => {
     fetchCategories();
   }, []);
 
-  return { categories, isLoading };
-};
+  if (options.returnType === 'full') {
+    return { categories, isLoading, error };
+  }
+
+  return {
+    categories: categories.map((cat) => cat.name),
+    isLoading,
+    error,
+  };
+}

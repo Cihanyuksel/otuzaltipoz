@@ -5,6 +5,7 @@ import { FaHeart as HeartIcon, FaRegCommentDots as CommentIcon } from 'react-ico
 import { photoService } from 'services/photoService';
 import { PopularPhoto } from 'types/photo';
 import Image from 'next/image';
+import Loader from '../common/loader';
 
 type TimeRange = 'all' | 'month' | 'week' | 'day';
 
@@ -81,11 +82,7 @@ const PopularPhotosSection = () => {
         </div>
 
         {/* LOADING */}
-        {loading && (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
-        )}
+        {loading && <Loader />}
 
         {/* FOTOĞRAFLAR VEYA HATA MESAJI */}
         {!loading && photos.length === 0 && (

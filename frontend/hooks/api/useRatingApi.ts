@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
-import { ratingService, IGetRatingsResponse, IRatePhotoResponse } from '../../services/ratingService';
 import { useEffect } from 'react';
+import { ratingService } from 'services/ratingService';
+import { IGetRatingsResponse, IRatePhotoResponse } from 'types/rating';
 
 interface RatePhotoVariables {
   photoId: string;
@@ -44,13 +45,8 @@ const useGetRatings = (
   return useQuery<IGetRatingsResponse, Error>({
     queryKey: ['ratings', photoId],
     queryFn: async () => {
-      try {
-        const result = await ratingService.getRatings(photoId);
-        return result;
-      } catch (error: any) {
-        console.error('🚨 Error fetching ratings:', error.response?.data);
-        throw error;
-      }
+      const result = await ratingService.getRatings(photoId);
+      return result;
     },
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60 * 24,

@@ -24,6 +24,7 @@ const useToggleLike = () => {
     mutationFn: ({ photoId }) => likeService.toggleLike(photoId),
 
     onMutate: async ({ photoId, searchQuery, hasToken, categories }) => {
+      // Likes query'sini de cancel et
       await queryClient.cancelQueries({ queryKey: ['likes', photoId] });
 
       const previousLikes = queryClient.getQueryData<LikeData>(['likes', photoId]);
@@ -61,6 +62,7 @@ const useToggleLike = () => {
     },
 
     onSuccess: (_data, { photoId }) => {
+      queryClient.invalidateQueries({ queryKey: ['likes', photoId] });
       queryClient.invalidateQueries({ queryKey: ['likedPhotos'] });
     },
 
@@ -71,6 +73,7 @@ const useToggleLike = () => {
 
       const queryKey = ['photos', { searchQuery, hasToken, categories }];
       queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: ['likes', photoId] });
     },
   });
 };

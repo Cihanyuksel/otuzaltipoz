@@ -4,12 +4,12 @@ import { FaRegCommentDots as CommentIcon } from 'react-icons/fa';
 
 import { Photo } from 'types/photo';
 
-interface PhotoGalleryProps {
+interface IPhotoGallery {
   photosToShow: Photo[];
   isOwner: boolean;
 }
 
-const PhotoGallery = ({ photosToShow, isOwner }: PhotoGalleryProps) => {
+const PhotoGallery = ({ photosToShow, isOwner }: IPhotoGallery) => {
   return (
     <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
       {photosToShow.length > 0 ? (

@@ -1,29 +1,24 @@
 'use client';
 //nextjs and react
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 //third-party
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, FieldError } from 'react-hook-form';
 import { CiCloudOn as CloudIcon } from 'react-icons/ci';
 import { IoIosArrowDown as ArrowDown } from 'react-icons/io';
 import { FaCheckCircle as CheckIcon } from 'react-icons/fa';
-//project-files
-import { useAddPhoto } from '@/hooks/api/usePhotoApi';
+//project files
 import Button from '../common/button';
+import { useAddPhoto } from '@/hooks/api/usePhotoApi';
+import { useCategories } from '@/hooks/api/useCategories';
+import { useOutsideClick } from '@/hooks/ui/useOutsideClick';
 import { PhotoUploadFormValues, photoUploadSchema } from 'lib/schemas';
-
-interface Category {
-  _id: string;
-  name: string;
-}
 
 export default function PhotoUploadForm() {
   const [fileName, setFileName] = useState('Dosya Seçilmedi');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [loadingCategories, setLoadingCategories] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showCheckmark, setShowCheckmark] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -38,43 +33,22 @@ export default function PhotoUploadForm() {
   });
 
   const { mutate, isPending } = useAddPhoto();
+  const {
+    categories,
+    isLoading: loadingCategories,
+    error: categoryError,
+  } = useCategories({
+    returnType: 'full',
+  });
 
-  const fetchCategories = async () => {
-    if (categories.length > 0) {
-      return true;
-    }
-
-    setLoadingCategories(true);
-    try {
-      const response = await fetch('http://localhost:4000/api/v1/categories');
-      const result = await response.json();
-      if (result.status) {
-        setCategories(result.data);
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error('Failed to fetch categories:', error);
-      setErrorMessage('Kategoriler yüklenirken bir hata oluştu.');
-      return false;
-    } finally {
-      setLoadingCategories(false);
-    }
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+  // Close dropdown when clicking outside
+  const closeDropdown = useCallback(() => {
+    setIsDropdownOpen(false);
   }, []);
 
+  useOutsideClick(dropdownRef, closeDropdown, isDropdownOpen);
+
+  // Show checkmark animation on file selection
   useEffect(() => {
     if (fileName !== 'Dosya Seçilmedi') {
       setShowCheckmark(true);
@@ -85,13 +59,14 @@ export default function PhotoUploadForm() {
     }
   }, [fileName]);
 
-  const handleDropdownToggle = async () => {
-    if (!isDropdownOpen && categories.length === 0) {
-      const success = await fetchCategories();
-      if (!success) {
-        return;
-      }
+  // Show error if categories fail to load
+  useEffect(() => {
+    if (categoryError) {
+      setErrorMessage('Kategoriler yüklenirken bir hata oluştu.');
     }
+  }, [categoryError]);
+
+  const handleDropdownToggle = () => {
     setIsDropdownOpen((prev) => !prev);
   };
 
@@ -146,11 +121,7 @@ export default function PhotoUploadForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
-    } else {
-      setFileName('Dosya Seçilmedi');
-    }
+    setFileName(file ? file.name : 'Dosya Seçilmedi');
   };
 
   const getSelectedCategoryNames = () => {
@@ -169,6 +140,7 @@ export default function PhotoUploadForm() {
           <h1 className="text-4xl font-bold tracking-tight text-[#1b140e]">Fotoğraf Yükle</h1>
           <p className="mt-2 text-base text-gray-600">Güzel anlarınızı dünyayla paylaşın</p>
         </div>
+
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6">
           {successMessage && <div className="p-4 rounded-md bg-green-100 text-green-700">{successMessage}</div>}
           {errorMessage && <div className="p-4 rounded-md bg-red-100 text-red-700">{errorMessage}</div>}
@@ -196,7 +168,7 @@ export default function PhotoUploadForm() {
               id="description"
               placeholder="Tell us more about your photo..."
               {...register('description')}
-            ></textarea>
+            />
             {errors.description && <p className="mt-2 text-sm text-red-500">{errors.description.message}</p>}
           </div>
 
@@ -205,11 +177,12 @@ export default function PhotoUploadForm() {
             <button
               type="button"
               onClick={handleDropdownToggle}
+              disabled={loadingCategories}
               className={`
-                    flex h-12 w-full items-center justify-between rounded-lg border-none bg-[#f5f1ea] p-4 text-base text-[#1b140e]
-                    focus:outline-none transition-all duration-150 cursor-pointer 
-                    ${isDropdownOpen ? 'rounded-none' : ''}
-                `}
+                flex h-12 w-full items-center justify-between rounded-lg border-none bg-[#f5f1ea] p-4 text-base text-[#1b140e]
+                focus:outline-none transition-all duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60
+                ${isDropdownOpen ? 'rounded-b-none' : ''}
+              `}
             >
               <span className={`truncate ${selectedCategories.length === 0 ? 'text-gray-500' : 'text-[#1b140e]'}`}>
                 {loadingCategories
@@ -219,27 +192,30 @@ export default function PhotoUploadForm() {
                     : 'Kategori Seçin'}
               </span>
               <ArrowDown
-                className={`ml-2 h-5 w-5 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : 'rotate-0'}`}
+                className={`ml-2 h-5 w-5 transition-transform duration-200 ${
+                  isDropdownOpen ? 'rotate-180' : 'rotate-0'
+                }`}
               />
             </button>
 
             {isDropdownOpen && !loadingCategories && (
               <div className="absolute z-10 w-full rounded-b-lg border border-t-0 border-gray-300 bg-white shadow-lg max-h-60 overflow-y-auto">
-                {categories.map((category) => (
-                  <div
-                    key={category._id}
-                    onClick={() => handleCategoryToggle(category._id)}
-                    className={`
-                                flex justify-between items-center px-4 py-3 cursor-pointer text-[#1b140e] transition-colors
-                                hover:bg-[#f5f1ea] text-sm
-                                ${selectedCategories.includes(category._id) ? 'bg-[#ef74641a] font-semibold' : ''}
-                            `}
-                  >
-                    {category.name}
-                    {selectedCategories.includes(category._id) && <span className="text-[#ef7464]">✓</span>}
-                  </div>
-                ))}
-                {categories.length === 0 && (
+                {categories.length > 0 ? (
+                  categories.map((category) => (
+                    <div
+                      key={category._id}
+                      onClick={() => handleCategoryToggle(category._id)}
+                      className={`
+                        flex justify-between items-center px-4 py-3 cursor-pointer text-[#1b140e] transition-colors
+                        hover:bg-[#f5f1ea] text-sm
+                        ${selectedCategories.includes(category._id) ? 'bg-[#ef74641a] font-semibold' : ''}
+                      `}
+                    >
+                      {category.name}
+                      {selectedCategories.includes(category._id) && <span className="text-[#ef7464]">✓</span>}
+                    </div>
+                  ))
+                ) : (
                   <div className="px-4 py-3 text-center text-gray-500 text-sm">Kategori bulunamadı.</div>
                 )}
               </div>
@@ -268,11 +244,7 @@ export default function PhotoUploadForm() {
               ${fileName !== 'Dosya Seçilmedi' ? 'border-[#ef7464]' : 'border-[#a6b8b1]'}
             `}
           >
-            <span
-              className={`material-symbols-outlined text-5xl ${fileName !== 'Dosya Seçilmedi' ? 'text-[#ef7464]' : 'text-gray-400'}`}
-            >
-              <CloudIcon />
-            </span>
+            <CloudIcon className={`text-5xl ${fileName !== 'Dosya Seçilmedi' ? 'text-[#ef7464]' : 'text-gray-400'}`} />
             <p className="mt-4 text-lg font-semibold text-gray-500">Sürükleyip bırakın veya yüklemek için tıklayın</p>
             <p className={`mt-1 text-sm ${fileName !== 'Dosya Seçilmedi' ? 'text-[#1b140e]' : 'text-gray-500'}`}>
               <span className="font-bold">{fileName}</span>
@@ -295,7 +267,13 @@ export default function PhotoUploadForm() {
           {errors.photo && <p className="mt-2 text-sm text-red-600">{(errors.photo as FieldError).message}</p>}
 
           <div className="flex justify-end pt-4">
-            <Button disabled={isPending} type="submit" variant="primary" className="font-bold" size="large">
+            <Button
+              disabled={isPending || loadingCategories}
+              type="submit"
+              variant="primary"
+              className="font-bold"
+              size="large"
+            >
               <span className="truncate">{isPending ? 'Yükleniyor...' : 'Yükle'}</span>
             </Button>
           </div>

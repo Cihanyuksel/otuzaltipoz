@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import Button from '../common/button';
 
-interface ReplyFormProps {
+interface IReplyForm {
   userPhoto?: string;
   onSubmit: (text: string) => void;
   onCancel?: () => void;
@@ -11,13 +11,7 @@ interface ReplyFormProps {
   replyingTo?: string;
 }
 
-export default function ReplyForm({
-  userPhoto,
-  onSubmit,
-  onCancel,
-  isSubmitting,
-  replyingTo,
-}: ReplyFormProps) {
+export default function ReplyForm({ userPhoto, onSubmit, onCancel, isSubmitting, replyingTo }: IReplyForm) {
   const [text, setText] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -47,12 +41,7 @@ export default function ReplyForm({
           autoFocus
         />
         <div className="flex gap-2 mt-1">
-          <Button
-            type="submit"
-            variant="primary"
-            size="small"
-            disabled={isSubmitting || !text.trim()}
-          >
+          <Button type="submit" variant="primary" size="small" disabled={isSubmitting || !text.trim()}>
             {isSubmitting ? 'Gönderiliyor...' : 'Gönder'}
           </Button>
           {onCancel && (

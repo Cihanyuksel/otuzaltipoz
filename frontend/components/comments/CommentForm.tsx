@@ -3,7 +3,7 @@ import { FaRegComments as CommentIcon } from 'react-icons/fa';
 import { useState } from 'react';
 import Button from '../common/button';
 
-interface CommentFormProps {
+interface ICommentForm {
   userPhoto?: string;
   onSubmit: (text: string) => void;
   isSubmitting?: boolean;
@@ -11,13 +11,7 @@ interface CommentFormProps {
   token: string | null;
 }
 
-export default function CommentForm({
-  userPhoto,
-  onSubmit,
-  isSubmitting,
-  placeholder,
-  token,
-}: CommentFormProps) {
+export default function CommentForm({ userPhoto, onSubmit, isSubmitting, placeholder, token }: ICommentForm) {
   const [text, setText] = useState('');
   const [error, setError] = useState('');
 

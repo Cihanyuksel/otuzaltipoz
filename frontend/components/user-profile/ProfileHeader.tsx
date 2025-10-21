@@ -19,7 +19,7 @@ interface IProfileHeader {
 }
 
 const ProfileHeader = ({ user, imageUrl, isOwner }: IProfileHeader) => {
-  const { user: currentUser, setAuth, accessToken } = useAuth();
+  const { user: currentUser, setAuth } = useAuth();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const router = useRouter();

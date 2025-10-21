@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { commentService } from 'services/commentService';
 
-export const useCommentApi = (photoId: string, accessToken?: string) => {
+export const useCommentApi = (photoId: string) => {
   const queryClient = useQueryClient();
 
   const {
@@ -33,7 +33,6 @@ export const useCommentApi = (photoId: string, accessToken?: string) => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', photoId] });
-      
     },
     onError: (err) => {
       console.error('Yanıt eklenirken hata oluştu:', err);

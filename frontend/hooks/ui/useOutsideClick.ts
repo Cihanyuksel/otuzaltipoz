@@ -1,4 +1,4 @@
-import { useEffect, RefObject } from 'react';
+import { useEffect, RefObject, useCallback } from 'react';
 
 /**
  * Hook that handles clicks outside of the passed ref
@@ -6,26 +6,32 @@ import { useEffect, RefObject } from 'react';
  * @param callback - Function to call when clicking outside
  * @param isActive - Optional flag to enable/disable the listener (default: true)
  */
-function useOutsideClick<T extends HTMLElement = HTMLElement>(
+export function useOutsideClick<T extends HTMLElement = HTMLElement>(
   ref: RefObject<T | null>,
   callback: () => void,
   isActive: boolean = true
 ) {
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+  // Memoize the callback to prevent unnecessary re-renders
+  const handleClickOutside = useCallback(
+    (event: MouseEvent | TouchEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) {
         callback();
       }
+    },
+    [ref, callback]
+  );
+
+  useEffect(() => {
+    if (!isActive) {
+      return;
     }
 
-    if (isActive) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
     };
-  }, [ref, callback, isActive]);
+  }, [handleClickOutside, isActive]);
 }
-
-export default useOutsideClick;
