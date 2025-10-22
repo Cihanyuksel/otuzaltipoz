@@ -11,7 +11,7 @@ import { useToggleLike } from '@/hooks/api/useLikeApi';
 
 interface LikeButtonProps {
   photoId: string;
-  likeCount: number;
+  totalLikes: number;
   isLikedByMe: boolean;
   onOpenModal?: () => void;
   onLoginRequired?: () => void;
@@ -20,10 +20,10 @@ interface LikeButtonProps {
   useContext?: boolean;
 }
 
-const LikeButton = memo(
+const PhotoLikeButton = memo(
   forwardRef<HTMLButtonElement, LikeButtonProps>(
     (
-      { photoId, likeCount, isLikedByMe, onOpenModal, onLoginRequired, searchQuery, categories, useContext = true },
+      { photoId, totalLikes, isLikedByMe, onOpenModal, onLoginRequired, searchQuery, categories, useContext = true },
       ref
     ) => {
       const { accessToken } = useAuth();
@@ -93,15 +93,15 @@ const LikeButton = memo(
           >
             {heartIcon}
           </button>
-          {likeCount > 0 && onOpenModal ? (
+          {totalLikes > 0 && onOpenModal ? (
             <button
               onClick={handleModalOpen}
               className="text-sm font-semibold cursor-pointer text-gray-700 hover:underline"
             >
-              {likeCount} Beğeni
+              {totalLikes} Beğeni
             </button>
-          ) : likeCount > 0 ? (
-            <span className="text-sm font-semibold text-gray-700">{likeCount} Beğeni</span>
+          ) : totalLikes > 0 ? (
+            <span className="text-sm font-semibold text-gray-700">{totalLikes} Beğeni</span>
           ) : null}
         </div>
       );
@@ -109,5 +109,5 @@ const LikeButton = memo(
   )
 );
 
-LikeButton.displayName = 'LikeButton';
-export default LikeButton;
+PhotoLikeButton.displayName = 'LikeButton';
+export default PhotoLikeButton;

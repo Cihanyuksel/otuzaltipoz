@@ -1,7 +1,7 @@
 type IPhotoInfo = {
   title: string;
   description: string;
-  tags: string[];
+  tags?: string[];
 };
 
 export default function PhotoInfo({ title, description, tags }: IPhotoInfo) {

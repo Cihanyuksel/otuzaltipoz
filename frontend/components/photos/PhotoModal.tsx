@@ -11,8 +11,8 @@ interface PhotoDocument {
   photo_url: string;
   title: string;
   description: string;
-  created_at: string;
-  updated_at?: string;
+  created_at: Date;
+  updated_at?: Date;
   user?: {
     username: string;
   };

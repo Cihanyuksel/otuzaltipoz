@@ -10,7 +10,7 @@ interface IPhotoCardInfo {
   description: string;
   uploader: string;
   profileImgUrl?: string;
-  created_at: string;
+  created_at: Date;
   uploaderId: string;
 }
 

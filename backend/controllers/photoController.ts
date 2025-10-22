@@ -26,7 +26,9 @@ import {
   LikeCountMap,
   CommentCountMap,
 } from "../types/photo.types";
+import Rating from "../models/Rating";
 
+//======================================= GET ALL PHOTOS ====================================
 const getAllPhotos = async (
   req: IGetUserAuthInfoRequest,
   res: Response<IGetAllPhotosResponse>,
@@ -141,9 +143,36 @@ const getAllPhotos = async (
       {}
     );
 
+    const ratings = await Rating.find({ photo_id: { $in: photoIds } }).lean();
+
+    const ratingData: {
+      [photoId: string]: { averageRating: number; totalVotes: number };
+    } = {};
+
+    photoIds.forEach((photoId) => {
+      const photoIdStr = photoId.toString();
+      const photoRatings = ratings.filter(
+        (r) => r.photo_id.toString() === photoIdStr
+      );
+
+      const totalVotes = photoRatings.length;
+      const averageRating = totalVotes
+        ? Math.round(
+            (photoRatings.reduce((acc, r) => acc + r.rating, 0) / totalVotes) *
+              10
+          ) / 10
+        : 0;
+
+      ratingData[photoIdStr] = { averageRating, totalVotes };
+    });
+
     const data: IPhotoResponse[] = photos.map((photo) => {
       const photoIdStr: string = photo._id.toString();
       const typedPhoto = photo as IPhotoPopulated;
+      const photoRating = ratingData[photoIdStr] || {
+        averageRating: 0,
+        totalVotes: 0,
+      };
 
       return {
         _id: typedPhoto._id,
@@ -157,6 +186,8 @@ const getAllPhotos = async (
         user: typedPhoto.user_id,
         likeCount: likeCounts[photoIdStr] || 0,
         isLikedByMe: isLikedMap.has(photoIdStr),
+        averageRating: photoRating.averageRating,
+        totalVotes: photoRating.totalVotes,
       };
     });
 
@@ -173,6 +204,7 @@ const getAllPhotos = async (
   }
 };
 
+//======================================= GET ALL PHOTO ====================================
 const getPhoto = async (
   req: IGetUserAuthInfoRequest,
   res: Response<IGetPhotoResponse>,
@@ -190,12 +222,26 @@ const getPhoto = async (
     if (!photo) return next(new AppError("Photo not found.", 404));
 
     const loggedInUserId: string | undefined = req.user?.id;
+
     const likeCount: number = await Like.countDocuments({
       photo_id: photo._id,
     });
+
     const isLikedByMe: boolean = loggedInUserId
-      ? !!(await Like.exists({ user_id: loggedInUserId, photo_id: photo._id }))
+      ? !!(await Like.exists({
+          user_id: loggedInUserId,
+          photo_id: photo._id,
+        }))
       : false;
+
+    const photoRatings = await Rating.find({ photo_id: photo._id }).lean();
+
+    const totalVotes = photoRatings.length;
+    const averageRating = totalVotes
+      ? Math.round(
+          (photoRatings.reduce((acc, r) => acc + r.rating, 0) / totalVotes) * 10
+        ) / 10
+      : 0;
 
     res.status(200).json({
       status: true,
@@ -211,6 +257,8 @@ const getPhoto = async (
         user: photo.user_id,
         likeCount,
         isLikedByMe,
+        averageRating,
+        totalVotes,
       },
     });
   } catch (error) {
@@ -220,6 +268,7 @@ const getPhoto = async (
   }
 };
 
+//======================================= CREATE PHOTO ====================================
 const createPhoto = async (
   req: IGetUserAuthInfoRequest,
   res: Response,
@@ -273,6 +322,7 @@ const createPhoto = async (
   }
 };
 
+//======================================= UPDATE PHOTO ====================================
 const updatePhoto = async (
   req: IGetUserAuthInfoRequest,
   res: Response,
@@ -308,6 +358,7 @@ const updatePhoto = async (
   }
 };
 
+//======================================= DELETE PHOTO ===================================
 const deletePhoto = async (
   req: IGetUserAuthInfoRequest,
   res: Response,
@@ -345,7 +396,7 @@ const deletePhoto = async (
     next(new AppError(errorMessage, 500));
   }
 };
-
+//======================================= GET PHOTO BY USER ID ===================================
 const getPhotoByUserId = async (
   req: Request,
   res: Response<IGetPhotosWithCommentsResponse>,
@@ -406,6 +457,7 @@ const getPhotoByUserId = async (
         categories: photo.categories,
         created_at: photo.created_at,
         updated_at: photo.updated_at,
+        averageRating: photo.averageRating,
         user: photo.user_id,
         likeCount: likeCounts[photoIdStr] || 0,
         commentCount: commentCounts[photoIdStr] || 0,
@@ -423,6 +475,7 @@ const getPhotoByUserId = async (
   }
 };
 
+//======================================= GET LIKED PHOTOS ===================================
 const getLikedPhotos = async (
   req: IGetUserAuthInfoRequest,
   res: Response<IGetPhotosWithCommentsResponse>,
@@ -480,6 +533,7 @@ const getLikedPhotos = async (
         created_at: photo.created_at,
         updated_at: photo.updated_at,
         user: photo.user_id,
+        averageRating: photo.averageRating,
         likeCount: likeCountMap.get(photoIdStr) || 0,
         commentCount: commentCounts[photoIdStr] || 0,
         isLikedByMe: true,
@@ -494,6 +548,7 @@ const getLikedPhotos = async (
   }
 };
 
+//======================================= GET POPULAR PHOTOS ===================================
 const getPopularPhotos = async (
   req: IGetUserAuthInfoRequest,
   res: Response<IGetPopularPhotosResponse>,

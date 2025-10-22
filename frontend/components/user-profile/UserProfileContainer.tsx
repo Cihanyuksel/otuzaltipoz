@@ -17,9 +17,9 @@ const UserProfileContainer = ({ userId: userIdFromServer }: IUserProfileContaine
 
   const userIdFromParams = params?.id as string | undefined;
 
-  const profileOwnerId = userIdFromServer || userIdFromParams || currentUser?.id;
-  const isOwner = (!userIdFromServer && !userIdFromParams) || currentUser?.id === profileOwnerId;
-
+  const profileOwnerId = userIdFromServer || userIdFromParams || currentUser?._id;
+  const isOwner = (!userIdFromServer && !userIdFromParams) || currentUser?._id === profileOwnerId;
+  console.log(currentUser);
   const [activeTab, setActiveTab] = useState<'uploaded' | 'liked'>('uploaded');
 
   useEffect(() => {
@@ -34,11 +34,7 @@ const UserProfileContainer = ({ userId: userIdFromServer }: IUserProfileContaine
     localStorage.setItem(storageKey, tab);
   };
 
-  const {
-    data: profileOwnerData,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useGetUser(profileOwnerId as string);
+  const { data: profileOwner, isLoading: isUserLoading, isError: isUserError } = useGetUser(profileOwnerId as string);
   const {
     data: uploadedData,
     isLoading: isUploadedLoading,
@@ -53,8 +49,7 @@ const UserProfileContainer = ({ userId: userIdFromServer }: IUserProfileContaine
   const isLoading = isUserLoading || (activeTab === 'uploaded' ? isUploadedLoading : isLikedLoading);
   const isError = isUserError || (activeTab === 'uploaded' ? isUploadedError : isLikedError);
 
-  const profileOwner = profileOwnerData;
-  console.log(profileOwner)
+  console.log(profileOwner);
   const imageUrl = profileOwner?.profile_img_url || '/no_profile.png';
   const photosToShow = activeTab === 'uploaded' ? uploadedData?.data || [] : likedData?.data || [];
 

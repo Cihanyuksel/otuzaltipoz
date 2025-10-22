@@ -1,35 +1,33 @@
 'use client';
-//nextjs and react
 import { useEffect, useRef, useState } from 'react';
-//third-party
 import { FiCheck as CheckIcon } from 'react-icons/fi';
 import { AnimatePresence, motion } from 'framer-motion';
 import { IoIosStar as StarFilledIcon, IoIosStarOutline as StarOutlineIcon } from 'react-icons/io';
-//project-files
-import Loader from '../common/loader';
-import { useGetRatings, useRatePhoto } from '@/hooks/api/useRatingApi';
+import { useRatePhoto } from '@/hooks/api/useRatingApi';
 
 interface IPhotoRatings {
   photoId: string;
   accessToken: string | null;
-  likeCount: number;
+  averageRating: number;
+  totalVotes: number;
   onLoginRequired: () => void;
 }
 
-export default function PhotoRatings({ photoId, accessToken, onLoginRequired }: IPhotoRatings) {
-  //state
+export default function PhotoRatings({ 
+  photoId, 
+  accessToken, 
+  averageRating = 0,
+  totalVotes = 0,
+  onLoginRequired 
+}: IPhotoRatings) {
   const [rating, setRating] = useState(0);
   const [showMessage, setShowMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  //ref
+  
   const starRef = useRef<HTMLDivElement>(null);
-  //api
-  const { data: ratingsData, isLoading, error } = useGetRatings(photoId);
   const ratePhotoMutation = useRatePhoto();
-  //constant
+  
   const IsLoggedIn = !!accessToken;
-  const averageRating = ratingsData?.averageRating || 0;
-  const totalVotes = ratingsData?.totalVotes || 0;
   const ratingOptions = [5, 4, 3, 2, 1];
 
   useEffect(() => {
@@ -40,33 +38,28 @@ export default function PhotoRatings({ photoId, accessToken, onLoginRequired }: 
     };
 
     window.addEventListener('click', handleClickOutside);
-
     return () => window.removeEventListener('click', handleClickOutside);
   }, []);
 
   const handleSubmit = () => {
     if (rating === 0) return;
     setErrorMessage(null);
+    
     if (!IsLoggedIn) {
       onLoginRequired();
       return;
     }
+    
     ratePhotoMutation.mutate(
-      {
-        photoId,
-        rating,
-      },
-
+      { photoId, rating },
       {
         onSuccess: () => {
           setShowMessage(true);
           setTimeout(() => setShowMessage(false), 1500);
           setRating(0);
         },
-
         onError: (error: any) => {
           const apiErrorMessage = error?.message;
-
           if (apiErrorMessage) {
             setErrorMessage(apiErrorMessage);
           } else {
@@ -77,25 +70,18 @@ export default function PhotoRatings({ photoId, accessToken, onLoginRequired }: 
     );
   };
 
-  if (isLoading) return <Loader />;
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-start gap-3 md:items-end">
-        <div className="text-red-500 text-sm">Puanlar yüklenemedi</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col gap-3 w-full  md:items-end">
+    <div className="flex flex-col gap-3 w-full md:items-end">
       <div className="flex items-baseline gap-2">
-        <span className="text-md md:text-2xl font-bold text-gray-900">{averageRating.toFixed(2)}</span>
+        <span className="text-md md:text-2xl font-bold text-gray-900">
+          {averageRating.toFixed(2)}
+        </span>
         <span className="text-sm text-gray-500">/ 5</span>
       </div>
-      <p className="hidden md:block text-sm text-gray-500">{totalVotes} kişi oy verdi</p>
+      <p className="hidden md:block text-sm text-gray-500">
+        {totalVotes} kişi oy verdi
+      </p>
 
-      {/* Star Rating Input */}
       <div ref={starRef} className="mt-2 flex flex-row-reverse items-center justify-end mr-10 flex-shrink-0">
         <div className="relative flex items-center">
           {rating > 0 && (
@@ -107,11 +93,7 @@ export default function PhotoRatings({ photoId, accessToken, onLoginRequired }: 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              transition={{
-                duration: 0.3,
-
-                ease: 'easeOut',
-              }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
               className={`relative ml-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white text-green-500 overflow-hidden group shadow-sm transition-all duration-300 ${
                 ratePhotoMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''
               }`}
@@ -153,8 +135,6 @@ export default function PhotoRatings({ photoId, accessToken, onLoginRequired }: 
           </AnimatePresence>
         </div>
 
-        {/* Stars */}
-
         <div className="flex flex-row-reverse items-center gap-2">
           <p className="text-sm text-gray-600">{rating}</p>
           <div className="star-rating flex flex-row-reverse">
@@ -166,7 +146,6 @@ export default function PhotoRatings({ photoId, accessToken, onLoginRequired }: 
                   value={n}
                   onChange={() => {
                     setRating(n);
-
                     setErrorMessage(null);
                   }}
                   className="hidden"
@@ -180,13 +159,19 @@ export default function PhotoRatings({ photoId, accessToken, onLoginRequired }: 
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   className={ratePhotoMutation.isPending ? 'opacity-50' : ''}
                 >
-                  {n <= rating ? <StarFilledIcon color="gold" size={30} /> : <StarOutlineIcon color="gray" size={30} />}
+                  {n <= rating ? (
+                    <StarFilledIcon color="gold" size={30} />
+                  ) : (
+                    <StarOutlineIcon color="gray" size={30} />
+                  )}
                 </motion.div>
               </label>
             ))}
           </div>
         </div>
-        <p className="mr-4 flex-shrink-0 text-md font-medium text-gray-600">Fotoğrafı Oyla</p>
+        <p className="mr-4 flex-shrink-0 text-md font-medium text-gray-600">
+          Fotoğrafı Oyla
+        </p>
       </div>
 
       {errorMessage && (

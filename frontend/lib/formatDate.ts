@@ -1,4 +1,4 @@
-export const formatDateNumeric = (isoString: string): string => {
+export const formatDateNumeric = (isoString: Date): string => {
   const d = new Date(isoString);
   const day = String(d.getDate()).padStart(2, '0');
   const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -9,7 +9,7 @@ export const formatDateNumeric = (isoString: string): string => {
   return `${day}.${month}.${year} ${hour}:${minute}`;
 };
 
-export const formatDateLong = (dateString: string) => {
+export const formatDateLong = (dateString: Date) => {
   const date = new Date(dateString);
   return date.toLocaleString('tr-TR', {
     year: 'numeric',

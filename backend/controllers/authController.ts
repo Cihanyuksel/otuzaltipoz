@@ -267,13 +267,13 @@ const login = async (
     await user.save();
 
     const userData = {
-      id: user._id,
+      _id: user._id,
       username: user.username,
-      fullname: user.full_name,
+      full_name: user.full_name,
       email: user.email,
       role: user.role,
       profile_img_url: user.profile_img_url,
-      isActive: user.is_active,
+      is_active: user.is_active,
     };
 
     // Generate tokens

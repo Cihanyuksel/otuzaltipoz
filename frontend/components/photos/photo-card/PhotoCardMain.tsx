@@ -1,4 +1,4 @@
-import LikeSection from './LikeSection';
+import LikeSection from './PhotoInteractionSection';
 import PhotoCardInfo from './PhotoCardInfo';
 import PhotoCardImage from './PhotoCardImage';
 
@@ -13,7 +13,7 @@ interface IPhotoCard {
   tags: string[];
   initialLikes?: number;
   isLikedByMe?: boolean;
-  created_at: string;
+  created_at: Date;
   onPhotoClick: () => void;
   likes?: number;
   uploaderId: string;

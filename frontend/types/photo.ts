@@ -1,3 +1,4 @@
+import { Category } from "@/hooks/api/useCategories";
 import { User } from "./auth";
 
 export interface ApiResponse<T> {
@@ -17,18 +18,19 @@ export type OmittedUser = Omit<
 
 export interface Photo {
   _id: string;
-  created_at: string;
-  updated_at: string;
-  description: string;
   photo_url: string;
-  tags: string[];
   title: string;
-  __v: number;
-  user: OmittedUser;
-  likes: number;
-  likeCount: number,
-  isLikedByMe: boolean,
-  commentCount: number
+  description: string;
+  tags?: string[];
+  categories: Category[];
+  created_at: Date;
+  updated_at: Date;
+  user: User;
+  likeCount: number;
+  isLikedByMe: boolean;
+  averageRating: number;    
+  totalVotes: number; 
+  commentCount?: number;      
 }
 
 export interface PopularPhoto {

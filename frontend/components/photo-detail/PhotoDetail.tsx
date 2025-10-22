@@ -10,11 +10,12 @@ import EditPhotoModal from '../photos/EditPhotoModal';
 import DeleteConfirmPhotoModal from '../common/confirm-modal';
 import Loader from '../common/loader';
 import Button from '../common/button';
-import LikeButton from '../photos/photo-card/LikeButton';
+import PhotoLikeButton from '../photos/photo-card/PhotoLikeButton';
 import CommentSection from '../comments/CommentSection';
 import { PhotoImage, PhotoInfo, RatingSection, UploaderInfo, PhotoActions } from '@/components/photo-detail';
 import { useGetLikes } from '@/hooks/api/useLikeApi';
 import { useGetPhoto, useDeletePhoto } from '@/hooks/api/usePhotoApi';
+import { useGetRatings } from '@/hooks/api/useRatingApi';
 import { useAuth } from '@/context/AuthContext';
 import { canManage as canManagePhoto } from 'lib/permission';
 
@@ -47,6 +48,9 @@ const PhotoDetail = () => {
     enabled: !isDeleting,
   });
   const { data: likeData } = useGetLikes(photoId, {
+    enabled: !!photoId && !isDeleting,
+  });
+  const { data: ratingsData } = useGetRatings(photoId, {
     enabled: !!photoId && !isDeleting,
   });
   const { mutate: deletePhoto, isPending, error } = useDeletePhoto();
@@ -85,13 +89,15 @@ const PhotoDetail = () => {
   if (isLoading) return <Loader text={'Yükleniyor...'} />;
   if (isError || !photo) return notFound();
 
-  //kontrol edilecek
   const isOwnerPhoto = user?._id === photo.user._id;
   const isLoggedIn = !!accessToken;
   const canDeletePhoto = canManagePhoto(user?.role, isOwnerPhoto);
 
   const currentLikeCount = likeData?.likeCount ?? photo.likeCount;
   const currentIsLikedByMe = likeData?.isLikedByMe ?? photo.isLikedByMe;
+  
+  const currentAverageRating = ratingsData?.averageRating ?? photo.averageRating ?? 0;
+  const currentTotalVotes = ratingsData?.totalVotes ?? photo.totalVotes ?? 0;
 
   return (
     <section
@@ -113,12 +119,13 @@ const PhotoDetail = () => {
                   <RatingSection
                     photoId={photo._id}
                     accessToken={accessToken}
-                    likeCount={currentLikeCount}
+                    averageRating={currentAverageRating}
+                    totalVotes={currentTotalVotes}
                     onLoginRequired={() => handleModalToggle('login', true)}
                   />
-                  <LikeButton
+                  <PhotoLikeButton
                     photoId={photo._id}
-                    likeCount={currentLikeCount}
+                    totalLikes={currentLikeCount}
                     isLikedByMe={currentIsLikedByMe}
                     onLoginRequired={() => handleModalToggle('login', true)}
                   />

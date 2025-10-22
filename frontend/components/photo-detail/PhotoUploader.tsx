@@ -2,21 +2,22 @@ import { formatDateLong } from 'lib/formatDate';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export interface IUploaderInfo {
+export interface UploaderInfo {
   _id: string;
   username: string;
   email: string;
   profile_img_url?: string;
-  created_at: string;
+  created_at: Date;
 }
 
-interface UploaderInfoProps {
-  user: IUploaderInfo;
-  photoCreatedAt: string;
-  photoUpdatedAt?: string;
+interface IUploaderInfo {
+  user: UploaderInfo;
+  photoCreatedAt: Date;
+  photoUpdatedAt?: Date;
 }
 
-export default function UploaderInfo({ user, photoCreatedAt, photoUpdatedAt }: UploaderInfoProps) {
+export default function UploaderInfo({ user, photoCreatedAt, photoUpdatedAt }: IUploaderInfo) {
+
   const createdTime = new Date(photoCreatedAt).getTime();
   const updatedTime = photoUpdatedAt ? new Date(photoUpdatedAt).getTime() : createdTime;
 

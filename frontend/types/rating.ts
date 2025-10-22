@@ -11,6 +11,8 @@ export interface IRating {
 export interface IRatePhotoResponse {
   message: string;
   rating: IRating;
+  averageRating: number;
+  totalVotes: number;
 }
 
 export interface IGetRatingsResponse {

@@ -6,8 +6,10 @@ export type User = {
   bio?: string;
   role: 'user' | 'admin';
   profile_img_url?: string;
-  is_active: boolean
+  is_active: boolean;
+  created_at: Date;
 };
+
 
 export interface SignupRequest {
   username: string;

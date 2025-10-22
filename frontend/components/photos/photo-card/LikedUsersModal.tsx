@@ -17,7 +17,7 @@ interface PhotoLikedUsersProps {
   onClose: () => void;
 }
 
-export default function PhotoLikedUsers({ photoId, isOpen, onClose }: PhotoLikedUsersProps) {
+export default function LikedUsersModal({ photoId, isOpen, onClose }: PhotoLikedUsersProps) {
   const { data, isLoading, isFetching } = useGetLikes(photoId, {
     enabled: isOpen,
   });

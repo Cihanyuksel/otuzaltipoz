@@ -48,6 +48,7 @@ export interface IPhotoPopulated
   extends Omit<IPhotoDocument, "user_id" | "categories"> {
   user_id: IUser;
   categories: ICategory[];
+  averageRating: number;
 }
 
 export interface IPhotoQueryFilter {
@@ -69,7 +70,9 @@ export interface IPhotoResponse {
   updated_at: Date;
   user: IUser;
   likeCount: number;
+  averageRating: number;
   isLikedByMe: boolean;
+  totalVotes?: number;
 }
 
 export interface IPhotoWithCommentsResponse extends IPhotoResponse {

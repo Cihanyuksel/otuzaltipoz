@@ -54,7 +54,7 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
   const toggleLikeMutation = useToggleLike();
 
   useEffect(() => {
-    const currentUserId = user?.id || null;
+    const currentUserId = user?._id || null;
 
     if (previousUserId !== currentUserId) {
       queryClient.invalidateQueries({ queryKey: ['likes'] });
@@ -66,7 +66,7 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
 
       setPreviousUserId(currentUserId);
     }
-  }, [user?.id, previousUserId, queryClient]);
+  }, [user?._id, previousUserId, queryClient]);
 
   useEffect(() => {
     const categoriesFromUrl = searchParams.get('categories');

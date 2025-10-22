@@ -6,6 +6,9 @@ import { IGetRatingsResponse, IRatePhotoResponse } from 'types/rating';
 interface RatePhotoVariables {
   photoId: string;
   rating: number;
+  searchQuery?: string;
+  hasToken?: boolean;
+  categories?: string;
 }
 
 const useRatePhoto = () => {
@@ -14,19 +17,22 @@ const useRatePhoto = () => {
   return useMutation<IRatePhotoResponse, Error, RatePhotoVariables, { previousRatings?: IGetRatingsResponse }>({
     mutationFn: ({ photoId, rating }) => ratingService.ratePhoto(photoId, rating),
 
-    onMutate: async ({ photoId, rating }) => {
+    onMutate: async ({ photoId }) => {
       await queryClient.cancelQueries({ queryKey: ['ratings', photoId] });
       const previousRatings = queryClient.getQueryData<IGetRatingsResponse>(['ratings', photoId]);
       return { previousRatings };
     },
 
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['ratings', variables.photoId] });
+    onSuccess: (_data, { photoId, searchQuery, hasToken, categories }) => {
+      queryClient.invalidateQueries({ queryKey: ['ratings', photoId] });
+      queryClient.invalidateQueries({ queryKey: ['photo', photoId] });
+      const queryKey = ['photos', { searchQuery, hasToken, categories }];
+      queryClient.invalidateQueries({ queryKey });
     },
 
-    onError: (_err, variables, context) => {
+    onError: (_err, { photoId }, context) => {
       if (context?.previousRatings) {
-        queryClient.setQueryData(['ratings', variables.photoId], context.previousRatings);
+        queryClient.setQueryData(['ratings', photoId], context.previousRatings);
       }
     },
   });

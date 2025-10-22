@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { likeService } from '../../services/likeService';
 import { Photo } from 'types/photo';
+import { ToggleLikeResponse } from 'types/like';
 
 interface ToggleLikeVariables {
   photoId: string;
@@ -20,11 +21,10 @@ interface LikeData {
 const useToggleLike = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<any, Error, ToggleLikeVariables, { previousLikes?: LikeData }>({
+  return useMutation<ToggleLikeResponse, Error, ToggleLikeVariables, { previousLikes?: LikeData }>({
     mutationFn: ({ photoId }) => likeService.toggleLike(photoId),
 
     onMutate: async ({ photoId, searchQuery, hasToken, categories }) => {
-      // Likes query'sini de cancel et
       await queryClient.cancelQueries({ queryKey: ['likes', photoId] });
 
       const previousLikes = queryClient.getQueryData<LikeData>(['likes', photoId]);
