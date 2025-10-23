@@ -35,6 +35,7 @@ interface CommentPaths {
   GET_COMMENTS: (id: string) => string;
   ADD_COMMENT: (id: string) => string;
   DELETE_COMMENT: (id: string) => string;
+  UPDATE_COMMENT: (id: string) =>string,
 }
 
 interface LikePaths {
@@ -79,9 +80,10 @@ export const PHOTO_PATHS: PhotosPaths = {
 };
 
 export const COMMENTS_PATH: CommentPaths = {
-  GET_COMMENTS: (id) => `/photos/${id}/comments`,
-  ADD_COMMENT: (id) => `/photos/${id}/comments`,
-  DELETE_COMMENT: (id) => `/photos/${id}/comments`,
+  GET_COMMENTS: (photoId) => `/comments/${photoId}`,
+  ADD_COMMENT: (photoId) => `/comments/${photoId}`,
+  UPDATE_COMMENT: (commentId) => `/comments/${commentId}`,
+  DELETE_COMMENT: (commentId) => `/comments/${commentId}`,
 };
 
 export const LIKE_PATH: LikePaths = {

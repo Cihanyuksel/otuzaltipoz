@@ -49,7 +49,7 @@ const UserProfileContainer = ({ userId: userIdFromServer }: IUserProfileContaine
   const isError = isUserError || (activeTab === 'uploaded' ? isUploadedError : isLikedError);
   const imageUrl = profileOwner?.profile_img_url || '/no_profile.png';
   const photosToShow = activeTab === 'uploaded' ? uploadedData?.data || [] : likedData?.data || [];
-
+  console.log(profileOwner)
   if (isLoading) return <Loader />;
 
   if (isError || !profileOwner) {

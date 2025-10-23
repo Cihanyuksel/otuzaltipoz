@@ -8,6 +8,8 @@ export interface IComment extends Document {
   isDeleted: boolean;
   created_at: Date;
   updated_at: Date;
+  edit_count: number;
+  is_edited: boolean;
 }
 
 const commentSchema = new Schema<IComment>(
@@ -25,8 +27,9 @@ const commentSchema = new Schema<IComment>(
       ref: "Comment",
       default: null,
     },
-
     isDeleted: { type: Boolean, default: false },
+    edit_count: { type: Number, default: 0 },
+    is_edited: { type: Boolean, default: false },
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },

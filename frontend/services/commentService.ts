@@ -1,7 +1,7 @@
 // services/commentService.ts
 import { axiosInstance } from 'lib/axiosInstance';
 import { COMMENTS_PATH } from 'lib/config';
-import { IComment, AddCommentResponse, DeleteCommentResponse } from 'types/comment';
+import { IComment, AddCommentResponse, DeleteCommentResponse, UpdateCommentResponse } from 'types/comment';
 
 export const commentService = {
   getComments: async (photoId: string): Promise<IComment[]> => {
@@ -14,6 +14,11 @@ export const commentService = {
     if (parentCommentId) body.parentComment = parentCommentId;
 
     const { data } = await axiosInstance.post(COMMENTS_PATH.ADD_COMMENT(photoId), body);
+    return data;
+  },
+
+  updateComment: async (commentId: string, commentText: string): Promise<UpdateCommentResponse> => {
+    const { data } = await axiosInstance.put(COMMENTS_PATH.UPDATE_COMMENT(commentId), { text: commentText }); // patch -> put
     return data;
   },
 

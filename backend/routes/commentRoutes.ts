@@ -9,9 +9,10 @@ import { authenticate } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post("/:photoId/comments", authenticate, addComment);
-router.get("/:photoId/comments", getCommentsByPhoto);
-router.delete("/:id/comments/", authenticate, deleteComment);
-router.put("/comments/:id", authenticate, updateComment);
+router.get("/:photoId", getCommentsByPhoto);  
+router.post("/:photoId", authenticate, addComment);  
+
+router.put("/:id", authenticate, updateComment);  
+router.delete("/:id", authenticate, deleteComment)
 
 export default router;

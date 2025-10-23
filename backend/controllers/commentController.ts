@@ -91,10 +91,21 @@ const updateComment = async (
 
     checkOwnershipOrRole(comment.user.toString(), req, ["admin", "moderator"]);
 
+    if (comment.edit_count >= 1 && req.user?.role !== "admin" && req.user?.role !== "moderator") {
+      return next(new AppError("Bir yorumu sadece bir kez düzenleyebilirsiniz", 403));
+    }
+
     comment.text = text;
+    comment.is_edited = true;
+    comment.edit_count += 1;
+    
     await comment.save();
 
-    res.json(comment);
+    const updatedComment = await Comment.findById(comment._id)
+      .populate("user", "_id username profile_img_url")
+      .lean();
+
+    res.json(updatedComment);
   } catch (err: any) {
     next(new AppError(err.message || "Error updating comment", 500));
   }

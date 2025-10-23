@@ -15,6 +15,7 @@ export const useCommentApi = (photoId: string) => {
     staleTime: 1000 * 60 * 5,
   });
 
+  //add comment
   const addCommentMutation = useMutation({
     mutationFn: (commentText: string) => commentService.addComment(photoId, commentText),
 
@@ -27,6 +28,7 @@ export const useCommentApi = (photoId: string) => {
     },
   });
 
+  //add reply
   const addReplyMutation = useMutation({
     mutationFn: (data: { parentCommentId: string; replyText: string }) =>
       commentService.addComment(photoId, data.replyText, data.parentCommentId),
@@ -39,6 +41,20 @@ export const useCommentApi = (photoId: string) => {
     },
   });
 
+  //update comment
+  const updateCommentMutation = useMutation({
+    mutationFn: (data: { commentId: string; commentText: string }) =>
+      commentService.updateComment(data.commentId, data.commentText),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments', photoId] });
+    },
+    onError: (err) => {
+      console.error('Yorum güncellenirken hata oluştu:', err);
+    },
+  });
+
+  //delete comments
   const deleteCommentMutation = useMutation({
     mutationFn: (commentId: string) => commentService.deleteComment(commentId),
 
@@ -61,6 +77,9 @@ export const useCommentApi = (photoId: string) => {
     addReply: addReplyMutation.mutate,
     isAddingReply: addReplyMutation.isPending,
     addReplyError: addReplyMutation.error,
+    updateComment: updateCommentMutation.mutate,
+    isUpdatingComment: updateCommentMutation.isPending,
+    updateCommentError: updateCommentMutation.error,
     deleteComment: deleteCommentMutation.mutate,
     isDeletingComment: deleteCommentMutation.isPending,
     deleteCommentError: deleteCommentMutation.error,

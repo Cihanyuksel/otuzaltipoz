@@ -51,7 +51,7 @@ if (config.node_env === "production") {
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/photos", photoRouter);
-app.use("/api/v1/photos", commentRouter);
+app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/photos", likeRouter);
 app.use("/api/v1/photos", ratingRouter);
 app.use("/api/v1/categories", categoryRouter);

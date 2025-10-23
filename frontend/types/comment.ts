@@ -14,6 +14,8 @@ export interface IComment {
   isDeleted: boolean;
   created_at: string;
   updated_at: string;
+  edit_count: number;  
+  is_edited: boolean; 
   replies?: IComment[];
 }
 
@@ -40,3 +42,8 @@ export type AddCommentResponse = {
 export type DeleteCommentResponse = {
   message: string; 
 };
+
+export interface UpdateCommentResponse {
+  message: string;
+  comment: IComment;
+}

@@ -30,6 +30,8 @@ export default function CommentSection({
     addComment,
     addReply,
     isAddingReply,
+    updateComment,
+    isUpdatingComment,
     deleteComment,
     isDeletingComment,
   } = useCommentApi(photoId);
@@ -52,6 +54,12 @@ export default function CommentSection({
   const handleAddReply = (parentId: string, text: string) => {
     if (accessToken) {
       addReply({ parentCommentId: parentId, replyText: text });
+    }
+  };
+
+  const handleEditComment = (commentId: string, newText: string) => {
+    if (accessToken) {
+      updateComment({ commentId, commentText: newText });
     }
   };
 
@@ -97,9 +105,10 @@ export default function CommentSection({
                   userPhoto={userPhoto}
                   onReply={handleAddReply}
                   onDelete={handleDeleteComment}
+                  onEdit={handleEditComment}
                   isReplying={isAddingReply}
                   isDeleting={isDeletingComment}
-                  //onLoginRequest={handleLoginRequest}
+                  isEditing={isUpdatingComment}
                 />
               ))
             ) : (

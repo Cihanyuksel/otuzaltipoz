@@ -147,7 +147,7 @@ const signup = async (
       success: true,
       message: "Kayıt başarılı! E-postanı kontrol et ve hesabını aktifleştir.",
       user: {
-        id: newUser._id,
+        _id: newUser._id,
         username: newUser.username,
         fullname: newUser.full_name,
         email: newUser.email,
@@ -391,7 +391,7 @@ const refresh = async (
       success: true,
       accessToken: newAccessToken,
       user: {
-        id: user._id,
+        _id: user._id,
         username: user.username,
         fullname: user.full_name,
         email: user.email,

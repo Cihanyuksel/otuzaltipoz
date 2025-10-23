@@ -5,3 +5,7 @@ export const canManage = (userRole: string | null | undefined, isOwnerPhoto: boo
 export const isAdmin = (user?: { role?: string | null }): boolean => {
   return user?.role === 'admin';
 };
+
+export const isAdminOrModerator = (user?: { role?: string | null }): boolean => {
+  return user?.role === 'admin' || user?.role === 'moderator';
+};
