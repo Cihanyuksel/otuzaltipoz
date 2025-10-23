@@ -13,7 +13,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="overflow-x-hidden">
+    <main>
       {sections.map(({ component, delay }, index) => (
         <AnimatedSection key={index} delay={delay}>
           {component}

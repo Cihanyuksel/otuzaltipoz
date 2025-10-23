@@ -95,7 +95,7 @@ const PhotoDetail = () => {
 
   const currentLikeCount = likeData?.likeCount ?? photo.likeCount;
   const currentIsLikedByMe = likeData?.isLikedByMe ?? photo.isLikedByMe;
-  
+
   const currentAverageRating = ratingsData?.averageRating ?? photo.averageRating ?? 0;
   const currentTotalVotes = ratingsData?.totalVotes ?? photo.totalVotes ?? 0;
 

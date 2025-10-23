@@ -27,6 +27,7 @@ import {
   CommentCountMap,
 } from "../types/photo.types";
 import Rating from "../models/Rating";
+import { checkOwnershipOrRole } from "../utils/authorization";
 
 //======================================= GET ALL PHOTOS ====================================
 const getAllPhotos = async (
@@ -334,12 +335,7 @@ const updatePhoto = async (
     if (!photo) return next(new AppError("Photo not found", 404));
 
     //role and owner check
-    if (
-      photo.user_id.toString() !== req.user!.id &&
-      req.user!.role !== "admin"
-    ) {
-      return next(new AppError("Bu işlemi yapmaya yetkiniz yok", 403));
-    }
+    checkOwnershipOrRole(photo.user_id.toString(), req, ["admin", "moderator"]);
 
     const updatedPhoto = await Photo.findByIdAndUpdate(
       req.params.id,
@@ -371,12 +367,7 @@ const deletePhoto = async (
     if (!deletedPhoto) return next(new AppError("Photo not found", 404));
 
     //role and owner check
-    if (
-      deletedPhoto.user_id.toString() !== req.user!.id &&
-      req.user!.role !== "admin"
-    ) {
-      return next(new AppError("Bu işlemi yapmaya yetkiniz yok", 403));
-    }
+    checkOwnershipOrRole(deletedPhoto.user_id.toString(), req);
 
     const urlParts: string[] = deletedPhoto.photo_url.split("/");
     const fileNameWithExt: string = urlParts[urlParts.length - 1];

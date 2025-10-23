@@ -99,6 +99,12 @@ function UserSection({
     );
   }
 
+  const roleLabels: Record<string, string> = {
+    user: 'User',
+    admin: 'Admin',
+    moderator: 'Moderator',
+  };
+
   return (
     <div ref={dropdownRef} className="relative flex items-center gap-4 flex-shrink-0">
       <div className="flex items-center gap-4">
@@ -109,7 +115,7 @@ function UserSection({
         />
         <div className="hidden xl:flex flex-col text-sm">
           <span className="font-bold text-gray-800 text-base">{user?.username}</span>
-          <span className="text-xs text-gray-500">{user?.role === 'user' ? 'User' : 'Admin'}</span>
+          <span className="text-xs text-gray-500">{roleLabels[user?.role || ''] || 'Unknown'}</span>
         </div>
       </div>
 

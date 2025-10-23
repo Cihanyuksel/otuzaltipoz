@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import Comment from "../models/Comment";
 import { IGetUserAuthInfoRequest } from "./authController";
 import { AppError } from "../utils/AppError";
+import { checkOwnershipOrRole } from "../utils/authorization";
 
 // Add comment
 const addComment = async (
@@ -65,12 +66,8 @@ const deleteComment = async (
     const comment = await Comment.findById(req.params.id);
 
     if (!comment) return next(new AppError("Comment not found", 404));
-    if (
-      comment.user.toString() !== req.user!.id &&
-      req.user?.role !== "admin"
-    ) {
-      return next(new AppError("Not authorized", 403));
-    }
+
+    checkOwnershipOrRole(comment.user.toString(), req);
 
     await comment.deleteOne();
 
@@ -91,8 +88,8 @@ const updateComment = async (
     const comment = await Comment.findById(req.params.id);
 
     if (!comment) return next(new AppError("Comment not found", 404));
-    if (comment.user.toString() !== req.user!.id)
-      return next(new AppError("Not authorized", 403));
+
+    checkOwnershipOrRole(comment.user.toString(), req, ["admin", "moderator"]);
 
     comment.text = text;
     await comment.save();

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import User, { IUser } from "../models/User";
 import { AppError } from "../utils/AppError";
 import { IGetUserAuthInfoRequest } from "./authController";
+import { checkOwnershipOrRole } from "../utils/authorization";
 
 // Get All Users
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -112,21 +113,32 @@ const deleteUser = async (
     }
 
     const isAdmin = currentUser.role === "admin";
+    const isModerator = currentUser.role === "moderator";
     const isOwner = userId === currentUser.id.toString();
 
-    if (!isAdmin && !isOwner) {
-      return next(
-        new AppError("You don't have permission to delete this user", 403)
-      );
-    }
+    // Yetki kontrolü
+    checkOwnershipOrRole(userId.toString(), req, ["admin", "moderator"]);
 
+    // Admin kısıtlamaları
     if (isAdmin && userToDelete.role === "admin" && !isOwner) {
       return next(new AppError("Admins cannot delete other admins", 403));
     }
 
+    // Moderator kısıtlamaları
+    if (isModerator) {
+      if (userToDelete.role === "admin" || userToDelete.role === "moderator") {
+        return next(
+          new AppError(
+            "Moderators cannot delete other moderators or admins",
+            403
+          )
+        );
+      }
+    }
+
+    // Son admini silme kontrolü
     if (isOwner && currentUser.role === "admin") {
       const adminCount = await User.countDocuments({ role: "admin" });
-      console.log(adminCount)
       if (adminCount <= 1) {
         return next(new AppError("Cannot delete the last admin user", 403));
       }
@@ -134,6 +146,7 @@ const deleteUser = async (
 
     await User.findByIdAndDelete(userId);
 
+    // Kendi hesabını silen kullanıcıyı logout et
     if (isOwner) {
       res.clearCookie("refreshToken", {
         httpOnly: true,

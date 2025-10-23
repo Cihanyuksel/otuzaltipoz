@@ -11,7 +11,7 @@ import { restrictTo } from "../middleware/restrictTo";
 
 const router = Router();
 
-router.get("/", authenticate, restrictTo(["admin"]), getAllUsers);
+router.get("/", authenticate, restrictTo(["admin", "moderator"]), getAllUsers);
 router.get("/:id", getUser);
 router.post("/", addUser);
 router.delete("/:id", authenticate, deleteUser);

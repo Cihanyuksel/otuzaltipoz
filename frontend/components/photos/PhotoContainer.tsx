@@ -3,22 +3,22 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 //project files
-  //components
-  import PhotoList from '@/components/photos/PhotoList';
-  import Loader from '../common/loader';
-  import MobileHeader from './category/MobileHeader';
-  import MobileMenu from './category/MobileMenu';
-  import Sidebar from './category/Sidebar';
-  //context
-  import { useSearch } from '@/context/SearchContext';
-  import { usePhotos } from '@/context/PhotoContext';
-  //hooks
-  import { useCategories } from '@/hooks/api/useCategories';
-  import { useCategorySelection } from '@/hooks/ui/useCategorySelection';
-  import { useDebouncedValue } from '@/hooks/ui/useDebouncedValue';
-  import { useResponsiveSidebar } from '@/hooks/ui/useResponsiveSidebar';
-  //config
-  import { getSections } from './category/SectionConfig';
+//components
+import PhotoList from '@/components/photos/PhotoList';
+import Loader from '../common/loader';
+import MobileHeader from './category/MobileHeader';
+import MobileMenu from './category/MobileMenu';
+import Sidebar from './category/Sidebar';
+//context
+import { useSearch } from '@/context/SearchContext';
+import { usePhotos } from '@/context/PhotoContext';
+//hooks
+import { useCategories } from '@/hooks/api/useCategories';
+import { useCategorySelection } from '@/hooks/ui/useCategorySelection';
+import { useDebouncedValue } from '@/hooks/ui/useDebouncedValue';
+import { useResponsiveSidebar } from '@/hooks/ui/useResponsiveSidebar';
+//config
+import { getSections } from './category/SectionConfig';
 
 const MAX_CATEGORIES = 3;
 
@@ -154,14 +154,14 @@ const PhotoContainer = () => {
           MAX_CATEGORIES={MAX_CATEGORIES}
         />
 
-        <main className="flex-1 overflow-y-auto p-4 bg-gray-100" id="scroll-container">
+        <section className="flex-1 overflow-y-auto p-4 bg-gray-100" id="scroll-container" aria-label="Fotoğraf Listesi">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
             {isPhotosLoading || isDebouncing ? (
-              <div className="col-span-full text-center py-8 text-gray-500">
+              <div className="col-span-full text-center py-8 text-gray-500" aria-live="polite">
                 <Loader />
               </div>
             ) : showNoResults ? (
-              <div className="col-span-full text-center py-8 text-gray-500">
+              <div className="col-span-full text-center py-8 text-gray-500" role="status">
                 Aradığınız kriterlere uygun fotoğraf bulunamadı. Lütfen başka bir anahtar kelime veya kategori deneyin.
               </div>
             ) : (
@@ -172,19 +172,25 @@ const PhotoContainer = () => {
               data-testid="load-more"
               ref={loadMoreRef}
               className="col-span-full flex justify-center py-6 min-h-[20px]"
+              aria-live="polite"
             >
-              {isFetchingNextPage ? (
-                <Loader />
-              ) : isCategoriesLoading ? (
-                <p className="text-gray-500 text-lg font-semibold animate-pulse">İlk fotoğraflar yükleniyor...</p>
-              ) : hasNextPage ? (
-                <p className="text-gray-500 text-lg font-semibold animate-pulse">Daha fazla fotoğraf yükleniyor...</p>
-              ) : (
-                <p className="text-gray-400 text-lg font-semibold">Tüm fotoğraflar yüklendi</p>
+              {(isFetchingNextPage || isCategoriesLoading) && <Loader />}
+              {!isFetchingNextPage && !isCategoriesLoading && (
+                <>
+                  {hasNextPage && (
+                    <p className="text-gray-500 text-lg font-semibold animate-pulse">
+                      Daha fazla fotoğraf yükleniyor...
+                    </p>
+                  )}
+
+                  {!hasNextPage && !showNoResults && (
+                    <p className="text-gray-400 text-lg font-semibold">Tüm fotoğraflar yüklendi.</p>
+                  )}
+                </>
               )}
             </div>
           </div>
-        </main>
+        </section>
       </div>
     </div>
   );

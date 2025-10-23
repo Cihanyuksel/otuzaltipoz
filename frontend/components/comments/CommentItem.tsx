@@ -11,12 +11,14 @@ import ReplyForm from './ReplyForm';
 import { commentFormatDate } from 'lib/commentFormatDate';
 import { truncateText } from 'lib/truncateText';
 import { IComment } from 'types/comment';
+import { canManage as canManageComment } from 'lib/permission';
+import { User } from 'types/auth';
 
 interface ICommentItem {
   comment: IComment;
   photoId: string;
   accessToken: string | null;
-  currentUser?: { _id: string; username: string } | null;
+  currentUser?: User | null;
   userPhoto?: string;
   depth?: number;
   onReply: (parentId: string, replyText: string) => void;
@@ -56,7 +58,7 @@ export default function CommentItem({
   const actualDepth = depth > 0 ? 1 : 0;
   const paddingLeft = actualDepth > 0 ? '20px' : '0px';
 
-  const isOwnComment = currentUser && comment.user.username === currentUser.username;
+  const isOwnComment = !!(currentUser && comment.user.username === currentUser.username);
   const isLoggedIn = !!accessToken;
   const hasReplies = comment.replies && comment.replies.length > 0;
 
@@ -75,7 +77,9 @@ export default function CommentItem({
 
   const MAX_COMMENT_LENGTH = 50;
   const truncatedCommentText = truncateText(comment.text, MAX_COMMENT_LENGTH);
-
+  //const canDelete = isOwnComment || (currentUser && isAdmin(currentUser));
+  const canDelete = canManageComment(currentUser?.role, isOwnComment)
+  
   return (
     <div
       style={{ paddingLeft }}
@@ -95,11 +99,9 @@ export default function CommentItem({
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-sm">{comment.user?.username}</span>
-              <span className="text-xs text-gray-500">
-                • {commentFormatDate(comment.created_at)}
-              </span>
+              <span className="text-xs text-gray-500">• {commentFormatDate(comment.created_at)}</span>
             </div>
-            {isOwnComment && (
+            {canDelete && (
               <button
                 onClick={handleOpenDeleteModel}
                 className="flex items-center gap-1 text-red-500 transition-all duration-200 hover:text-red-700 hover:scale-105 text-xs p-1 disabled:opacity-50 cursor-pointer"
@@ -117,9 +119,7 @@ export default function CommentItem({
             <button
               onClick={handleReplyClick}
               className={`text-xs font-medium transition-colors ${
-                isLoggedIn
-                  ? 'text-[#ef7464] hover:underline cursor-pointer'
-                  : 'text-gray-400 cursor-not-allowed'
+                isLoggedIn ? 'text-[#ef7464] hover:underline cursor-pointer' : 'text-gray-400 cursor-not-allowed'
               }`}
               disabled={!isLoggedIn}
             >
@@ -173,8 +173,8 @@ export default function CommentItem({
         title="Yorumu Sil"
         message={
           <>
-            <strong>{truncatedCommentText}</strong> isimli yorumunuzu silmek istediğinizden emin
-            misiniz? Bu işlem geri alınamaz.
+            <strong>{truncatedCommentText}</strong> isimli yorumunuzu silmek istediğinizden emin misiniz? Bu işlem geri
+            alınamaz.
           </>
         }
         onConfirm={() => onDelete(comment._id)}
