@@ -1,8 +1,11 @@
+'use client';
+import { useState } from 'react';
 //project-files
 import ProfileHeader from './ProfileHeader';
 import ProfileTabs from './ProfileTabs';
 import PhotoGallery from './PhotoGallery';
 import Loader from '@/components/common/loader';
+import EditProfileModal from './EditProfileModal';
 //types
 import { User } from 'types/auth';
 import { Photo } from 'types/photo';
@@ -18,7 +21,18 @@ interface IUserProfile {
   photosToShow: Photo[];
 }
 
-const UserProfile = ({isLoading, isError, profileOwner, imageUrl, isOwner, photosToShow, activeTab, handleTabChange }: IUserProfile) => {
+const UserProfile = ({
+  isLoading,
+  isError,
+  profileOwner,
+  imageUrl,
+  isOwner,
+  photosToShow,
+  activeTab,
+  handleTabChange,
+}: IUserProfile) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -39,15 +53,23 @@ const UserProfile = ({isLoading, isError, profileOwner, imageUrl, isOwner, photo
   }
 
   return (
-    <section className="flex-1 min-h-screen">
-      <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-        <ProfileHeader user={profileOwner} imageUrl={imageUrl} isOwner={isOwner} />
-        <div className="mt-12">
-          <ProfileTabs activeTab={activeTab} handleTabChange={handleTabChange} />
-          <PhotoGallery photosToShow={photosToShow} isOwner={isOwner} />
+    <>
+      <section className="flex-1 min-h-screen">
+        <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+          <ProfileHeader
+            user={profileOwner}
+            imageUrl={imageUrl}
+            isOwner={isOwner}
+            onEditProfileClick={() => setIsEditModalOpen(true)}
+          />
+          <div className="mt-12">
+            <ProfileTabs activeTab={activeTab} handleTabChange={handleTabChange} />
+            <PhotoGallery photosToShow={photosToShow} isOwner={isOwner} />
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+      <EditProfileModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} user={profileOwner} />
+    </>
   );
 };
 

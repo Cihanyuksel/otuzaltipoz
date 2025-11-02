@@ -17,6 +17,9 @@ interface AuthPaths {
 interface UserPaths {
   DELETE_USER: (id: string) => string;
   GET_USER: (id: string) => string;
+  UPDATE_USER: (id: string) => string;
+  UPDATE_USERNAME: (id: string) => string;
+  UPDATE_PASSWORD: (id: string) => string;
 }
 
 interface PhotosPaths {
@@ -35,7 +38,7 @@ interface CommentPaths {
   GET_COMMENTS: (id: string) => string;
   ADD_COMMENT: (id: string) => string;
   DELETE_COMMENT: (id: string) => string;
-  UPDATE_COMMENT: (id: string) =>string,
+  UPDATE_COMMENT: (id: string) => string;
 }
 
 interface LikePaths {
@@ -63,8 +66,11 @@ export const AUTH_PATHS: AuthPaths = {
 };
 
 export const USER_PATHS: UserPaths = {
-  DELETE_USER: (id: string) => `/users/${id}`,
   GET_USER: (id: string) => `/users/${id}`,
+  UPDATE_USER: (id: string) => `/users/${id}`,
+  UPDATE_USERNAME: (id: string) => `/users/${id}/username`,
+  UPDATE_PASSWORD: (id: string) => `/users/${id}/password`,
+  DELETE_USER: (id: string) => `/users/${id}`,
 };
 
 export const PHOTO_PATHS: PhotosPaths = {

@@ -1,41 +1,37 @@
-export type User = {
+export interface User {
   _id: string;
   username: string;
-  full_name?: string;
   email: string;
-  bio?: string;
-  role: 'user' | 'admin';
-  profile_img_url?: string;
+  full_name: string;
+  role: 'user' | 'admin' | 'moderator';
   is_active: boolean;
-  created_at: Date;
-};
-
-
-export interface SignupRequest {
-  username: string;
-  fullname: string;
-  email: string;
-  password: string;
+  is_verified: boolean;
+  created_at: string;
+  updated_at: string;
+  profile_img_url?: string;
+  bio?: string;
+  username_change_count?: number;
 }
-
-export type LoginRequest = Omit<SignupRequest, 'fullname' | 'username'>;
-
-export type AuthData = {
-  user: User;
-  accessToken: string;
-};
 
 export interface AuthResponse {
   success: boolean;
   message: string;
-  data: AuthData;
+  data: {
+    user: User;
+    accessToken: string;
+  };
 }
 
-export type ContactData = {
-  fullName: string;
+export interface LoginCredentials {
   email: string;
-  phone?: string;
-  message: string;
-};
+  password: string;
+}
 
-export type MessageResponse = { success: false; message: string };
+export interface SignupData {
+  email: string;
+  username: string;
+  password: string;
+  full_name: string;
+  bio?: string;
+  profile_img?: File;
+}

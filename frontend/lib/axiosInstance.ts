@@ -39,9 +39,22 @@ const PUBLIC_ENDPOINTS = [
   '/auth/verify-email',
 ];
 
+// 401 hatası alındığında LOGOUT YAPILMAMASI gereken endpoint'ler
+// Bu endpoint'ler validation error dönebilir (örn: yanlış şifre)
+const VALIDATION_ENDPOINTS = [
+  '/password',      // Password update - yanlış şifre girildiğinde 401
+  '/auth/login',    // Login - yanlış credentials girildiğinde 401
+  '/username',      // Username update - eğer 401 dönüyorsa
+];
+
 const isPublicEndpoint = (url?: string): boolean => {
   if (!url) return false;
   return PUBLIC_ENDPOINTS.some((endpoint) => url.includes(endpoint));
+};
+
+const isValidationEndpoint = (url?: string): boolean => {
+  if (!url) return false;
+  return VALIDATION_ENDPOINTS.some((endpoint) => url.includes(endpoint));
 };
 
 // Request interceptor
@@ -65,10 +78,36 @@ axiosInstance.interceptors.response.use(
     }>
   ) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    
     // ==================== TOKEN REFRESH LOGIC ====================
     const isPublic = isPublicEndpoint(originalRequest?.url);
+    const isValidation = isValidationEndpoint(originalRequest?.url);
 
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isPublic) {
+      // YENI: Validation endpoint'lerinde token refresh deneme, direkt error döndür
+      if (isValidation) {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('⚠️ Validation error - not refreshing token:', error.response?.data?.message);
+        }
+        
+        // Error'u olduğu gibi döndür, logout yapma
+        const errorMessage = error.response?.data?.message || 'Bir hata oluştu';
+        const errorDetails = error.response?.data?.errors;
+        const statusCode = error.response?.status;
+
+        const apiError = {
+          message: errorMessage,
+          status: statusCode,
+          details: errorDetails,
+          isNetworkError: false,
+          isServerError: false,
+          isClientError: true,
+        };
+
+        return Promise.reject(apiError);
+      }
+
+      // Token refresh için queue mantığı
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -119,7 +158,7 @@ axiosInstance.interceptors.response.use(
     }
 
     // ==================== ERROR HANDLING ====================
-    if (error.response?.status === 401 && !isPublic) {
+    if (error.response?.status === 401 && !isPublic && !isValidation) {
       window.dispatchEvent(new CustomEvent('auth:unauthorized'));
     }
 
@@ -135,6 +174,7 @@ axiosInstance.interceptors.response.use(
         message: errorMessage,
         details: errorDetails,
         isPublic,
+        isValidation,
       });
     }
 

@@ -9,7 +9,6 @@ interface IPhotoGallery {
   isOwner: boolean;
 }
 const PhotoGallery = ({ photosToShow, isOwner }: IPhotoGallery) => {
-  console.log(photosToShow);
   return (
     <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
       {photosToShow.length > 0 ? (

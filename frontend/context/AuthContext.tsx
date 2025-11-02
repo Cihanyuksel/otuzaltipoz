@@ -53,7 +53,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const setAuth = useCallback((authData: AuthResponse['data'] | null) => {
     if (authData) {
       setUser(authData.user);
-      console.log(authData, 'AUTHCONTEXT');
       setAccessToken(authData.accessToken);
       setAxiosAccessToken(authData.accessToken);
       setAuthSession(true);

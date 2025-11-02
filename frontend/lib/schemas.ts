@@ -84,6 +84,7 @@ const registerSchema = z
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
+//CONTACT FORM
 const contactSchema = z.object({
   fullName: z.string().min(2, 'Ad Soyad en az 2 karakter olmalı.').max(50, 'Ad Soyad en fazla 50 karakter olabilir.'),
   email: z.string().email('Geçerli bir e-posta adresi girin.'),
@@ -93,5 +94,69 @@ const contactSchema = z.object({
 
 type ContactFormValues = z.infer<typeof contactSchema>;
 
-export { photoEditSchema, photoUploadSchema, loginSchema, registerSchema, contactSchema };
-export type { PhotoEditFormValues, PhotoUploadFormValues, LoginFormValues, RegisterFormValues, ContactFormValues };
+//PROFILE UPDATE
+const profileUpdateSchema = z.object({
+  full_name: z
+    .string()
+    .min(2, 'İsim en az 2 karakter olmalıdır')
+    .max(100, 'İsim en fazla 100 karakter olabilir')
+    .trim(),
+  bio: z.string().max(500, 'Biyografi en fazla 500 karakter olabilir').optional().or(z.literal('')),
+});
+
+type ProfileUpdateFormValues = z.infer<typeof profileUpdateSchema>;
+
+//USERNAME UPDATE
+const usernameUpdateSchema = z.object({
+  username: z
+    .string()
+    .min(3, 'Kullanıcı adı en az 3 karakter olmalıdır')
+    .max(30, 'Kullanıcı adı en fazla 30 karakter olabilir')
+    .regex(/^[a-z0-9_]+$/, 'Kullanıcı adı sadece küçük harf, rakam ve alt çizgi içerebilir')
+    .toLowerCase()
+    .trim(),
+});
+
+type UsernameUpdateFormValues = z.infer<typeof usernameUpdateSchema>;
+
+//PASSWORD UPDATE
+const passwordUpdateSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Mevcut şifre gereklidir'),
+    newPassword: z
+      .string()
+      .min(6, 'Yeni şifre en az 6 karakter olmalıdır')
+      .max(100, 'Şifre en fazla 100 karakter olabilir'),
+    confirmPassword: z.string().min(1, 'Şifre tekrarı gereklidir'),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Şifreler eşleşmiyor',
+    path: ['confirmPassword'],
+  })
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    message: 'Yeni şifre mevcut şifreden farklı olmalıdır',
+    path: ['newPassword'],
+  });
+
+type PasswordUpdateFormValues = z.infer<typeof passwordUpdateSchema>;
+
+export {
+  photoEditSchema,
+  photoUploadSchema,
+  loginSchema,
+  registerSchema,
+  contactSchema,
+  profileUpdateSchema,
+  usernameUpdateSchema,
+  passwordUpdateSchema,
+};
+export type {
+  PhotoEditFormValues,
+  PhotoUploadFormValues,
+  LoginFormValues,
+  RegisterFormValues,
+  ContactFormValues,
+  ProfileUpdateFormValues,
+  UsernameUpdateFormValues,
+  PasswordUpdateFormValues,
+};

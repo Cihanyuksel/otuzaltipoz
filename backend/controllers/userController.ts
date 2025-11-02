@@ -36,7 +36,7 @@ const addUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-//Update User
+// Update User (Bio, Full Name)
 const updateUser = async (
   req: IGetUserAuthInfoRequest,
   res: Response,
@@ -44,14 +44,16 @@ const updateUser = async (
 ) => {
   try {
     const userId = req.params.id;
-    const currentUser = req.user!; // REFACTOR IHTIYACI
+    const currentUser = req.user!;
 
+    // Ownership check
     if (currentUser.role !== "admin" && currentUser.role !== "moderator") {
       if (userId !== currentUser.id.toString()) {
         return next(new AppError("You can only update your own profile", 403));
       }
     }
 
+    // Role update restriction
     if (req.body.role) {
       if (currentUser.role !== "admin") {
         return next(new AppError("Only admins can change user roles", 403));
@@ -62,13 +64,20 @@ const updateUser = async (
       }
     }
 
-    const protectedFields = ["password", "is_verified", "created_at"];
+    // Protected fields
+    const protectedFields = [
+      "password",
+      "is_verified",
+      "created_at",
+      "username_change_count",
+    ];
     protectedFields.forEach((field) => {
       if (req.body[field] && currentUser.role !== "admin") {
         delete req.body[field];
       }
     });
 
+    // Email change requires re-verification
     if (req.body.email) {
       if (currentUser.role !== "admin") {
         req.body.is_verified = false;
@@ -86,6 +95,7 @@ const updateUser = async (
 
     res.status(200).json({
       status: "success",
+      message: "Profil başarıyla güncellendi",
       data: updatedUser,
     });
   } catch (error: any) {
@@ -93,7 +103,119 @@ const updateUser = async (
   }
 };
 
-//Delete User
+// Update Username (ONLY ONCE)
+const updateUsername = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.params.id;
+    const currentUser = req.user!;
+    const { username } = req.body;
+
+    // Ownership check
+    if (userId !== currentUser.id.toString() && currentUser.role !== "admin") {
+      return next(new AppError("You can only update your own username", 403));
+    }
+
+    if (!username || username.trim().length < 3) {
+      return next(new AppError("Username must be at least 3 characters", 400));
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+
+    // Check if user already changed username
+    if (user.username_change_count >= 1 && currentUser.role !== "admin") {
+      return next(new AppError("You can only change your username once", 403));
+    }
+
+    // Check if username is already taken
+    const existingUser = await User.findOne({
+      username: username.toLowerCase(),
+      _id: { $ne: userId },
+    });
+
+    if (existingUser) {
+      return next(new AppError("This username is already taken", 400));
+    }
+
+    user.username = username.toLowerCase();
+    user.username_change_count += 1;
+    await user.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Username successfully updated",
+      data: {
+        username: user.username,
+        username_change_count: user.username_change_count,
+        can_change_again: user.username_change_count < 1,
+      },
+    });
+  } catch (error: any) {
+    next(new AppError(error.message || "Username update failed", 400));
+  }
+};
+
+// Update Password
+const updatePassword = async (
+  req: IGetUserAuthInfoRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.params.id;
+    const currentUser = req.user!;
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    // Ownership check
+    if (userId !== currentUser.id.toString() && currentUser.role !== "admin") {
+      return next(new AppError("You can only update your own password", 403));
+    }
+
+    // Validation
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return next(new AppError("All password fields are required", 400));
+    }
+
+    if (newPassword !== confirmPassword) {
+      return next(new AppError("New passwords do not match", 400));
+    }
+
+    if (newPassword.length < 6) {
+      return next(new AppError("Password must be at least 6 characters", 400));
+    }
+
+    const user = await User.findById(userId).select("+password");
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+
+    if (currentUser.role !== "admin") {
+      const isPasswordCorrect = await user.comparePassword(currentPassword);
+      if (!isPasswordCorrect) {
+        return next(new AppError("Current password is incorrect", 401));
+      }
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Password successfully updated",
+    });
+  } catch (error: any) {
+    next(new AppError(error.message || "Password update failed", 400));
+  }
+};
+
+// Delete User
 const deleteUser = async (
   req: IGetUserAuthInfoRequest,
   res: Response,
@@ -116,15 +238,15 @@ const deleteUser = async (
     const isModerator = currentUser.role === "moderator";
     const isOwner = userId === currentUser.id.toString();
 
-    // Yetki kontrolü
+    // Authorization check
     checkOwnershipOrRole(userId.toString(), req, ["admin", "moderator"]);
 
-    // Admin kısıtlamaları
+    // Admin restrictions
     if (isAdmin && userToDelete.role === "admin" && !isOwner) {
       return next(new AppError("Admins cannot delete other admins", 403));
     }
 
-    // Moderator kısıtlamaları
+    // Moderator restrictions
     if (isModerator) {
       if (userToDelete.role === "admin" || userToDelete.role === "moderator") {
         return next(
@@ -136,7 +258,7 @@ const deleteUser = async (
       }
     }
 
-    // Son admini silme kontrolü
+    // Last admin check
     if (isOwner && currentUser.role === "admin") {
       const adminCount = await User.countDocuments({ role: "admin" });
       if (adminCount <= 1) {
@@ -146,7 +268,7 @@ const deleteUser = async (
 
     await User.findByIdAndDelete(userId);
 
-    // Kendi hesabını silen kullanıcıyı logout et
+    // Logout if deleting own account
     if (isOwner) {
       res.clearCookie("refreshToken", {
         httpOnly: true,
@@ -173,4 +295,12 @@ const deleteUser = async (
   }
 };
 
-export { getAllUsers, getUser, addUser, updateUser, deleteUser };
+export {
+  getAllUsers,
+  getUser,
+  addUser,
+  updateUser,
+  updateUsername,
+  updatePassword,
+  deleteUser,
+};
