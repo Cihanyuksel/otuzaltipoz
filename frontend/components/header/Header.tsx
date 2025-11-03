@@ -1,56 +1,22 @@
 'use client';
 import { Logo, UserSection, MobileMenu, NavMenu, SearchBar } from '@/components/header';
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import { usePathname } from 'next/navigation';
-import { useRouter } from 'next/navigation';
 import AnimatedSection from '../common/animated-section';
+import { useHeader } from './useHeader';
 
 export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const pathname = usePathname();
-  const router = useRouter();
-
-  const { user, logout, loading, setAuth } = useAuth();
-  const isLogoutPending = logout.isPending;
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  const handleLogout = () => {
-    logout.mutate(undefined, {
-      onSuccess: async () => {
-        setAuth(null);
-
-        router.push('/login');
-      },
-
-      onError: (error) => {
-        console.error(error);
-      },
-    });
-
-    setDropdownOpen(false);
-  };
-
-  const handleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
+  const {
+    menuOpen,
+    setMenuOpen,
+    dropdownOpen,
+    setDropdownOpen,
+    isScrolled,
+    user,
+    loading,
+    isLogoutPending,
+    handleLogout,
+    handleDropdown,
+    pathname,
+  } = useHeader();
 
   const userProps = {
     user,

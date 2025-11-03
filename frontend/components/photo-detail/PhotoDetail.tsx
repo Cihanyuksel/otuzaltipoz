@@ -1,89 +1,34 @@
 'use client';
-//nextjs and react
-import { useState } from 'react';
-import { notFound, useParams, useRouter } from 'next/navigation';
-//third-party
-import { toast } from 'react-toastify';
-//project files
+import { notFound } from 'next/navigation';
+
+// project files
 import LoginModal from '../auth/login-modal';
 import EditPhotoModal from '../photos/EditPhotoModal';
-import DeleteConfirmPhotoModal from '../common/confirm-modal';
-import Loader from '../common/loader';
-import Button from '../common/button';
+import DeleteConfirmPhotoModal from '@/common/confirm-modal';
+import Loader from '@/common/loader';
+import Button from '@/common/button';
 import PhotoLikeButton from '../photos/photo-card/PhotoLikeButton';
 import CommentSection from '../comments/CommentSection';
 import { PhotoImage, PhotoInfo, RatingSection, UploaderInfo, PhotoActions } from '@/components/photo-detail';
-import { useGetLikes } from '@/hooks/api/useLikeApi';
-import { useGetPhoto, useDeletePhoto } from '@/hooks/api/usePhotoApi';
-import { useGetRatings } from '@/hooks/api/useRatingApi';
-import { useAuth } from '@/context/AuthContext';
+import { usePhotoDetail } from './usePhotoDetail';
 import { canManage as canManagePhoto } from 'lib/permission';
 
-type ModalName = 'login' | 'edit' | 'delete';
-
-interface ModalStates {
-  login: boolean;
-  edit: boolean;
-  delete: boolean;
-}
-
 const PhotoDetail = () => {
-  const { user, accessToken } = useAuth();
-  const router = useRouter();
-  const [modalStates, setModalStates] = useState<ModalStates>({
-    login: false,
-    edit: false,
-    delete: false,
-  });
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const params = useParams();
-  const photoId = params.id as string;
-
   const {
-    data: photo,
+    photo,
     isLoading,
     isError,
-  } = useGetPhoto(photoId, {
-    enabled: !isDeleting,
-  });
-  const { data: likeData } = useGetLikes(photoId, {
-    enabled: !!photoId && !isDeleting,
-  });
-  const { data: ratingsData } = useGetRatings(photoId, {
-    enabled: !!photoId && !isDeleting,
-  });
-  const { mutate: deletePhoto, isPending, error } = useDeletePhoto();
-
-  const handleModalToggle = (modalName: ModalName, isOpen: boolean) => {
-    setModalStates((prevState) => ({
-      ...prevState,
-      [modalName]: !!isOpen,
-    }));
-  };
-
-  const handleDelete = () => {
-    if (!photo) return;
-
-    setIsDeleting(true);
-
-    deletePhoto(photo._id, {
-      onSuccess: () => {
-        handleModalToggle('delete', false);
-
-        toast.success('Fotoğraf başarıyla silindi!', {
-          autoClose: 1500,
-        });
-
-        router.push('/photos');
-      },
-      onError: (err) => {
-        setIsDeleting(false);
-        console.error(`Fotoğraf silinirken hata oluştu: ${photo._id}`, err);
-        toast.error('Fotoğraf silinirken bir hata oluştu.');
-      },
-    });
-  };
+    likeData,
+    ratingsData,
+    modalStates,
+    isDeleting,
+    handleModalToggle,
+    handleDelete,
+    user,
+    accessToken,
+    isPending,
+    error,
+  } = usePhotoDetail();
 
   if (isDeleting) return <Loader text={'Fotoğraf Siliniyor...'} />;
   if (isLoading) return <Loader text={'Yükleniyor...'} />;
@@ -114,6 +59,7 @@ const PhotoDetail = () => {
                 <UploaderInfo user={photo.user} photoCreatedAt={photo.created_at} photoUpdatedAt={photo.updated_at} />
                 <div className="mt-4"></div>
               </div>
+
               {isLoggedIn ? (
                 <div className="flex flex-col md:flex-col justify-end items-end gap-5">
                   <RatingSection
@@ -144,6 +90,7 @@ const PhotoDetail = () => {
                 </div>
               )}
             </div>
+
             <CommentSection
               userPhoto={user?.profile_img_url}
               photoId={photo._id}
@@ -153,12 +100,11 @@ const PhotoDetail = () => {
         </div>
       </div>
 
+      {/* Modals */}
       <LoginModal isOpen={modalStates.login} onClose={() => handleModalToggle('login', false)} />
-
       {modalStates.edit && (
         <EditPhotoModal isOpen={modalStates.edit} onClose={() => handleModalToggle('edit', false)} photo={photo} />
       )}
-
       <DeleteConfirmPhotoModal
         isOpen={modalStates.delete}
         onClose={() => handleModalToggle('delete', false)}

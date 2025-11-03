@@ -6,6 +6,7 @@ type ActionItem =
       name: string;
       handler: () => void;
       type: 'default' | 'danger';
+      disabled?: boolean;
     };
 
 interface IProfileDropdown {
@@ -30,6 +31,7 @@ function ProfileDropdown({ actionItems, isPending }: IProfileDropdown) {
           const actionItem = item as Extract<ActionItem, { handler: () => void }>;
           const isDeleteAction = actionItem.name === 'Hesabı Sil';
           const isDisabled = isDeleteAction && isPending;
+          const isAdminSettings = actionItem.name === 'Admin Ayarları' && actionItem.disabled;
 
           return (
             <button
@@ -39,8 +41,8 @@ function ProfileDropdown({ actionItems, isPending }: IProfileDropdown) {
                 actionItem.type === 'danger'
                   ? 'text-red-600 hover:bg-red-50 hover:text-red-700'
                   : 'text-gray-700 hover:bg-gray-100'
-              } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={isDisabled}
+              } ${isDisabled || isAdminSettings ? 'opacity-50 cursor-not-allowed line-through' : ''}`}
+              disabled={isDisabled || isAdminSettings}
               role="menuitem"
             >
               {isDeleteAction && isPending ? 'Siliniyor...' : actionItem.name}

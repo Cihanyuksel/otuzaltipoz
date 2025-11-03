@@ -1,9 +1,9 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import PhotoUploadForm from '@/components/photos/photo-upload-form/PhotoUploadForm';
 import { Suspense } from 'react';
 import Loader from '@/components/common/loader';
 import { createPageMetadata } from 'lib/metadata';
+import PhotoUploadForm from '@/components/photos/photo-upload-form/PhotoUploadForm';
 
 export const metadata = createPageMetadata({
   title: 'Fotoğraf Yükle | otuzaltıpoz',

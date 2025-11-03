@@ -35,12 +35,19 @@ export const signupSchema = Joi.object({
     "any.required": "Şifre gereklidir",
   }),
 
-  full_name: Joi.string().min(3).max(50).required().trim().messages({
-    "string.empty": "Ad Soyad gereklidir",
-    "string.min": "Ad Soyad en az 3 karakter olmalıdır",
-    "string.max": "Ad Soyad en fazla 50 karakter olabilir",
-    "any.required": "Ad Soyad gereklidir",
-  }),
+  full_name: Joi.string()
+    .pattern(/^[A-Za-zÇĞİÖŞÜçğıöşü\s]+$/)
+    .min(3)
+    .max(50)
+    .required()
+    .trim()
+    .messages({
+      "string.empty": "Ad Soyad gereklidir",
+      "string.min": "Ad Soyad en az 3 karakter olmalıdır",
+      "string.max": "Ad Soyad en fazla 50 karakter olabilir",
+      "string.pattern.base": "Ad Soyad sadece harflerden oluşmalıdır",
+      "any.required": "Ad Soyad gereklidir",
+    }),
 
   bio: Joi.string().max(500).optional().trim().allow("").messages({
     "string.max": "Bio en fazla 500 karakter olabilir",

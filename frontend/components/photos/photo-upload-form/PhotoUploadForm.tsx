@@ -6,7 +6,7 @@ import Button from '@/common/button';
 import { useAddPhoto } from '@/hooks/api/usePhotoApi';
 import { PhotoUploadFormValues, photoUploadSchema } from 'lib/schemas';
 import FileUploadArea from './FileUploadArea';
-import CategoryDropdown from './CategoryDropDown';
+import CategoryDropdown from './CategoryDropdown';
 
 function PhotoUploadForm() {
   const [fileName, setFileName] = useState('Dosya Seçilmedi');

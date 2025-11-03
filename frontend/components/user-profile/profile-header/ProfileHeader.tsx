@@ -8,6 +8,8 @@ import ProfileInfo from './ProfileInfo';
 import ProfileDropdown from './ProfileDropdown';
 import { User } from 'types/auth';
 import { useProfileActions } from './useProfileActions';
+import { canManage } from 'lib/permission';
+import { useAuth } from '@/context/AuthContext';
 
 interface IProfileHeader {
   user: User;
@@ -25,6 +27,9 @@ const ProfileHeader = ({ user, imageUrl, isOwner, onEditProfileClick, onAdminSet
       onEditProfileClick,
       onAdminSettingsClick,
     });
+  const { user: currentUser } = useAuth();
+
+  const canManageProfile = canManage(currentUser?.role, isOwner);
 
   return (
     <>
@@ -32,7 +37,7 @@ const ProfileHeader = ({ user, imageUrl, isOwner, onEditProfileClick, onAdminSet
         <ProfileInfo user={user} imageUrl={imageUrl} />
 
         <div className="absolute top-0 right-0" ref={dropdownRef}>
-          {isOwner && (
+          {canManageProfile && (
             <Button
               onClick={() => setShowDropdown((prev) => !prev)}
               className="p-2 rounded-full hover:bg-gray-100"

@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 //project files
-import Input from '../common/input';
-import Button from '../common/button';
+import Input from '@/common/input';
+import Button from '@/common/button';
 import { ContactFormValues, contactSchema } from 'lib/schemas';
 import { authService } from 'services/authService';
 

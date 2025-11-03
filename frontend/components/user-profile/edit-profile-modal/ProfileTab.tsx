@@ -38,7 +38,7 @@ const EditProfileTab: React.FC<IEditProfileTab> = ({ isPending, handleClose, for
           placeholder="Kendinizden bahsedin..."
         />
         {form.formState.errors.bio && <p className="mt-1 text-sm text-red-600">{form.formState.errors.bio.message}</p>}
-        <p className="text-xs text-gray-500 mt-1">{form.watch('bio')?.length || 0} / 500 karakter</p>
+        <p className="text-xs text-gray-500 mt-1">{form.watch('bio')?.length || 0} / 250 karakter</p>
       </div>
 
       {form.formState.errors.root && (

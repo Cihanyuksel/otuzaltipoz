@@ -17,6 +17,7 @@ export type ActionItem =
       name: string;
       handler: () => void;
       type: 'default' | 'danger';
+      disabled?: boolean;
     };
 
 interface UseProfileActionsProps {
@@ -47,7 +48,7 @@ export const useProfileActions = ({
   const canDeleteAccount = useMemo(() => canManageUser(currentUser?.role, isOwner), [currentUser?.role, isOwner]);
   const isAdminValue = useMemo(() => isAdmin(currentUser ?? undefined), [currentUser]);
 
-  // Handler Function
+  //----------Handler Functions-----------------
   const handleSignOut = useCallback(() => {
     setAuth(null);
     router.push('/login');
@@ -57,25 +58,21 @@ export const useProfileActions = ({
   const handleEditProfile = useCallback(() => {
     if (onEditProfileClick) {
       onEditProfileClick();
-    } else {
-      router.push('/profile/edit');
     }
     setShowDropdown(false);
-  }, [onEditProfileClick, router]);
+  }, [onEditProfileClick]);
+
+  const handleAdminSettings = useCallback(() => {
+    if (onAdminSettingsClick) {
+      onAdminSettingsClick();
+    }
+    setShowDropdown(false);
+  }, [onAdminSettingsClick]);
 
   const handleDeleteAccount = useCallback(() => {
     setShowConfirmModal(true);
     setShowDropdown(false);
   }, []);
-
-  const handleAdminSettings = useCallback(() => {
-    if (onAdminSettingsClick) {
-      onAdminSettingsClick();
-    } else {
-      router.push('/admin/settings');
-    }
-    setShowDropdown(false);
-  }, [onAdminSettingsClick, router]);
 
   const handleConfirmDelete = useCallback(() => {
     deleteUser({ userId: user._id });
@@ -92,8 +89,8 @@ export const useProfileActions = ({
     }
     router.push('/');
   }, [isOwner, setAuth, router]);
+  //---------------END Handler Function---------------
 
-  // Action Items
   const actionItems = useMemo(() => {
     const items: (ActionItem | false)[] = [
       isOwner && {
@@ -105,6 +102,7 @@ export const useProfileActions = ({
         name: 'Admin Ayarları',
         handler: handleAdminSettings,
         type: 'default' as const,
+        disabled: true, // 🔒 admin ayarları pasif
       },
       isOwner && {
         name: 'Çıkış Yap',
@@ -150,6 +148,7 @@ export const useProfileActions = ({
     }
   }, [isSuccess, isOwner, setAuth, router]);
 
+  // --- Modal Mesajları ---
   const deleteMessage = (
     <div>
       <p className="mb-2">

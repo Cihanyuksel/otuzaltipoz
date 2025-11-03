@@ -2,9 +2,14 @@
 import { IoIosClose as CloseIcon } from 'react-icons/io';
 import { FiMenu as MenuIcon } from 'react-icons/fi';
 import { CategorySection } from './CategorySection';
-import { Section } from './SectionConfig';
+import {
+  Section,
+  CategorySection as CategorySectionType,
+  NavigationSection as NavigationSectionType,
+} from './SectionConfig';
+import { NavigationSection } from './NavigationSection';
 
-interface SidebarProps {
+interface ISidebar {
   isSidebarOpen: boolean;
   setIsSidebarOpen: (value: boolean) => void;
   categorySection: Section[];
@@ -14,6 +19,14 @@ interface SidebarProps {
   handleCategoryClick: (categoryName: string) => void;
   handleRemoveCategory: (categoryName: string) => void;
   MAX_CATEGORIES: number;
+}
+
+function isCategorySection(section: Section): section is CategorySectionType {
+  return section.type === 'category';
+}
+
+function isNavigationSection(section: Section): section is NavigationSectionType {
+  return section.type === 'navigation';
 }
 
 export default function Sidebar({
@@ -26,14 +39,14 @@ export default function Sidebar({
   handleCategoryClick,
   handleRemoveCategory,
   MAX_CATEGORIES,
-}: SidebarProps) {
+}: ISidebar) {
   return (
     <div
       className={`
         hidden top-20 lg:block md:sticky md:top-0 2xl:top-44 md:self-start md:h-screen md:overflow-y-auto
         bg-white border-r border-gray-200 shadow-xl shadow-gray-200/50 
         transition-all duration-300 ease-in-out z-20 
-        ${isSidebarOpen ? 'w-1/6 p-4' : 'w-1/12 pt-5'}
+        ${isSidebarOpen ? 'w-1/6 p-4' : 'w-[100px] pt-5'}
       `}
     >
       <div
@@ -50,7 +63,7 @@ export default function Sidebar({
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="cursor-pointer p-1 hover:opacity-70 transition-opacity"
-          aria-label={isSidebarOpen ? 'Sidebar\'ı kapat' : 'Sidebar\'ı aç'}
+          aria-label={isSidebarOpen ? "Sidebar'ı kapat" : "Sidebar'ı aç"}
         >
           {isSidebarOpen ? (
             <CloseIcon size={32} className="text-[#ef7464]" />
@@ -82,20 +95,37 @@ export default function Sidebar({
 
       <div className="overflow-y-auto transition-all duration-300">
         <ul className="space-y-1">
-          {categorySection.map((section) => (
-            <CategorySection
-              key={section.title}
-              title={section.title}
-              items={section.items}
-              isOpen={openSections[section.title] || false}
-              onToggle={() => handleSectionToggle(section.title)}
-              isSidebarOpen={isSidebarOpen}
-              icon={section.icon}
-              onCategoryClick={handleCategoryClick}
-              selectedCategories={selectedCategories}
-              onRemoveCategory={handleRemoveCategory}
-            />
-          ))}
+          {categorySection.map((section) => {
+            if (isCategorySection(section)) {
+              return (
+                <CategorySection
+                  key={section.title}
+                  title={section.title}
+                  items={section.items}
+                  isOpen={openSections[section.title] || false}
+                  onToggle={() => handleSectionToggle(section.title)}
+                  isSidebarOpen={isSidebarOpen}
+                  iconName={section.iconName}
+                  onCategoryClick={handleCategoryClick}
+                  selectedCategories={selectedCategories}
+                  onRemoveCategory={handleRemoveCategory}
+                />
+              );
+            } else if (isNavigationSection(section)) {
+              return (
+                <NavigationSection
+                  key={section.title}
+                  title={section.title}
+                  items={section.items}
+                  isOpen={openSections[section.title] || false}
+                  onToggle={() => handleSectionToggle(section.title)}
+                  isSidebarOpen={isSidebarOpen}
+                  iconName={section.iconName}
+                />
+              );
+            }
+            return null;
+          })}
         </ul>
       </div>
     </div>

@@ -57,8 +57,14 @@ function UserSection({
   const dropdownItems: DropdownItem[] = [
     { name: 'Profil', href: '/profile', icon: <ProfileIcon size={20} /> },
     { name: 'Fotoğraf Yükle', href: '/photo-upload', icon: <PhotoIcon size={20} /> },
-    { name: 'Mesajlar', href: '/messages', icon: <MessageIcon size={20} /> },
-    { name: 'Bildirimler', href: '/notifications', icon: <NotificationsIcon size={20} />, badgeCount: 1 },
+    { name: 'Mesajlar', href: '/messages', icon: <MessageIcon size={20} />, disabled: true },
+    {
+      name: 'Bildirimler',
+      href: '/notifications',
+      icon: <NotificationsIcon size={20} />,
+      badgeCount: 1,
+      disabled: true,
+    },
     {
       name: 'Çıkış Yap',
       href: '/',
@@ -154,16 +160,25 @@ function UserSection({
               ) : (
                 <li key={item.name} className="relative" role="none">
                   <Link
-                    href={item.href}
-                    onClick={closeDropdown}
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 transition-colors"
+                    href={item.disabled ? '#' : item.href}
+                    onClick={item.disabled ? undefined : closeDropdown}
+                    className={`flex items-center gap-2 px-4 py-2 transition-colors 
+                      ${
+                        item.disabled
+                          ? 'cursor-not-allowed text-gray-400 line-through'
+                          : 'hover:bg-gray-100 text-gray-800'
+                      }`}
+                    aria-disabled={item.disabled}
                     role="menuitem"
                   >
-                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#d3deda]">
+                    <span
+                      className={`flex items-center justify-center w-8 h-8 rounded-full 
+                        ${item.disabled ? 'bg-gray-200' : 'bg-[#d3deda]'}`}
+                    >
                       {item.icon}
                     </span>
                     {item.name}
-                    {item.badgeCount && item.badgeCount > 0 && (
+                    {item.badgeCount && item.badgeCount > 0 && !item.disabled && (
                       <span
                         className="absolute top-1/2 -translate-y-1/2 right-4 inline-flex items-center justify-center h-4 w-4 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full"
                         aria-label={`${item.badgeCount} yeni bildirim`}

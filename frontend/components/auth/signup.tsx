@@ -1,13 +1,16 @@
 'use client';
+//nextjs and react
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+//third-party
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FaEye as ShowIcon, FaEyeSlash as HideIcon, FaCheck as CheckIcon } from 'react-icons/fa';
+import { FaEye as ShowIcon, FaEyeSlash as HideIcon, FaCheck as CheckIcon, FaUserPlus } from 'react-icons/fa';
+//project files
+import Button from '@/common/button';
+import Input from '@/common/input';
 import { useAuth } from '@/context/AuthContext';
 import { RegisterFormValues, registerSchema } from 'lib/schemas';
-import Button from '../common/button';
-import Input from '../common/input';
 
 export default function SignupForm() {
   const { signup } = useAuth();
@@ -68,75 +71,101 @@ export default function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onsubmit)} className="flex flex-col gap-2 w-full">
-      {errorMessage && <div className="bg-red-100 text-red-800 p-2 rounded-md">{errorMessage}</div>}
-      {successMessage && <div className="bg-green-100 text-green-800 p-2 rounded-md">{successMessage}</div>}
-
-      <Input name="username" register={register} error={errors.username?.message} placeholder="Kullanıcı Adı" />
-      <Input name="full_name" register={register} error={errors.full_name?.message} placeholder="Ad Soyad" />
-      <Input name="email" register={register} error={errors.email?.message} placeholder="Email" type="email" />
-
-      <div className="relative">
-        <Input
-          name="password"
-          register={register}
-          error={errors.password?.message}
-          placeholder="Şifre"
-          type={showPassword ? 'text' : 'password'}
-        />
-        <button
-          type="button"
-          onClick={() => setShowPassword((prev) => !prev)}
-          className="absolute right-2 top-6 cursor-pointer"
-        >
-          {showPassword ? <ShowIcon /> : <HideIcon />}
-        </button>
+    <div className="w-full">
+      <div className="text-center mb-5">
+        <FaUserPlus className="text-3xl mx-auto text-[#ef7464] mb-2" />
+        <h2 className="text-2xl font-bold text-gray-800">Otuzaltıpoz Topluluğuna Katıl</h2>
+        <p className="text-sm text-gray-500 mt-1">Hemen kaydol, fotoğraflarını paylaşmaya başla!</p>
       </div>
 
-      <div className="relative">
-        <Input
-          name="passwordCheck"
-          register={register}
-          error={errors.passwordCheck?.message}
-          placeholder="Şifre Onayla"
-          type={showPassword ? 'text' : 'password'}
-        />
-      </div>
-
-      <textarea
-        {...register('bio')}
-        placeholder="Biyografinizi yazın..."
-        className="border-2 border-gray-300 bg-white  p-2 rounded-md w-full resize-none focus:border-[#ef7464] focus:outline-none"
-        rows={3}
-      />
-      {errors.bio && <p className="text-red-500 text-sm">{errors.bio.message}</p>}
-
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2 text-gray-700">Profil Fotoğrafı</label>
-        <label className="flex items-center justify-between border border-gray-300 rounded-lg p-3 cursor-pointer hover:border-[#ef7464] transition duration-200">
-          <span className="text-gray-700 truncate">{fileName}</span>
-          {isSelected ? (
-            <span className="flex items-center gap-1 bg-green-600 text-white px-3 py-1 rounded-lg text-sm">
-              <CheckIcon /> Seçildi
+      <form onSubmit={handleSubmit(onsubmit)} className="flex flex-col gap-3 w-full">
+        {errorMessage && (
+          <div className="bg-red-100 text-red-800 p-2 rounded-lg border border-red-300 text-sm font-medium">
+            **Hata:** {errorMessage}
+          </div>
+        )}
+        {successMessage && (
+          <div className="bg-green-100 text-green-800 p-2 rounded-lg border border-green-300 text-sm font-medium">
+            <span className="flex items-center gap-2">
+              <CheckIcon className="w-4 h-4" /> **Başarılı!** {successMessage}
             </span>
-          ) : (
-            <span className="bg-[#ef7464] text-white px-3 py-1 rounded-lg text-sm hover:bg-[#ef7464db] transition duration-200">
-              Dosya Seç
-            </span>
-          )}
-          <input
-            type="file"
-            key={fileName}
-            accept="image/*"
-            className="hidden"
-            onChange={handleChange}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Input name="username" register={register} error={errors.username?.message} placeholder="Kullanıcı Adı" />
+          <Input name="full_name" register={register} error={errors.full_name?.message} placeholder="Ad Soyad" />
+        </div>
+
+        <Input name="email" register={register} error={errors.email?.message} placeholder="Email Adresi" type="email" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="relative">
+            <Input
+              name="password"
+              register={register}
+              error={errors.password?.message}
+              placeholder="Şifre Oluştur"
+              type={showPassword ? 'text' : 'password'}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-[#ef7464] text-sm"
+            >
+              {showPassword ? <ShowIcon className="w-4 h-4" /> : <HideIcon className="w-4 h-4" />}
+            </button>
+          </div>
+
+          <div className="relative">
+            <Input
+              name="passwordCheck"
+              register={register}
+              error={errors.passwordCheck?.message}
+              placeholder="Şifreyi Onayla"
+              type={showPassword ? 'text' : 'password'}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium mb-1 text-gray-700">Kısa Biyografi (İsteğe Bağlı)</label>
+          <textarea
+            {...register('bio')}
+            placeholder="Seni ve fotoğrafçılığını anlatan kısa bir biyografi..."
+            className="border-2 border-gray-300 bg-white p-2 rounded-lg w-full resize-none text-sm focus:border-[#ef7464] focus:outline-none transition duration-200"
+            rows={3}
           />
-        </label>
-      </div>
+          {errors.bio && <p className="text-red-500 text-xs mt-1">{errors.bio.message}</p>}
+        </div>
 
-      <Button type="submit" variant="primary">
-        Kayıt Ol
-      </Button>
-    </form>
+        <div className="mt-1">
+          <label className="block text-xs font-medium mb-1 text-gray-700">Profil Fotoğrafı Seç (İsteğe Bağlı)</label>
+          <label className="flex items-center justify-between border-2 border-dashed border-gray-300 rounded-lg p-2 cursor-pointer hover:border-[#ef7464] transition duration-200 bg-gray-50">
+            <span className={`text-sm font-medium truncate ${isSelected ? 'text-gray-800' : 'text-gray-500'}`}>
+              {fileName}
+            </span>
+            {isSelected ? (
+              <span className="flex items-center gap-1 bg-green-600 text-white px-2 py-0.5 rounded-full text-xs font-semibold">
+                <CheckIcon className="w-3 h-3" /> Seçildi
+              </span>
+            ) : (
+              <span className="bg-[#ef7464] text-white px-2 py-0.5 rounded-full text-xs font-semibold hover:bg-[#ef7464db] transition duration-200">
+                Dosya Seç
+              </span>
+            )}
+            <input type="file" key={fileName} accept="image/*" className="hidden" onChange={handleChange} />
+          </label>
+        </div>
+
+        <Button
+          type="submit"
+          variant="primary"
+          className="mt-3 py-2.5 text-base bg-[#ef7464] hover:bg-[#ef7464db] transition duration-200"
+        >
+          Hemen Kayıt Ol
+        </Button>
+      </form>
+    </div>
   );
 }

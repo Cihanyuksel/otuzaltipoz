@@ -3,22 +3,22 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 //project files
-  //components
-  import PhotoList from '@/components/photos/PhotoList';
-  import Loader from '@/common/loader';
-  import MobileHeader from './category/MobileHeader';
-  import MobileMenu from './category/MobileMenu';
-  import Sidebar from './category/Sidebar';
-  //context
-  import { useSearch } from '@/context/SearchContext';
-  import { usePhotos } from '@/context/PhotoContext';
-  //hooks
-  import { useCategories } from '@/hooks/api/useCategories';
-  import { useCategorySelection } from '@/hooks/ui/useCategorySelection';
-  import { useDebouncedValue } from '@/hooks/ui/useDebouncedValue';
-  import { useResponsiveSidebar } from '@/hooks/ui/useResponsiveSidebar';
-  //config
-  import { getSections } from './category/SectionConfig';
+//components
+import PhotoList from '@/components/photos/PhotoList';
+import Loader from '@/common/loader';
+import MobileHeader from './category/MobileHeader';
+import MobileMenu from './category/MobileMenu';
+import Sidebar from './category/Sidebar';
+//context
+import { useSearch } from '@/context/SearchContext';
+import { usePhotos } from '@/context/PhotoContext';
+//hooks
+import { useCategories } from '@/hooks/api/useCategories';
+import { useCategorySelection } from '@/hooks/ui/useCategorySelection';
+import { useDebouncedValue } from '@/hooks/ui/useDebouncedValue';
+import { useResponsiveSidebar } from '@/hooks/ui/useResponsiveSidebar';
+//config
+import { getSections } from './category/SectionConfig';
 
 const MAX_CATEGORIES = 3;
 
