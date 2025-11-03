@@ -1,17 +1,16 @@
-// EditForm.tsx
 'use client';
 import { useState } from 'react';
 import { FiCheck as CheckIcon, FiX as CancelIcon } from 'react-icons/fi';
 import Button from '../common/button';
 
-interface IEditForm {
+interface IEditCommentForm {
   initialText: string;
   onSubmit: (text: string) => void;
   isSubmitting?: boolean;
   onCancel: () => void;
 }
 
-export default function EditForm({ initialText, onSubmit, isSubmitting, onCancel }: IEditForm) {
+export default function EditCommentForm({ initialText, onSubmit, isSubmitting, onCancel }: IEditCommentForm) {
   const [text, setText] = useState(initialText);
   const [error, setError] = useState('');
 

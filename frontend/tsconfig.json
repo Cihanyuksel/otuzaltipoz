@@ -22,8 +22,9 @@
     "paths": {
       "@/components/*": ["components/*"],
       "@/hooks/*": ["hooks/*"],
+      "@/common/*": ["components/common/*"],
       "@/context/*": ["context/*"],
-      "@/public/*": ["public/*"],
+      "@/public/*": ["public/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.js"],

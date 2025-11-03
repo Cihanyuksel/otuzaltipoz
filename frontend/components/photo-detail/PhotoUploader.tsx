@@ -7,7 +7,7 @@ export interface UploaderInfo {
   username: string;
   email: string;
   profile_img_url?: string;
-  created_at: Date;
+  created_at: string;
 }
 
 interface IUploaderInfo {

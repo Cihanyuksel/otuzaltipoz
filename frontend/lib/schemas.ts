@@ -98,10 +98,12 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 const profileUpdateSchema = z.object({
   full_name: z
     .string()
-    .min(2, 'İsim en az 2 karakter olmalıdır')
-    .max(100, 'İsim en fazla 100 karakter olabilir')
-    .trim(),
-  bio: z.string().max(500, 'Biyografi en fazla 500 karakter olabilir').optional().or(z.literal('')),
+    .min(3, 'En az 3 karakter olmalı')
+    .regex(
+      /^[A-Za-zÇçĞğİıÖöŞşÜü]+(?: [A-Za-zÇçĞğİıÖöŞşÜü]+){0,2}$/,
+      'Kullanıcı adı sadece harflerden oluşabilir ve en fazla iki boşluk içerebilir'
+    ),
+    bio: z.string().max(250, 'Biyografi en fazla 250 karakter olmalı').optional(),
 });
 
 type ProfileUpdateFormValues = z.infer<typeof profileUpdateSchema>;

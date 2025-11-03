@@ -1,18 +1,10 @@
 'use client';
 import { useState } from 'react';
-//project-files
-import ProfileHeader from './ProfileHeader';
-import ProfileTabs from './ProfileTabs';
-import PhotoGallery from './PhotoGallery';
-import Loader from '@/components/common/loader';
-import EditProfileModal from './EditProfileModal';
-//types
+import { ProfileHeader, ProfileTabs, PhotoGallery, EditProfileModal } from './index';
 import { User } from 'types/auth';
 import { Photo } from 'types/photo';
 
 interface IUserProfile {
-  isLoading: boolean;
-  isError: boolean;
   profileOwner: User;
   imageUrl: string;
   isOwner: boolean;
@@ -21,36 +13,8 @@ interface IUserProfile {
   photosToShow: Photo[];
 }
 
-const UserProfile = ({
-  isLoading,
-  isError,
-  profileOwner,
-  imageUrl,
-  isOwner,
-  photosToShow,
-  activeTab,
-  handleTabChange,
-}: IUserProfile) => {
+const UserProfile = ({ profileOwner, imageUrl, isOwner, photosToShow, activeTab, handleTabChange }: IUserProfile) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
-  if (isLoading) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <Loader />
-      </div>
-    );
-  }
-
-  if (isError || !profileOwner) {
-    return (
-      <section className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg font-semibold">Kullanıcı bulunamadı</p>
-          <p className="text-gray-600 mt-2">Bu kullanıcı mevcut değil.</p>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <>
@@ -62,10 +26,8 @@ const UserProfile = ({
             isOwner={isOwner}
             onEditProfileClick={() => setIsEditModalOpen(true)}
           />
-          <div className="mt-12">
-            <ProfileTabs activeTab={activeTab} handleTabChange={handleTabChange} />
-            <PhotoGallery photosToShow={photosToShow} isOwner={isOwner} />
-          </div>
+          <ProfileTabs activeTab={activeTab} handleTabChange={handleTabChange} />
+          <PhotoGallery photosToShow={photosToShow} isOwner={isOwner} />
         </div>
       </section>
       <EditProfileModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} user={profileOwner} />

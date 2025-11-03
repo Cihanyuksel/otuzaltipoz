@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 //project files
   //components
   import PhotoList from '@/components/photos/PhotoList';
-  import Loader from '../common/loader';
+  import Loader from '@/common/loader';
   import MobileHeader from './category/MobileHeader';
   import MobileMenu from './category/MobileMenu';
   import Sidebar from './category/Sidebar';

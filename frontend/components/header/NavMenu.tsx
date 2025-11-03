@@ -10,7 +10,7 @@ interface HeaderNavbarProps {
   isScrolled: boolean;
 }
 
-export default function HeaderNavbar({ isScrolled }: HeaderNavbarProps) {
+function HeaderNavbar({ isScrolled }: HeaderNavbarProps) {
   const pathname = usePathname();
 
   const links = [
@@ -53,3 +53,5 @@ export default function HeaderNavbar({ isScrolled }: HeaderNavbarProps) {
     </>
   );
 }
+
+export default HeaderNavbar;

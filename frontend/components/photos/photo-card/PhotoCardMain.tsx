@@ -1,4 +1,4 @@
-import LikeSection from './PhotoInteractionSection';
+import PhotoInteractionSection from './PhotoInteractionSection';
 import PhotoCardInfo from './PhotoCardInfo';
 import PhotoCardImage from './PhotoCardImage';
 
@@ -44,7 +44,7 @@ const PhotoCardMain: React.FC<IPhotoCard> = ({
         title={title}
         uploaderId={uploaderId}
       />
-      <LikeSection photoId={photoId} />
+      <PhotoInteractionSection photoId={photoId} />
     </div>
   );
 };

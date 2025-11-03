@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import PhotoUploadForm from '@/components/photos/PhotoUploadForm';
+import PhotoUploadForm from '@/components/photos/photo-upload-form/PhotoUploadForm';
 import { Suspense } from 'react';
 import Loader from '@/components/common/loader';
 import { createPageMetadata } from 'lib/metadata';

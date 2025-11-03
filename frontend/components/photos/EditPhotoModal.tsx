@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IoClose as CloseIcon } from 'react-icons/io5';
 //project files
-import Button from '../common/button';
-import Input from '../common/input';
+import Button from '@/common/button';
+import Input from '@/common/input';
 import { useUpdatePhoto } from '@/hooks/api/usePhotoApi';
 import { Photo } from 'types/photo';
 import { PhotoEditFormValues, photoEditSchema } from 'lib/schemas';

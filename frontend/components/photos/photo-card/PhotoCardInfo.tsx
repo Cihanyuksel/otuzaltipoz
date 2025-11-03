@@ -2,7 +2,7 @@ import { formatDateNumeric } from 'lib/formatDate';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { HiArrowRight } from 'react-icons/hi2';
+import { HiArrowRight as ArrowRightIcon } from 'react-icons/hi2';
 
 interface IPhotoCardInfo {
   photoId: string;
@@ -45,7 +45,7 @@ function PhotoCardInfo({
               <h2 className="text-sm font-semibold truncate group-hover:text-[#ef7464] transition-colors duration-200">
                 {title}
               </h2>
-              <HiArrowRight
+              <ArrowRightIcon
                 className={`text-[#ef7464] flex-shrink-0 transition-all duration-200 font-bold ${
                   isLinkHovered ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2'
                 }`}

@@ -1,5 +1,4 @@
-// components/photos/category/SectionConfig.tsx
-import { FiLayers as CategoriesIcon, FiUsers as UsersIcon, FiNavigation as ExploreIcon } from "react-icons/fi";
+import { FiLayers as CategoriesIcon, FiUsers as UsersIcon, FiNavigation as ExploreIcon } from 'react-icons/fi';
 
 export interface Section {
   title: string;
@@ -9,18 +8,18 @@ export interface Section {
 
 export const getSections = (categories: string[]): Section[] => [
   {
-    title: "Kategoriler",
+    title: 'Kategoriler',
     icon: <CategoriesIcon className="text-[#ef7464] hover:text-[#ef7464]/60" />,
     items: categories,
   },
   {
-    title: "Keşfet",
+    title: 'Keşfet',
     icon: <ExploreIcon className="text-[#ef7464] hover:text-[#ef7464]/60" />,
-    items: ["Popüler Fotoğraflar", "Editörün Seçtikleri", "Yeni Yüklenenler"],
+    items: ['Popüler Fotoğraflar', 'Editörün Seçtikleri', 'Yeni Yüklenenler'],
   },
   {
-    title: "Topluluk",
+    title: 'Topluluk',
     icon: <UsersIcon className="text-[#ef7464] hover:text-[#ef7464]/60" />,
-    items: ["Fotoğrafçılar", "Tartışmalar"],
+    items: ['Fotoğrafçılar', 'Tartışmalar'],
   },
 ];

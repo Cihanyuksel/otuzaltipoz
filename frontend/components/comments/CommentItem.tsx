@@ -1,16 +1,19 @@
 'use client';
+//nextjs and react
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+//third-party
 import { RiDeleteBin6Line as DeleteIcon } from 'react-icons/ri';
+//project files
 import DeleteConfirmCommentModal from '../common/confirm-modal';
+import EditCommentForm from './EditCommentForm';
 import ReplyForm from './ReplyForm';
 import { commentFormatDate } from 'lib/commentFormatDate';
 import { truncateText } from 'lib/truncateText';
-import { IComment } from 'types/comment';
 import { canManage as canManageComment, isAdminOrModerator } from 'lib/permission';
+import { IComment } from 'types/comment';
 import { User } from 'types/auth';
-import EditForm from './EditCommentForm';
 
 interface ICommentItem {
   comment: IComment;
@@ -64,7 +67,7 @@ export default function CommentItem({
   const isOwnComment = !!(currentUser && comment.user.username === currentUser.username);
   const isLoggedIn = !!accessToken;
   const hasReplies = comment.replies && comment.replies.length > 0;
-  
+
   const canEdit = isOwnComment && comment.edit_count < 1;
   const isAdmin = currentUser ? isAdminOrModerator(currentUser) : false;
 
@@ -142,7 +145,7 @@ export default function CommentItem({
           {!showEditForm ? (
             <p className="text-sm text-gray-700">{comment.text}</p>
           ) : (
-            <EditForm
+            <EditCommentForm
               initialText={comment.text}
               onSubmit={handleEditSubmit}
               isSubmitting={isEditing}

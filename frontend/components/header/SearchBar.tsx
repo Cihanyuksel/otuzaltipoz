@@ -1,7 +1,6 @@
 'use client';
 import { MdSearch as SearchIcon } from 'react-icons/md';
 import { useSearch } from '@/context/SearchContext';
-import { useRouter } from 'next/navigation';
 
 interface HeaderSearchBarProps {
   isScrolled: boolean;
@@ -9,7 +8,6 @@ interface HeaderSearchBarProps {
 
 export default function HeaderSearchBar({ isScrolled }: HeaderSearchBarProps) {
   const { searchValue, setSearchValue } = useSearch();
-  const router = useRouter();
 
   const handleSearchClick = () => {
     window.scrollTo({
