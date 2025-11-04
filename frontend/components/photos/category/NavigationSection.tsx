@@ -1,9 +1,5 @@
 'use client';
-import {
-  IoIosArrowDown as ArrowDownIcon,
-  IoIosArrowUp as ArrowUpIcon,
-  IoIosArrowForward as ArrowRightIcon,
-} from 'react-icons/io';
+import { IoIosArrowForward as ArrowRightIcon } from 'react-icons/io';
 import { renderIcon } from './SectionConfig';
 
 interface NavigationItem {

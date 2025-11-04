@@ -17,10 +17,10 @@ interface IPhotoCard {
   onPhotoClick: () => void;
   likes?: number;
   uploaderId: string;
-  index: number
+  index: number;
 }
 
-const PhotoCardMain: React.FC<IPhotoCard> = ({
+const PhotoCard = ({
   photoId,
   title,
   description,
@@ -30,8 +30,8 @@ const PhotoCardMain: React.FC<IPhotoCard> = ({
   created_at,
   onPhotoClick,
   uploaderId,
-  index
-}) => {
+  index,
+}: IPhotoCard) => {
   return (
     <div className="rounded overflow-hidden shadow-lg border transition-all duration-300 border-gray-200  hover:scale-101 hover:shadow-xl">
       <PhotoCardImage imageUrl={imageUrl} onPhotoClick={onPhotoClick} title={title} index={index} />
@@ -49,5 +49,4 @@ const PhotoCardMain: React.FC<IPhotoCard> = ({
   );
 };
 
-export default PhotoCardMain;
-
+export default PhotoCard;
