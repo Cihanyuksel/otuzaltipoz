@@ -1,5 +1,6 @@
 import { axiosInstance } from 'lib/axiosInstance';
 import { USER_PATHS } from 'lib/config';
+import { User } from 'types/auth';
 
 export const userService = {
   // Get user by ID
@@ -8,10 +9,12 @@ export const userService = {
     return response.data;
   },
 
-  // Update user profile (bio, full_name)
-  updateUser: async (userId: string, data: { bio?: string; full_name?: string }) => {
-    const response = await axiosInstance.put(USER_PATHS.UPDATE_USER(userId), data);
-    return response.data;
+  // Update user profile (bio, full_name and profile image)
+  updateUser: async (userId: string, userData: FormData | { bio?: string; full_name?: string }): Promise<User> => {
+    const { data } = await axiosInstance.put(USER_PATHS.UPDATE_USER(userId), userData, {
+      headers: userData instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined,
+    });
+    return data.data;
   },
 
   // Update username

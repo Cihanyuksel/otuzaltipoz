@@ -47,4 +47,3 @@ export interface ContactData {
   phone?: string;
   message: string;
 }
-

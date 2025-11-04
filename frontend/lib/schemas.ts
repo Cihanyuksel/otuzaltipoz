@@ -103,7 +103,19 @@ const profileUpdateSchema = z.object({
       /^[A-Za-zÇçĞğİıÖöŞşÜü]+(?: [A-Za-zÇçĞğİıÖöŞşÜü]+){0,2}$/,
       'Kullanıcı adı sadece harflerden oluşabilir ve en fazla iki boşluk içerebilir'
     ),
-    bio: z.string().max(250, 'Biyografi en fazla 250 karakter olmalı').optional(),
+  bio: z.string().max(250, 'Biyografi en fazla 250 karakter olmalı').optional(),
+  profile_img: z
+    .any()
+    .refine((files) => {
+      if (!files || files.length === 0) return true;
+      return files[0]?.size <= 5000000; // 5MB
+    }, 'Dosya boyutu en fazla 5MB olabilir')
+    .refine((files) => {
+      if (!files || files.length === 0) return true;
+      return ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(files[0]?.type);
+    }, 'Sadece .jpg, .jpeg, .png ve .webp formatları desteklenir')
+    .optional(),
+  removeProfileImg: z.boolean().optional(),
 });
 
 type ProfileUpdateFormValues = z.infer<typeof profileUpdateSchema>;

@@ -2,8 +2,9 @@
 import { useState, useRef } from 'react';
 import { User } from 'types/auth';
 import { useOutsideClick } from '@/hooks/ui/useOutsideClick';
-import { Header, TabButton, ProfileTab, UsernameTab, PasswordTab } from './index';
+import { Header, TabButton, UsernameTab, PasswordTab, ProfileTab } from './index';
 import { useProfileModalForms } from './useProfileModalForms';
+import { ModalOverlay } from '@/components/common/modal-overlay';
 
 interface IEditProfileModal {
   isOpen: boolean;
@@ -31,14 +32,14 @@ const EditProfileModal = ({ isOpen, onClose, user }: IEditProfileModal) => {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#f5f1ea]/50">
+    <ModalOverlay onClose={handleCloseAndReset} isLoading={isPending}>
       <div ref={modalRef} className="w-full max-w-lg bg-white rounded-lg shadow-xl transform transition-all">
         <Header handleCloseAndReset={handleCloseAndReset} isPending={isPending} />
         <TabButton tabs={tabs} setActiveTab={setActiveTab} activeTab={activeTab} isPending={isPending} />
 
         <div className="p-6">
           {activeTab === 'profile' && (
-            <ProfileTab form={profileForm} isPending={isPending} handleClose={handleCloseAndReset} />
+            <ProfileTab user={user} form={profileForm} isPending={isPending} handleClose={handleCloseAndReset} />
           )}
           {activeTab === 'username' && (
             <UsernameTab
@@ -54,7 +55,7 @@ const EditProfileModal = ({ isOpen, onClose, user }: IEditProfileModal) => {
           )}
         </div>
       </div>
-    </div>
+    </ModalOverlay>
   );
 };
 

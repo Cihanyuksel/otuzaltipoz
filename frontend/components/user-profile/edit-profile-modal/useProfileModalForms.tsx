@@ -21,7 +21,11 @@ interface IUseProfileModalForms {
 export const useProfileModalForms = ({ user, onClose }: IUseProfileModalForms) => {
   const profileForm = useForm<ProfileUpdateFormValues>({
     resolver: zodResolver(profileUpdateSchema),
-    defaultValues: { full_name: user.full_name || '', bio: user.bio || '' },
+    defaultValues: {
+      full_name: user.full_name || '',
+      bio: user.bio || '',
+      removeProfileImg: false,
+    },
     mode: 'onChange',
   });
 
@@ -57,8 +61,22 @@ export const useProfileModalForms = ({ user, onClose }: IUseProfileModalForms) =
 
   const onProfileSubmit = useCallback(
     (data: ProfileUpdateFormValues) => {
+      const formData = new FormData();
+
+      formData.append('full_name', data.full_name);
+      if (data.bio) {
+        formData.append('bio', data.bio);
+      }
+
+      // Handle profile image
+      if (data.removeProfileImg) {
+        formData.append('removeProfileImg', 'true');
+      } else if (data.profile_img && data.profile_img.length > 0) {
+        formData.append('profile_img', data.profile_img[0]);
+      }
+
       updateUserMutation.mutate(
-        { userId: user._id, data },
+        { userId: user._id, data: formData },
         {
           onSuccess: () => {
             toast.success('Profil başarıyla güncellendi!', { position: 'top-right', autoClose: 3000 });

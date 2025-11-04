@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 // project files
 import LoginModal from '../auth/login-modal';
-import EditPhotoModal from '../photos/EditPhotoModal';
+import EditPhotoModal from './edit-photo-modal/EditPhotoModal';
 import DeleteConfirmPhotoModal from '@/common/confirm-modal';
 import Loader from '@/common/loader';
 import Button from '@/common/button';
@@ -43,6 +43,12 @@ const PhotoDetail = () => {
 
   const currentAverageRating = ratingsData?.averageRating ?? photo.averageRating ?? 0;
   const currentTotalVotes = ratingsData?.totalVotes ?? photo.totalVotes ?? 0;
+
+  const deletConfirmModalMessage = (
+    <>
+      <strong>{photo.title}</strong> başlıklı fotoğrafı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+    </>
+  );
 
   return (
     <section
@@ -102,6 +108,7 @@ const PhotoDetail = () => {
 
       {/* Modals */}
       <LoginModal isOpen={modalStates.login} onClose={() => handleModalToggle('login', false)} />
+
       {modalStates.edit && (
         <EditPhotoModal isOpen={modalStates.edit} onClose={() => handleModalToggle('edit', false)} photo={photo} />
       )}
@@ -109,12 +116,7 @@ const PhotoDetail = () => {
         isOpen={modalStates.delete}
         onClose={() => handleModalToggle('delete', false)}
         title="Fotoğrafı Sil"
-        message={
-          <>
-            <strong>{photo.title}</strong> başlıklı fotoğrafı silmek istediğinizden emin misiniz? Bu işlem geri
-            alınamaz.
-          </>
-        }
+        message={deletConfirmModalMessage}
         onConfirm={handleDelete}
         confirmButtonText={isPending ? 'Siliniyor...' : 'Sil'}
         isConfirming={isPending}

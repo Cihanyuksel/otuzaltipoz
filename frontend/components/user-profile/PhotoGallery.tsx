@@ -1,14 +1,35 @@
+// PhotoGallery.tsx
+
 import Link from 'next/link';
 import { FaHeart as HeartIcon } from 'react-icons/fa6';
 import { FaRegCommentDots as CommentIcon } from 'react-icons/fa';
-
 import { Photo } from 'types/photo';
 
 interface IPhotoGallery {
   photosToShow: Photo[];
   isOwner: boolean;
+  activeTab: 'uploaded' | 'liked' | string;
 }
-const PhotoGallery = ({ photosToShow, isOwner }: IPhotoGallery) => {
+
+const PhotoGallery = ({ photosToShow, isOwner, activeTab }: IPhotoGallery) => {
+  const getEmptyMessage = () => {
+    if (activeTab === 'liked') {
+      return {
+        title: 'Henüz fotoğraf beğenmediniz.',
+        subtitle: 'Beğendiğiniz fotoğraflar burada görünecektir.',
+      };
+    }
+    
+    return {
+      title: 'Henüz fotoğraf yok.',
+      subtitle: isOwner
+        ? 'İlk fotoğrafını şimdi yükleyerek profilini canlandır.'
+        : 'Kullanıcının henüz fotoğrafı yok.',
+    };
+  };
+
+  const { title, subtitle } = getEmptyMessage();
+
   return (
     <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
       {photosToShow.length > 0 ? (
@@ -34,10 +55,11 @@ const PhotoGallery = ({ photosToShow, isOwner }: IPhotoGallery) => {
         ))
       ) : (
         <div className="flex flex-col items-center justify-center col-span-2 sm:col-span-3 md:col-span-4 p-8 text-center bg-gray-50 rounded-lg shadow-sm">
-          <p className="text-lg font-semibold text-gray-700">Henüz fotoğraf yok.</p>
-          {isOwner && (
+          <p className="text-lg font-semibold text-gray-700">{title}</p>
+          
+          {isOwner && activeTab === 'uploaded' ? (
             <>
-              <p className="mt-2 text-sm text-gray-500">İlk fotoğrafını şimdi yükleyerek profilini canlandır.</p>
+              <p className="mt-2 text-sm text-gray-500">{subtitle}</p>
               <Link
                 href="/photo-upload"
                 className="mt-4 px-6 py-2 bg-[#d3deda] text-white font-bold rounded-full hover:bg-[#d3dedac6] transition duration-300 shadow-md"
@@ -45,6 +67,8 @@ const PhotoGallery = ({ photosToShow, isOwner }: IPhotoGallery) => {
                 Fotoğraf Yükle
               </Link>
             </>
+          ) : (
+             <p className="mt-2 text-sm text-gray-500">{subtitle}</p>
           )}
         </div>
       )}

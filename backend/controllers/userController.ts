@@ -3,6 +3,7 @@ import User, { IUser } from "../models/User";
 import { AppError } from "../utils/AppError";
 import { IGetUserAuthInfoRequest } from "./authController";
 import { checkOwnershipOrRole } from "../utils/authorization";
+import cloudinary from "../config/cloudinary";
 
 // Get All Users
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -36,72 +37,112 @@ const addUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-// Update User (Bio, Full Name)
+// Update User Profile
 const updateUser = async (
   req: IGetUserAuthInfoRequest,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    const userId = req.params.id;
-    const currentUser = req.user!;
+    const { id } = req.params;
+    const { full_name, bio, removeProfileImg } = req.body;
 
-    // Ownership check
-    if (currentUser.role !== "admin" && currentUser.role !== "moderator") {
-      if (userId !== currentUser.id.toString()) {
-        return next(new AppError("You can only update your own profile", 403));
+    // Authorization check
+    if (req.user?.id !== id && req.user?.role !== "admin") {
+      return next(new AppError("Bu işlem için yetkiniz yok", 403));
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return next(new AppError("Kullanıcı bulunamadı", 404));
+    }
+
+    // Update basic fields
+    if (full_name) user.full_name = full_name.trim();
+    if (bio !== undefined) user.bio = bio.trim();
+
+    // Handle profile image removal
+    if (removeProfileImg === 'true' || removeProfileImg === true) {
+      if (user.profile_img_url) {
+        try {
+          // Extract public_id from cloudinary URL
+          const urlParts = user.profile_img_url.split('/');
+          const filename = urlParts[urlParts.length - 1];
+          const publicId = `photos_app/profiles/${filename.split('.')[0]}`;
+          await cloudinary.uploader.destroy(publicId);
+        } catch (cloudErr) {
+          console.error("Cloudinary delete error:", cloudErr);
+        }
+      }
+      user.profile_img_url = undefined;
+    }
+
+    // Handle new profile image upload
+    if (req.file?.buffer && removeProfileImg !== 'true' && removeProfileImg !== true) {
+      try {
+        // Delete old image if exists
+        if (user.profile_img_url) {
+          try {
+            const urlParts = user.profile_img_url.split('/');
+            const filename = urlParts[urlParts.length - 1];
+            const publicId = `photos_app/profiles/${filename.split('.')[0]}`;
+            await cloudinary.uploader.destroy(publicId);
+          } catch (cloudErr) {
+            console.error("Old image delete error:", cloudErr);
+          }
+        }
+
+        // Upload new image
+        const uploadResult: any = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: "photos_app/profiles",
+              transformation: [
+                { width: 300, height: 300, crop: "fill", gravity: "face" },
+                { quality: "auto", format: "webp" },
+              ],
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          );
+          stream.end(req.file!.buffer);
+        });
+
+        user.profile_img_url = uploadResult.secure_url;
+      } catch (cloudErr: any) {
+        console.error("Cloudinary upload error:", cloudErr);
+        return next(
+          new AppError("Profil resmi yüklenirken bir hata oluştu.", 500)
+        );
       }
     }
 
-    // Role update restriction
-    if (req.body.role) {
-      if (currentUser.role !== "admin") {
-        return next(new AppError("Only admins can change user roles", 403));
-      }
+    await user.save();
 
-      if (userId === currentUser.id.toString() && req.body.role !== "admin") {
-        return next(new AppError("You cannot change your own admin role", 403));
-      }
-    }
-
-    // Protected fields
-    const protectedFields = [
-      "password",
-      "is_verified",
-      "created_at",
-      "username_change_count",
-    ];
-    protectedFields.forEach((field) => {
-      if (req.body[field] && currentUser.role !== "admin") {
-        delete req.body[field];
-      }
-    });
-
-    // Email change requires re-verification
-    if (req.body.email) {
-      if (currentUser.role !== "admin") {
-        req.body.is_verified = false;
-      }
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(userId, req.body, {
-      new: true,
-      runValidators: true,
-    }).select("-password");
-
-    if (!updatedUser) {
-      return next(new AppError("User not found", 404));
-    }
-
-    res.status(200).json({
-      status: "success",
+    res.json({
+      success: true,
       message: "Profil başarıyla güncellendi",
-      data: updatedUser,
+      data: {
+        _id: user._id,
+        username: user.username,
+        full_name: user.full_name,
+        email: user.email,
+        bio: user.bio,
+        profile_img_url: user.profile_img_url,
+        role: user.role,
+        is_active: user.is_active,
+        is_verified: user.is_verified,
+        username_change_count: user.username_change_count,
+      },
     });
-  } catch (error: any) {
-    next(new AppError(error.message || "User not updated", 400));
+  } catch (err: any) {
+    console.error("Update user error:", err);
+    next(new AppError(err.message || "Sunucu hatası", 500));
   }
 };
+
 
 // Update Username (ONLY ONCE)
 const updateUsername = async (

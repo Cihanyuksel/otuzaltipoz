@@ -25,12 +25,13 @@ const useUpdateUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ userId, data }: { userId: string; data: { bio?: string; full_name?: string } }) => {
+    mutationFn: ({ userId, data }: { userId: string; data: FormData | { bio?: string; full_name?: string } }) => {
       return userService.updateUser(userId, data);
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['user', variables.userId] });
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['photos'] });
     },
   });
 };

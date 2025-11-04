@@ -27,7 +27,7 @@ const UserProfile = ({ profileOwner, imageUrl, isOwner, photosToShow, activeTab,
             onEditProfileClick={() => setIsEditModalOpen(true)}
           />
           <ProfileTabs activeTab={activeTab} handleTabChange={handleTabChange} />
-          <PhotoGallery photosToShow={photosToShow} isOwner={isOwner} />
+          <PhotoGallery photosToShow={photosToShow} isOwner={isOwner} activeTab={activeTab} />
         </div>
       </section>
       <EditProfileModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} user={profileOwner} />

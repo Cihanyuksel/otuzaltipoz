@@ -1,11 +1,11 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import PhotoContainer from '@/components/photos/PhotoContainer';
+//import PhotoContainer from '@/components/photos/PhotoContainer';
 import Loader from '@/components/common/loader';
 import { Suspense } from 'react';
 import { queryClient } from 'lib/queryClient';
 import { photoService } from 'services/photoService';
 import { createPageMetadata } from 'lib/metadata';
-
+import PhotoContainer from '@/components/photos/photo-container/PhotoContainer'
 export const metadata = createPageMetadata({
   title: 'Fotoğraflar | otuzaltıpoz',
   description: 'Tüm kategorilerdeki fotoğrafları keşfedin. otuzaltıpoz topluluğunda paylaşılan eşsiz anları inceleyin.',
