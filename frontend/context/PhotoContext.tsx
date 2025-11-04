@@ -4,7 +4,6 @@ import { useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { Photo } from 'types/photo';
 import { useAuth } from './AuthContext';
-import { useSearch } from './SearchContext';
 import { useGetAllPhoto } from '@/hooks/api/usePhotoApi';
 import { useToggleLike } from '@/hooks/api/useLikeApi';
 
@@ -19,6 +18,8 @@ interface PhotosContextType {
   fetchNextPage: () => void;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
+  searchValue: string;
+  setSearchValue: (val: string) => void;
 }
 
 const PhotosContext = createContext<PhotosContextType | undefined>(undefined);
@@ -29,11 +30,12 @@ interface PhotosProviderProps {
 
 export const PhotosProvider = ({ children }: PhotosProviderProps) => {
   const { accessToken, user } = useAuth();
-  const { searchValue } = useSearch();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
 
+  const [searchValue, setSearchValue] = useState('');
   const [debouncedSearchValue, setDebouncedSearchValue] = useState(searchValue);
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [previousUserId, setPreviousUserId] = useState<string | null>(null);
 
@@ -117,6 +119,8 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
     fetchNextPage,
     hasNextPage: !!hasNextPage,
     isFetchingNextPage,
+    searchValue,
+    setSearchValue,
   };
 
   return <PhotosContext.Provider value={value}>{children}</PhotosContext.Provider>;

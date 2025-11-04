@@ -6,8 +6,6 @@ import { User } from 'types/auth';
 //third-party
 import { IoCloseOutline as MenuCloseIcon } from 'react-icons/io5';
 import { RxHamburgerMenu as MenuOpenIcon } from 'react-icons/rx';
-//project files
-import MobileSearchBar from './MobileSearchBar';
 
 interface IMobileMenu {
   setMenuOpen: Dispatch<SetStateAction<boolean>>;
@@ -29,7 +27,10 @@ export default function MobileMenu({ menuOpen, setMenuOpen, loading, user }: IMo
 
   return (
     <>
-      <button className="lg:hidden text-gray-800 focus:outline-none relative w-8 h-8" onClick={() => setMenuOpen(!menuOpen)}>
+      <button
+        className="lg:hidden text-gray-800 focus:outline-none relative w-8 h-8"
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
         <MenuOpenIcon
           className={`absolute inset-0 m-auto text-2xl transition-all duration-300 ease-in-out ${
             menuOpen ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0'
@@ -48,7 +49,6 @@ export default function MobileMenu({ menuOpen, setMenuOpen, loading, user }: IMo
         }`}
       >
         <ul className="bg-[#f5f1ea] flex flex-col items-center py-4 space-y-4 shadow-lg">
-          {pathname === '/photos' && <MobileSearchBar />}
           {navLinks.map((link) => (
             <li key={link.name} className="w-full px-4">
               <Link

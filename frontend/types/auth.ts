@@ -35,3 +35,16 @@ export interface SignupData {
   bio?: string;
   profile_img?: File;
 }
+
+export interface MessageResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface ContactData {
+  fullName: string;
+  email: string;
+  phone?: string;
+  message: string;
+}
+

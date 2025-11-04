@@ -1,6 +1,5 @@
 'use client';
-import { Logo, UserSection, MobileMenu, NavMenu, SearchBar } from '@/components/header';
-import AnimatedSection from '../common/animated-section';
+import { Logo, UserSection, MobileMenu, NavMenu} from '@/components/header';
 import { useHeader } from './useHeader';
 
 export default function Header() {
@@ -15,7 +14,6 @@ export default function Header() {
     isLogoutPending,
     handleLogout,
     handleDropdown,
-    pathname,
   } = useHeader();
 
   const userProps = {
@@ -44,11 +42,6 @@ export default function Header() {
     <header className={headerClasses}>
       <Logo isScrolled={isScrolled} />
       <NavMenu isScrolled={isScrolled} />
-      {pathname === '/photos' && (
-        <AnimatedSection delay={10}>
-          <SearchBar isScrolled={isScrolled} />
-        </AnimatedSection>
-      )}
       <UserSection {...userProps} />
       <MobileMenu {...mobileMenuProps} />
     </header>

@@ -10,7 +10,6 @@ import MobileHeader from './category/MobileHeader';
 import MobileMenu from './category/MobileMenu';
 import Sidebar from './category/Sidebar';
 //context
-import { useSearch } from '@/context/SearchContext';
 import { usePhotos } from '@/context/PhotoContext';
 //hooks
 import { useCategories } from '@/hooks/api/useCategories';
@@ -19,11 +18,11 @@ import { useDebouncedValue } from '@/hooks/ui/useDebouncedValue';
 import { useResponsiveSidebar } from '@/hooks/ui/useResponsiveSidebar';
 //config
 import { getSections } from './category/SectionConfig';
+import { SearchBar } from './SearchBar';
 
 const MAX_CATEGORIES = 3;
 
 const PhotoContainer = () => {
-  const { searchValue: searchQuery } = useSearch();
   const searchParams = useSearchParams();
 
   const {
@@ -35,6 +34,8 @@ const PhotoContainer = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    searchValue,
+    setSearchValue,
   } = usePhotos();
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -45,12 +46,13 @@ const PhotoContainer = () => {
   const { handleCategoryClick, handleRemoveCategory } = useCategorySelection({
     selectedCategories,
     setSelectedCategories,
-    searchQuery,
+    searchQuery: searchValue,
     maxCategories: MAX_CATEGORIES,
   });
 
   const { isSidebarOpen, setIsSidebarOpen, isMobileMenuOpen, setIsMobileMenuOpen } = useResponsiveSidebar();
-  const debouncedSearchValue = useDebouncedValue(searchQuery, 2000);
+
+  const debouncedSearchValue = useDebouncedValue(searchValue, 2000);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -88,7 +90,7 @@ const PhotoContainer = () => {
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const isDebouncing = searchQuery !== debouncedSearchValue;
+  const isDebouncing = searchValue !== debouncedSearchValue;
   const sections = useMemo(() => getSections(categories), [categories]);
 
   const handleSectionToggle = (title: string) => {
@@ -155,6 +157,10 @@ const PhotoContainer = () => {
         />
 
         <section className="flex-1 overflow-y-auto p-4 bg-gray-100" id="scroll-container" aria-label="Fotoğraf Listesi">
+          <div className="mb-6 w-full lg:w-3/4 xl:w-1/2 mx-auto">
+            <SearchBar value={searchValue} onChange={setSearchValue} />
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
             {isPhotosLoading || isDebouncing ? (
               <div className="col-span-full text-center py-8 text-gray-500" aria-live="polite">

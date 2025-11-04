@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { API_BASE_URL, AUTH_PATHS } from '../lib/config';
-import { AuthResponse, ContactData, LoginRequest, MessageResponse } from '../types/auth';
 import { axiosInstance } from 'lib/axiosInstance';
+import { AuthResponse, ContactData, LoginCredentials, MessageResponse } from 'types/auth';
 
 export const authService = {
   signup: async (formData: FormData): Promise<AuthResponse> => {
@@ -9,7 +9,7 @@ export const authService = {
     return data;
   },
 
-  login: async (data: LoginRequest): Promise<AuthResponse> => {
+  login: async (data: LoginCredentials): Promise<AuthResponse> => {
     const { data: response } = await axiosInstance.post(AUTH_PATHS.LOGIN, data);
     return response;
   },
@@ -47,8 +47,7 @@ export const authService = {
     return response;
   },
 
-  contactMail: async (data: ContactData): Promise<AuthResponse> => {
-    console.log(data)
+  contactMail: async (data: ContactData): Promise<MessageResponse> => {
     const { data: response } = await axiosInstance.post(AUTH_PATHS.CONTACT, data);
     return response;
   },
