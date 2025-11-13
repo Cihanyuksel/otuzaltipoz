@@ -40,6 +40,7 @@ const useRatePhoto = () => {
 
 const useGetRatings = (
   photoId: string,
+  accessToken?: string | null,
   options?: Omit<UseQueryOptions<IGetRatingsResponse, Error>, 'queryKey' | 'queryFn'>
 ) => {
   const queryClient = useQueryClient();
@@ -54,10 +55,14 @@ const useGetRatings = (
       const result = await ratingService.getRatings(photoId);
       return result;
     },
+    enabled: !!photoId && !!accessToken,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60 * 24,
-    refetchInterval: false,
-    retry: 1,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: false,
+    retryOnMount: false,
     ...options,
   });
 };

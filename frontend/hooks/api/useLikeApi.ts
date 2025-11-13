@@ -78,24 +78,30 @@ const useToggleLike = () => {
   });
 };
 
-const useGetLikes = (photoId: string, options?: Omit<UseQueryOptions<LikeData, Error>, 'queryKey' | 'queryFn'>) => {
+const useGetLikes = (
+  photoId: string,
+  accessToken?: string | null,
+  options?: Omit<UseQueryOptions<LikeData, Error>, 'queryKey' | 'queryFn'>
+) => {
+  const baseEnabled = !!photoId && !!accessToken;
+
+  const finalEnabled = options?.enabled !== undefined ? baseEnabled && options.enabled : baseEnabled;
+
   return useQuery<LikeData, Error>({
     queryKey: ['likes', photoId],
     queryFn: async () => {
-      try {
-        const result = await likeService.getLikes(photoId);
-        return result;
-      } catch (error: any) {
-        throw error;
-      }
+      const result = await likeService.getLikes(photoId);
+      return result;
     },
-    enabled: !!photoId,
     staleTime: 1000 * 30,
     gcTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    retry: 1,
+    refetchOnReconnect: false,
+    retry: false,
+    retryOnMount: false,
     ...options,
+    enabled: finalEnabled,
   });
 };
 

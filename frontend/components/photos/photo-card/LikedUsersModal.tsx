@@ -10,6 +10,7 @@ import { FaCrown as CrownIcon } from 'react-icons/fa6';
 //project-files
 import { useGetLikes } from '@/hooks/api/useLikeApi';
 import { isAdmin } from 'lib/permission';
+import { useAuth } from '@/context/AuthContext';
 
 interface PhotoLikedUsersProps {
   photoId: string;
@@ -18,8 +19,10 @@ interface PhotoLikedUsersProps {
 }
 
 export default function LikedUsersModal({ photoId, isOpen, onClose }: PhotoLikedUsersProps) {
-  const { data, isLoading, isFetching } = useGetLikes(photoId, {
-    enabled: isOpen,
+  const { accessToken } = useAuth();
+
+  const { data, isLoading, isFetching } = useGetLikes(photoId, accessToken, {
+    enabled: isOpen && !!accessToken
   });
 
   const usersWhoLiked = data?.usersWhoLiked || [];

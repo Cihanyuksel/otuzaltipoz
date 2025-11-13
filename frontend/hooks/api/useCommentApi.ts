@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { commentService } from 'services/commentService';
 
-export const useCommentApi = (photoId: string) => {
+export const useCommentApi = (photoId: string, accessToken?: string | null) => {
   const queryClient = useQueryClient();
 
   const {
@@ -12,7 +12,13 @@ export const useCommentApi = (photoId: string) => {
   } = useQuery({
     queryKey: ['comments', photoId],
     queryFn: () => commentService.getComments(photoId),
+    enabled: !!photoId && !!accessToken,
     staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: false,
+    retryOnMount: false,
   });
 
   //add comment

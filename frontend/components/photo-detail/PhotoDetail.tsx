@@ -1,6 +1,5 @@
 'use client';
 import { notFound } from 'next/navigation';
-
 // project files
 import LoginModal from '../auth/login-modal';
 import EditPhotoModal from './edit-photo-modal/EditPhotoModal';
