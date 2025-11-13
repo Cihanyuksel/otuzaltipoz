@@ -79,10 +79,13 @@ export const getPhotoRatings = async (req: Request, res: Response) => {
       : 0;
 
     return res.status(200).json({
-      averageRating,
-      totalVotes,
-      photoId,
+      message: "Fotoğrafın oylama bilgileri başarıyla getirildi",
       success: true,
+      data: {
+        photoId,
+        averageRating,
+        totalVotes,
+      },
     });
   } catch (error) {
     console.error("Get ratings error:", error);

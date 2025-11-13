@@ -1,9 +1,27 @@
+import dotenv from "dotenv";
+import path from "path";
+const env = process.env.NODE_ENV || "development";
+let envPath: string;
+
+if (env === "production") {
+  envPath = path.resolve(__dirname, `../.env.production`);
+} else if (env === "test") {
+  envPath = path.resolve(__dirname, `./.env.test`);
+} else {
+  envPath = path.resolve(__dirname, `./.env.development`);
+}
+dotenv.config({ path: envPath });
+
+console.log("Server URL:", process.env.SERVER_URL);
+
 import app from "./app";
 import { config } from "./config/config";
 import { connectDB } from "./config/db";
 import { setupTransporter } from "./utils/globalTransporter";
 
 const PORT = config.server.port || 4000;
+console.log(`✅ Yüklenen Konfigürasyon: .env.${env}`);
+console.log(`✅ Bağlantı Adresi: ${process.env.MONGODB_URI}`);
 
 const initializeApp = async () => {
   try {

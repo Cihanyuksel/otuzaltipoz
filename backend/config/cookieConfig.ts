@@ -1,8 +1,5 @@
-import dotenv from "dotenv";
 import { CookieOptions } from "express";
 import { config } from "./config";
-
-dotenv.config();
 
 const sevenDaysInMilliseconds = 7 * 24 * 60 * 60 * 1000;
 const isProduction = config.node_env === "production";

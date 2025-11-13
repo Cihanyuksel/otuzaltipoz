@@ -6,7 +6,7 @@ import { IComment, AddCommentResponse, DeleteCommentResponse, UpdateCommentRespo
 export const commentService = {
   getComments: async (photoId: string): Promise<IComment[]> => {
     const { data } = await axiosInstance.get(COMMENTS_PATH.GET_COMMENTS(photoId));
-    return data;
+    return data.data;
   },
 
   addComment: async (photoId: string, commentText: string, parentCommentId?: string): Promise<AddCommentResponse> => {

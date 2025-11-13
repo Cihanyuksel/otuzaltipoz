@@ -9,6 +9,9 @@ dist/
 build/
 
 .env
+.env.dev
+.env.prod
+.env.test
 
 .vscode/
 .idea/

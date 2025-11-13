@@ -15,6 +15,7 @@ export const getAllCategories = async (
 
     res.status(200).json({
       status: true,
+      message: "Kategoriler başarıyla getirildi",
       total: categories.length,
       data: categories,
     });

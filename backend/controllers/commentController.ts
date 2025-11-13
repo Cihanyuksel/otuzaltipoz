@@ -3,6 +3,8 @@ import Comment from "../models/Comment";
 import { IGetUserAuthInfoRequest } from "./authController";
 import { AppError } from "../utils/AppError";
 import { checkOwnershipOrRole } from "../utils/authorization";
+import Photo from "../models/Photo";
+import mongoose from "mongoose";
 
 // Add comment
 const addComment = async (
@@ -14,14 +16,23 @@ const addComment = async (
     const { photoId } = req.params;
     const { text, parentComment } = req.body;
 
+    const photoExists = await Photo.findById(photoId);
+    if (!photoExists) {
+      return next(new AppError("Photo not found", 404));
+    }
+
     const comment = await Comment.create({
-      text,
       photo: photoId,
       user: req.user?.id,
+      text,
       parentComment: parentComment || null,
     });
 
-    res.status(201).json(comment);
+    res.status(201).json({
+      message: "Yorum başarıyla eklendi.",
+      success: true,
+      data: comment,
+    });
   } catch (err: any) {
     next(new AppError(err.message || "Error adding comment", 500));
   }
@@ -36,7 +47,12 @@ const getCommentsByPhoto = async (
   try {
     const { photoId } = req.params;
 
-    const comments = await Comment.find({ photo: photoId, parentComment: null })
+    const photoObjectId = new mongoose.Types.ObjectId(photoId);
+
+    const comments = await Comment.find({
+      photo: photoObjectId,
+      parentComment: null,
+    })
       .populate("user", "_id username profile_img_url")
       .sort({ created_at: -1 })
       .lean();
@@ -50,7 +66,12 @@ const getCommentsByPhoto = async (
         return { ...comment, replies };
       })
     );
-    res.json(commentsWithReplies);
+
+    res.json({
+      message: "Fotoğrafın yorumları başarıyla getirildi.",
+      success: true,
+      data: commentsWithReplies,
+    });
   } catch (err: any) {
     next(new AppError(err.message || "Error fetching comments", 500));
   }
@@ -71,7 +92,7 @@ const deleteComment = async (
 
     await comment.deleteOne();
 
-    res.json({ message: "Comment deleted" });
+    res.json({ success: true, message: "Comment deleted" });
   } catch (err: any) {
     next(new AppError(err.message || "Error deleting comment", 500));
   }
@@ -91,21 +112,31 @@ const updateComment = async (
 
     checkOwnershipOrRole(comment.user.toString(), req, ["admin", "moderator"]);
 
-    if (comment.edit_count >= 1 && req.user?.role !== "admin" && req.user?.role !== "moderator") {
-      return next(new AppError("Bir yorumu sadece bir kez düzenleyebilirsiniz", 403));
+    if (
+      comment.edit_count >= 1 &&
+      req.user?.role !== "admin" &&
+      req.user?.role !== "moderator"
+    ) {
+      return next(
+        new AppError("Bir yorumu sadece bir kez düzenleyebilirsiniz", 403)
+      );
     }
 
     comment.text = text;
     comment.is_edited = true;
     comment.edit_count += 1;
-    
+
     await comment.save();
 
     const updatedComment = await Comment.findById(comment._id)
       .populate("user", "_id username profile_img_url")
       .lean();
 
-    res.json(updatedComment);
+    res.json({
+      message: "Yorum başarıyla güncellendi.",
+      success: true,
+      data: updatedComment,
+    });
   } catch (err: any) {
     next(new AppError(err.message || "Error updating comment", 500));
   }

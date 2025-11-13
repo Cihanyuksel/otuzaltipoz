@@ -248,7 +248,7 @@ const updatePassword = async (
     await user.save();
 
     res.status(200).json({
-      status: "success",
+      success: "true",
       message: "Password successfully updated",
     });
   } catch (error: any) {

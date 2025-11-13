@@ -13,12 +13,9 @@ import {
 import { AppError } from "../utils/AppError";
 //third-party
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 import cloudinary from "../config/cloudinary";
 import { randomBytes } from "crypto";
 import { config } from "../config/config";
-
-dotenv.config();
 
 interface JwtPayload {
   userId: string;
@@ -65,11 +62,11 @@ const signup = async (
     ]);
 
     if (existingEmail) {
-      return next(new AppError("Bu email zaten kullanılıyor.", 400));
+      return next(new AppError("Bu email zaten kullanılıyor.", 409));
     }
 
     if (existingUsername) {
-      return next(new AppError("Bu kullanıcı adı zaten alınmış.", 400));
+      return next(new AppError("Bu kullanıcı adı zaten alınmış.", 409));
     }
 
     let profile_img_url: string | undefined;
@@ -125,24 +122,35 @@ const signup = async (
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 saat
     });
 
-    // Send verification email
-    try {
-      sendVerifyEmail(newUser.email, newUser.username, verificationToken);
-    } catch (emailError: any) {
-      console.error("Email sending failed:", emailError);
-      // User and token delete
-      await Promise.all([
-        User.findByIdAndDelete(newUser._id),
-        Token.deleteOne({ userId: newUser._id, type: "emailVerification" }),
-      ]);
-      return next(
-        new AppError(
-          "E-posta gönderilirken bir hata oluştu. Lütfen tekrar deneyin.",
-          500
-        )
-      );
+    // test/dev env otomatic verify
+    let autoVerified = false;
+    if (config.node_env !== "production") {
+      newUser.is_verified = true;
+      await newUser.save();
+      autoVerified = true;
+    } else {
+      try {
+        await sendVerifyEmail(
+          newUser.email,
+          newUser.username,
+          verificationToken
+        );
+      } catch (emailError: any) {
+        console.error("Email sending failed:", emailError);
+        await Promise.all([
+          User.findByIdAndDelete(newUser._id),
+          Token.deleteOne({ userId: newUser._id, type: "emailVerification" }),
+        ]);
+        return next(
+          new AppError(
+            "E-posta gönderilirken bir hata oluştu. Lütfen tekrar deneyin.",
+            500
+          )
+        );
+      }
     }
 
+    // Response
     res.status(201).json({
       success: true,
       message: "Kayıt başarılı! E-postanı kontrol et ve hesabını aktifleştir.",
@@ -157,6 +165,10 @@ const signup = async (
         is_active: newUser.is_active,
         is_verified: newUser.is_verified,
       },
+      ...(autoVerified && {
+        auto_verified: true,
+        verification_token: verificationToken,
+      }),
     });
   } catch (err: any) {
     console.error("Signup error:", err);
@@ -225,7 +237,7 @@ const verifyEmail = async (
 };
 
 const login = async (
-  req: Request,
+req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -251,7 +263,7 @@ const login = async (
       return next(
         new AppError(
           "Hesabınız henüz aktifleştirilmemiş. Lütfen e-postanızı kontrol edin.",
-          401
+          403
         )
       );
     }
@@ -350,7 +362,7 @@ const refresh = async (
 
     if (!storedToken) {
       await RefreshToken.deleteMany({ userId: payload.userId });
-      res.status(403).json({
+      res.status(401).json({
         success: false,
         message: "Invalid refresh token or session revoked",
       });
@@ -359,7 +371,7 @@ const refresh = async (
 
     if (storedToken.expiresAt < new Date()) {
       await storedToken.deleteOne();
-      res.status(403).json({
+      res.status(401).json({
         success: false,
         message: "Token expired",
       });
@@ -389,6 +401,7 @@ const refresh = async (
 
     res.json({
       success: true,
+      messsage: "Access token yenilendi",
       accessToken: newAccessToken,
       user: {
         _id: user._id,
@@ -441,20 +454,3 @@ const logout = async (
 };
 
 export { login, logout, signup, refresh, verifyEmail };
-
-
-/*if (req.file?.buffer) {
-      const uploadResult: any = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "photos_app" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        stream.end(req.file!.buffer);
-      });
-
-      profile_img_url = uploadResult.secure_url;
-    }
-*/

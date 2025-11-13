@@ -41,7 +41,12 @@ export const sendContactMessage = async (
 
     // Send contact email
     try {
-      await sendContactEmail(fullName.trim(), email, phone?.trim(), message.trim());
+      await sendContactEmail(
+        fullName.trim(),
+        email,
+        phone?.trim(),
+        message.trim()
+      );
     } catch (emailError: any) {
       console.error("Contact email sending failed:", emailError);
       return next(
@@ -54,7 +59,8 @@ export const sendContactMessage = async (
 
     res.status(200).json({
       success: true,
-      message: "Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağız.",
+      message:
+        "Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağız.",
     });
   } catch (err: any) {
     console.error("Contact message error:", err);

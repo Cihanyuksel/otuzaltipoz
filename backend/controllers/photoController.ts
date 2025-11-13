@@ -28,6 +28,12 @@ import {
 } from "../types/photo.types";
 import Rating from "../models/Rating";
 import { checkOwnershipOrRole } from "../utils/authorization";
+import { streamUpload } from "../utils/cloudinaryUpload";
+import {
+  parseCategories,
+  parseTags,
+  validateCategories,
+} from "../utils/category";
 
 //======================================= GET ALL PHOTOS ====================================
 const getAllPhotos = async (
@@ -276,49 +282,34 @@ const createPhoto = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    if (!req.file) return next(new AppError("Photo required", 400));
+    if (!req.file?.buffer) {
+      return next(new AppError("Photo required", 400));
+    }
 
-    const result = cloudinary.uploader.upload_stream(
-      { folder: "photos_app" },
-      async (error, uploaded) => {
-        if (error) return next(new AppError("Upload Error", 500));
+    const categoriesArray = parseCategories(req.body.categories);
+    validateCategories(categoriesArray);
+    const tags = parseTags(req.body.tags);
+    const uploadResult = await streamUpload(req.file.buffer, "photos_app");
 
-        let categoriesArray: string[] = [];
-        if (req.body.categories) {
-          if (typeof req.body.categories === "string") {
-            categoriesArray = req.body.categories
-              .split(",")
-              .map((c: string) => c.trim());
-          } else if (Array.isArray(req.body.categories)) {
-            categoriesArray = req.body.categories;
-          }
-        }
+    const photo = await Photo.create({
+      user_id: req.user!.id,
+      photo_url: uploadResult.secure_url,
+      title: req.body.title,
+      description: req.body.description,
+      tags,
+      categories: categoriesArray,
+    });
 
-        if (categoriesArray.length < 1 || categoriesArray.length > 3) {
-          return next(new AppError("1-3 arası kategori seçmelisiniz", 400));
-        }
-
-        const tags: string[] = req.body.tags
-          ? req.body.tags.split(",").map((t: string) => t.trim())
-          : [];
-
-        const photo = await Photo.create({
-          user_id: req.user!.id,
-          photo_url: uploaded?.secure_url,
-          title: req.body.title,
-          description: req.body.description,
-          tags,
-          categories: categoriesArray,
-        });
-
-        res.status(201).json({ success: true, photo });
-      }
-    );
-
-    if (req.file?.buffer) result.end(req.file.buffer);
+    res.status(201).json({
+      success: true,
+      photo,
+    });
   } catch (err) {
-    const errorMessage: string =
-      err instanceof Error ? err.message : "Sunucu hatası";
+    if (err instanceof AppError) {
+      return next(err);
+    }
+
+    const errorMessage = err instanceof Error ? err.message : "Sunucu hatası";
     next(new AppError(errorMessage, 500));
   }
 };

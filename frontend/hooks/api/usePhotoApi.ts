@@ -76,7 +76,6 @@ export const useGetUserPhotos = (userId: string) =>
     staleTime: 1000 * 60,
     refetchOnWindowFocus: false,
   });
-
 //---------------------------------------------------------------------------------------------------------
 export const useGetLikedPhotos = (userId: string) =>
   useQuery<ApiResponse<Photo[]>>({

@@ -86,15 +86,15 @@ export const PHOTO_PATHS: PhotosPaths = {
 };
 
 export const COMMENTS_PATH: CommentPaths = {
-  GET_COMMENTS: (photoId) => `/comments/${photoId}`,
-  ADD_COMMENT: (photoId) => `/comments/${photoId}`,
-  UPDATE_COMMENT: (commentId) => `/comments/${commentId}`,
-  DELETE_COMMENT: (commentId) => `/comments/${commentId}`,
+  GET_COMMENTS: (photoId) => `/photos/comments/${photoId}`,
+  ADD_COMMENT: (photoId) => `/photos/comments/${photoId}`,
+  UPDATE_COMMENT: (commentId) => `/photos/comments/${commentId}`,
+  DELETE_COMMENT: (commentId) => `/photos/comments/${commentId}`,
 };
 
 export const LIKE_PATH: LikePaths = {
   GET_LIKES: (id) => `/photos/${id}/likes`,
-  TOGGLE_LIKE: (id) => `/photos/${id}/like`,
+  TOGGLE_LIKE: (id) => `/photos/${id}/toggle-like`,
 };
 
 export const RATING_PATH: RatingPaths = {
