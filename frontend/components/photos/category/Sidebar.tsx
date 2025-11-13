@@ -41,60 +41,74 @@ export default function Sidebar({
   MAX_CATEGORIES,
 }: ISidebar) {
   return (
-    <div
+    <aside
       className={`
-        hidden top-20 lg:block md:sticky md:top-0 2xl:top-44 md:self-start md:h-screen md:overflow-y-auto
-        bg-white border-r border-gray-200 shadow-xl shadow-gray-200/50 
-        transition-all duration-300 ease-in-out z-20 
-        ${isSidebarOpen ? 'w-1/6 p-4' : 'w-[100px] pt-5'}
+        hidden lg:block md:sticky top-0 self-start h-screen overflow-y-auto
+        bg-white /* Arka planı netleştirdik */
+        border-r border-gray-200 /* Sınır çizgisini biraz daha görünür yaptık */
+        transition-all  
+        ${isSidebarOpen ? 'w-1/6 p-5' : 'w-[90px] py-6 px-2 items-center'}
       `}
     >
       <div
-        className={`flex items-center mb-6 transition-all duration-300 ${
-          isSidebarOpen ? 'justify-between' : 'justify-center'
-        }`}
+        className={`
+          flex items-center transition-all duration-300 
+          pb-5 border-b border-gray-200 /* YENİ: Alt boşluk ve ayırıcı çizgi */
+          mb-6 /* Yeni boşluk ayarı */
+          ${isSidebarOpen ? 'justify-between' : 'justify-center flex-col gap-4'}
+        `}
       >
-        {isSidebarOpen && selectedCategories.length > 0 && (
-          <span className="bg-[#ef7464] text-white text-xs font-medium tracking-wider px-3 py-1.5 rounded-md shadow-md">
-            {selectedCategories.length}/{MAX_CATEGORIES}
-          </span>
-        )}
+        {isSidebarOpen
+          ? selectedCategories.length > 0 && (
+              <span className="bg-[#ef7464]/10 text-[#ef7464] text-xs font-bold px-3 py-1.5 rounded-full shadow-sm border border-[#ef7464]/20">
+                {selectedCategories.length}/{MAX_CATEGORIES}
+              </span>
+            )
+          : selectedCategories.length > 0 && (
+              <span className="bg-[#ef7464] text-white text-[10px] font-bold w-6 h-6 flex items-center justify-center rounded-full shadow-md animate-in zoom-in duration-300">
+                {selectedCategories.length}
+              </span>
+            )}
 
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="cursor-pointer p-1 hover:opacity-70 transition-opacity"
+          className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 hover:text-[#ef7464] transition-all duration-300 outline-none focus:ring-2 focus:ring-orange-100 cursor-pointer"
           aria-label={isSidebarOpen ? "Sidebar'ı kapat" : "Sidebar'ı aç"}
         >
-          {isSidebarOpen ? (
-            <CloseIcon size={32} className="text-[#ef7464]" />
-          ) : (
-            <MenuIcon size={20} className="text-gray-500" />
-          )}
+          {isSidebarOpen ? <CloseIcon size={28} /> : <MenuIcon size={22} />}
         </button>
       </div>
 
       {isSidebarOpen && selectedCategories.length > 0 && (
-        <div className="mb-4 flex flex-wrap gap-2 p-2 bg-gray-100 rounded-lg max-h-24 overflow-y-auto">
-          {selectedCategories.map((category) => (
-            <div
-              key={category}
-              className="flex items-center bg-[#ef7464] text-white text-xs px-2 py-1 rounded-full shadow-sm"
-            >
-              <span className="truncate max-w-[120px]">{category}</span>
-              <button
-                onClick={() => handleRemoveCategory(category)}
-                className="ml-1 text-white hover:text-gray-100 transition flex-shrink-0"
-                aria-label={`${category} kategorisini kaldır`}
+        <div className="pb-6 border-b border-gray-200 mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto custom-scrollbar p-1">
+            {selectedCategories.map((category) => (
+              <div
+                key={category}
+                className="group flex items-center gap-1.5 pl-3 pr-1 py-1 bg-[#ef7464]/5 border border-[#ef7464]/20 text-[#ef7464] text-xs font-semibold rounded-lg transition-all hover:bg-[#ef7464]/10 hover:shadow-sm"
               >
-                <CloseIcon size={18} />
-              </button>
-            </div>
-          ))}
+                <span className="truncate max-w-[120px]">{category}</span>
+                <button
+                  onClick={() => handleRemoveCategory(category)}
+                  className="p-0.5 rounded-md hover:bg-[#ef7464] hover:text-white text-[#ef7464]/70 transition-colors flex-shrink-0"
+                  aria-label={`${category} kategorisini kaldır`}
+                >
+                  <CloseIcon size={18} />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      <div className="overflow-y-auto transition-all duration-300">
-        <ul className="space-y-1">
+      <div
+        className={`
+          transition-all duration-300 
+          ${!isSidebarOpen && 'flex flex-col items-center'}
+          ${isSidebarOpen && selectedCategories.length === 0 && 'pt-1'} /* Çipler yokken boşluk olmasın diye ayar */
+        `}
+      >
+        <ul className="space-y-2">
           {categorySection.map((section) => {
             if (isCategorySection(section)) {
               return (
@@ -128,6 +142,6 @@ export default function Sidebar({
           })}
         </ul>
       </div>
-    </div>
+    </aside>
   );
 }

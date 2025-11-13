@@ -82,10 +82,10 @@ export const CategorySection: React.FC<ICategorySection> = ({
                         e.stopPropagation();
                         onRemoveCategory(item);
                       }}
-                      className="ml-2 flex-shrink-0 text-white hover:text-gray-100 transition focus:outline-none"
+                      className="ml-2 flex-shrink-0 text-white hover:text-gray-100 transition focus:outline-none cursor-pointer"
                       aria-label={`${item} kategorisini kaldır`}
                     >
-                      <CloseIcon size={12} />
+                      <CloseIcon size={18} />
                     </button>
                   )}
                 </Link>

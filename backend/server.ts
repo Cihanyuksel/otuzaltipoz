@@ -4,11 +4,11 @@ const env = process.env.NODE_ENV || "development";
 let envPath: string;
 
 if (env === "production") {
-  envPath = path.resolve(__dirname, `../.env.production`);
+  envPath = path.resolve(__dirname, `../.env.prod`);
 } else if (env === "test") {
   envPath = path.resolve(__dirname, `./.env.test`);
 } else {
-  envPath = path.resolve(__dirname, `./.env.development`);
+  envPath = path.resolve(__dirname, `./.env.dev`);
 }
 dotenv.config({ path: envPath });
 
