@@ -1,6 +1,6 @@
 'use client';
+
 import { notFound } from 'next/navigation';
-// project files
 import LoginModal from '../auth/login-modal';
 import EditPhotoModal from './edit-photo-modal/EditPhotoModal';
 import DeleteConfirmPhotoModal from '@/common/confirm-modal';
@@ -74,6 +74,7 @@ const PhotoDetail = () => {
                     totalVotes={currentTotalVotes}
                     onLoginRequired={() => handleModalToggle('login', true)}
                   />
+                  {/* Detay sayfasında searchQuery ve categories yok */}
                   <PhotoLikeButton
                     photoId={photo._id}
                     totalLikes={currentLikeCount}

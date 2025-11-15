@@ -1,12 +1,16 @@
 'use client';
 import { useEffect, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { usePhotos } from '@/context/PhotoContext';
 import { usePhotoContainerLogic } from './usePhotoContainerLogic';
 import PhotoContainerLayout from './PhotoContainerLayout';
 
+import MobileHeader from '../category/MobileHeader';
+import MobileMenu from '../category/MobileMenu';
+import Sidebar from '../category/Sidebar';
+import PhotoContent from './PhotoContent';
+import { MAX_CATEGORIES } from './constant';
+
 const PhotoContainer = () => {
-  const searchParams = useSearchParams();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   const {
@@ -18,8 +22,7 @@ const PhotoContainer = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    searchValue,
-    setSearchValue,
+    searchQuery,
   } = usePhotos();
 
   const {
@@ -32,33 +35,18 @@ const PhotoContainer = () => {
     setIsSidebarOpen,
     isMobileMenuOpen,
     setIsMobileMenuOpen,
-    debouncedSearchValue,
     isDebouncing,
     showNoResults,
     isCategoriesLoading,
   } = usePhotoContainerLogic({
-    searchValue,
+    searchValue: searchQuery,
     selectedCategories,
     setSelectedCategories,
     photos,
     isPhotosLoading,
   });
 
-  // URL'den kategori senkronizasyonu
-  useEffect(() => {
-    const categoriesFromUrl = searchParams.get('categories');
-
-    if (categoriesFromUrl) {
-      const categoriesArray = categoriesFromUrl.split(',').filter(Boolean);
-      if (JSON.stringify(categoriesArray) !== JSON.stringify(selectedCategories)) {
-        setSelectedCategories(categoriesArray);
-      }
-    } else if (selectedCategories.length > 0) {
-      setSelectedCategories([]);
-    }
-  }, [searchParams, selectedCategories, setSelectedCategories]);
-
-  // Infinite scroll observer
+  // 3. Efekt: Infinite scroll tetikleyicisi (Aynen kaldı)
   useEffect(() => {
     if (!hasNextPage || isFetchingNextPage || !loadMoreRef.current) {
       return;
@@ -83,27 +71,51 @@ const PhotoContainer = () => {
 
   return (
     <PhotoContainerLayout
-      photosError={photosError}
-      isMobileMenuOpen={isMobileMenuOpen}
-      setIsMobileMenuOpen={setIsMobileMenuOpen}
-      selectedCategories={selectedCategories}
-      sections={sections}
-      openSections={openSections}
-      handleSectionToggle={handleSectionToggle}
-      handleCategoryClick={handleCategoryClick}
-      handleRemoveCategory={handleRemoveCategory}
-      isSidebarOpen={isSidebarOpen}
-      setIsSidebarOpen={setIsSidebarOpen}
-      searchValue={searchValue}
-      setSearchValue={setSearchValue}
-      isPhotosLoading={isPhotosLoading}
-      isDebouncing={isDebouncing}
-      showNoResults={showNoResults}
-      photos={photos}
-      isFetchingNextPage={isFetchingNextPage}
-      isCategoriesLoading={isCategoriesLoading}
-      hasNextPage={hasNextPage}
-      loadMoreRef={loadMoreRef}
+      mobileHeader={
+        <MobileHeader
+          isMobileMenuOpen={isMobileMenuOpen}
+          setIsMobileMenuOpen={setIsMobileMenuOpen}
+          selectedCategories={selectedCategories}
+          MAX_CATEGORIES={MAX_CATEGORIES}
+        />
+      }
+      mobileMenu={
+        <MobileMenu
+          isMobileMenuOpen={isMobileMenuOpen}
+          categorySection={sections}
+          openSections={openSections}
+          handleSectionToggle={handleSectionToggle}
+          selectedCategories={selectedCategories}
+          handleCategoryClick={handleCategoryClick}
+          handleRemoveCategory={handleRemoveCategory}
+        />
+      }
+      sidebar={
+        <Sidebar
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          categorySection={sections}
+          openSections={openSections}
+          handleSectionToggle={handleSectionToggle}
+          selectedCategories={selectedCategories}
+          handleCategoryClick={handleCategoryClick}
+          handleRemoveCategory={handleRemoveCategory}
+          MAX_CATEGORIES={MAX_CATEGORIES}
+        />
+      }
+      content={
+        <PhotoContent
+          isPhotosLoading={isPhotosLoading}
+          isDebouncing={isDebouncing}
+          showNoResults={showNoResults}
+          photos={photos}
+          isFetchingNextPage={isFetchingNextPage}
+          isCategoriesLoading={isCategoriesLoading}
+          hasNextPage={hasNextPage}
+          loadMoreRef={loadMoreRef}
+          photosError={photosError}
+        />
+      }
     />
   );
 };

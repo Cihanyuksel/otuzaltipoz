@@ -1,12 +1,9 @@
 'use client';
-//nextjs and react
+
 import { forwardRef, memo } from 'react';
-//third-party
 import { FaHeart as HeartFilledIcon, FaRegHeart as HeartOutlineIcon } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-//project-files
 import { useAuth } from '@/context/AuthContext';
-import { usePhotos } from '@/context/PhotoContext';
 import { useToggleLike } from '@/hooks/api/useLikeApi';
 
 interface LikeButtonProps {
@@ -17,20 +14,13 @@ interface LikeButtonProps {
   onLoginRequired?: () => void;
   searchQuery?: string;
   categories?: string;
-  useContext?: boolean;
 }
 
 const PhotoLikeButton = memo(
   forwardRef<HTMLButtonElement, LikeButtonProps>(
-    (
-      { photoId, totalLikes, isLikedByMe, onOpenModal, onLoginRequired, searchQuery, categories, useContext = true },
-      ref
-    ) => {
+    ({ photoId, totalLikes, isLikedByMe, onOpenModal, onLoginRequired, searchQuery, categories }, ref) => {
       const { accessToken } = useAuth();
-      const { toggleLike: contextToggleLike, isLoading: contextLoading } = usePhotos();
-      const { mutate: apiToggleLike, isPending: apiPending } = useToggleLike();
-
-      const isLoading = useContext ? contextLoading : apiPending;
+      const { mutate: toggleLike, isPending } = useToggleLike();
 
       const handleToggle = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -45,25 +35,21 @@ const PhotoLikeButton = memo(
           return;
         }
 
-        if (useContext) {
-          contextToggleLike(photoId);
-        } else {
-          apiToggleLike(
-            {
-              photoId,
-              accessToken,
-              searchQuery,
-              categories,
-              hasToken: !!accessToken,
+        toggleLike(
+          {
+            photoId,
+            accessToken,
+            searchQuery,
+            categories,
+            hasToken: !!accessToken,
+          },
+          {
+            onError: (error) => {
+              toast.error('Beğeni işlemi başarısız oldu.');
+              console.error('Like toggle error:', error);
             },
-            {
-              onError: (error) => {
-                toast.error('Beğeni işlemi başarısız oldu.');
-                console.error('Like toggle error:', error);
-              },
-            }
-          );
-        }
+          }
+        );
       };
 
       const handleModalOpen = (e: React.MouseEvent) => {
@@ -74,7 +60,7 @@ const PhotoLikeButton = memo(
         }
       };
 
-      const heartIcon = isLoading ? (
+      const heartIcon = isPending ? (
         <div className="w-4 h-4 bg-gray-200 animate-pulse rounded" />
       ) : isLikedByMe ? (
         <HeartFilledIcon className="text-[#ef7464]" />
@@ -86,7 +72,7 @@ const PhotoLikeButton = memo(
         <div className="flex gap-2 border border-gray-200 p-2 rounded-md hover:bg-gray-50 transition-colors">
           <button
             onClick={handleToggle}
-            disabled={isLoading}
+            disabled={isPending}
             className="flex items-center justify-center gap-1 text-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
             ref={ref}
             aria-label={isLikedByMe ? 'Beğeniyi kaldır' : 'Beğen'}
@@ -109,5 +95,5 @@ const PhotoLikeButton = memo(
   )
 );
 
-PhotoLikeButton.displayName = 'LikeButton';
+PhotoLikeButton.displayName = 'PhotoLikeButton';
 export default PhotoLikeButton;

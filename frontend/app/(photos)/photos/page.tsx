@@ -1,11 +1,12 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-//import PhotoContainer from '@/components/photos/PhotoContainer';
 import Loader from '@/components/common/loader';
 import { Suspense } from 'react';
 import { queryClient } from 'lib/queryClient';
 import { photoService } from 'services/photoService';
 import { createPageMetadata } from 'lib/metadata';
-import PhotoContainer from '@/components/photos/photo-container/PhotoContainer'
+import PhotoContainer from '@/components/photos/photo-container/PhotoContainer';
+import { PhotosProvider } from '@/context/PhotoContext';
+
 export const metadata = createPageMetadata({
   title: 'Fotoğraflar | otuzaltıpoz',
   description: 'Tüm kategorilerdeki fotoğrafları keşfedin. otuzaltıpoz topluluğunda paylaşılan eşsiz anları inceleyin.',
@@ -15,15 +16,23 @@ export const metadata = createPageMetadata({
 
 async function prefetchPhotos() {
   try {
+    const queryKey = [
+      'photos',
+      {
+        searchQuery: '',
+        hasToken: false,
+        categories: undefined,
+      },
+    ];
+
     await queryClient.prefetchInfiniteQuery({
-      queryKey: ['photos', { searchQuery: '', hasToken: false, categories: '' }],
+      queryKey: queryKey,
       queryFn: async ({ pageParam = 0 }) => {
         const data = await photoService.getAllPhoto({
           searchQuery: '',
-          categories: '',
+          categories: undefined,
           offset: pageParam,
         });
-
         return data;
       },
       initialPageParam: 0,
@@ -37,9 +46,7 @@ async function prefetchPhotos() {
       pages: 1,
     });
 
-    const dehydrated = dehydrate(queryClient);
-
-    return dehydrated;
+    return dehydrate(queryClient);
   } catch (error) {
     console.error('SSR Prefetch error:', error);
     return dehydrate(queryClient);
@@ -52,9 +59,9 @@ export default async function PhotosPage() {
   return (
     <HydrationBoundary state={dehydratedState}>
       <Suspense fallback={<Loader aria-label="Fotoğraflar yükleniyor..." />}>
-        <div className="flex-1">
+        <PhotosProvider>
           <PhotoContainer />
-        </div>
+        </PhotosProvider>
       </Suspense>
     </HydrationBoundary>
   );

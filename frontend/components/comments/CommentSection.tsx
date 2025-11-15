@@ -69,8 +69,6 @@ export default function CommentSection({
   const commentCount = comments?.length || 0;
   const hasComments = commentCount > 0;
 
-  console.log(commentCount);
-
   // Early returns ile conditional rendering
   if (isLoadingComments && isLoggedIn) {
     return (

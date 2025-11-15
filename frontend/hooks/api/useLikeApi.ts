@@ -21,13 +21,24 @@ interface LikeData {
 const useToggleLike = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<ToggleLikeResponse, Error, ToggleLikeVariables, { previousLikes?: LikeData }>({
+  return useMutation<
+    ToggleLikeResponse,
+    Error,
+    ToggleLikeVariables,
+    {
+      previousLikes?: LikeData;
+      previousPhotos?: any;
+    }
+  >({
     mutationFn: ({ photoId }) => likeService.toggleLike(photoId),
 
     onMutate: async ({ photoId, searchQuery, hasToken, categories }) => {
       await queryClient.cancelQueries({ queryKey: ['likes', photoId] });
+      const queryKey = ['photos', { searchQuery, hasToken, categories }];
+      await queryClient.cancelQueries({ queryKey });
 
       const previousLikes = queryClient.getQueryData<LikeData>(['likes', photoId]);
+      const previousPhotos = queryClient.getQueryData(queryKey);
 
       if (previousLikes) {
         const newData = {
@@ -38,9 +49,9 @@ const useToggleLike = () => {
         queryClient.setQueryData(['likes', photoId], newData);
       }
 
-      const queryKey = ['photos', { searchQuery, hasToken, categories }];
       queryClient.setQueryData(queryKey, (oldData: any) => {
         if (!oldData) return oldData;
+
         return {
           ...oldData,
           pages: oldData.pages.map((page: any) => ({
@@ -58,12 +69,16 @@ const useToggleLike = () => {
         };
       });
 
-      return { previousLikes };
+      return { previousLikes, previousPhotos };
     },
 
     onSuccess: (_data, { photoId }) => {
-      queryClient.invalidateQueries({ queryKey: ['likes', photoId] });
       queryClient.invalidateQueries({ queryKey: ['likedPhotos'] });
+
+      queryClient.invalidateQueries({
+        queryKey: ['likes', photoId],
+        refetchType: 'none',
+      });
     },
 
     onError: (_err, { photoId, searchQuery, hasToken, categories }, context) => {
@@ -71,9 +86,14 @@ const useToggleLike = () => {
         queryClient.setQueryData(['likes', photoId], context.previousLikes);
       }
 
-      const queryKey = ['photos', { searchQuery, hasToken, categories }];
-      queryClient.invalidateQueries({ queryKey });
-      queryClient.invalidateQueries({ queryKey: ['likes', photoId] });
+      if (context?.previousPhotos) {
+        const queryKey = ['photos', { searchQuery, hasToken, categories }];
+        queryClient.setQueryData(queryKey, context.previousPhotos);
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: ['photos', { searchQuery, hasToken, categories }],
+      });
     },
   });
 };
@@ -84,7 +104,6 @@ const useGetLikes = (
   options?: Omit<UseQueryOptions<LikeData, Error>, 'queryKey' | 'queryFn'>
 ) => {
   const baseEnabled = !!photoId && !!accessToken;
-
   const finalEnabled = options?.enabled !== undefined ? baseEnabled && options.enabled : baseEnabled;
 
   return useQuery<LikeData, Error>({
@@ -93,8 +112,8 @@ const useGetLikes = (
       const result = await likeService.getLikes(photoId);
       return result;
     },
-    staleTime: 1000 * 30,
-    gcTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,

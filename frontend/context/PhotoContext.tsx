@@ -1,25 +1,23 @@
 'use client';
-import { createContext, useContext, ReactNode, useCallback, useState, useEffect } from 'react';
+import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { Photo } from 'types/photo';
 import { useAuth } from './AuthContext';
 import { useGetAllPhoto } from '@/hooks/api/usePhotoApi';
-import { useToggleLike } from '@/hooks/api/useLikeApi';
 
 interface PhotosContextType {
   photos: Photo[] | undefined;
   isLoading: boolean;
   error: Error | null;
-  toggleLike: (photoId: string) => void;
   refetch: () => void;
   selectedCategories: string[];
   setSelectedCategories: (categories: string[]) => void;
   fetchNextPage: () => void;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
-  searchValue: string;
-  setSearchValue: (val: string) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
 }
 
 const PhotosContext = createContext<PhotosContextType | undefined>(undefined);
@@ -33,9 +31,7 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
 
-  const [searchValue, setSearchValue] = useState('');
-  const [debouncedSearchValue, setDebouncedSearchValue] = useState(searchValue);
-
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [previousUserId, setPreviousUserId] = useState<string | null>(null);
 
@@ -48,12 +44,10 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
     hasNextPage,
     isFetchingNextPage,
   } = useGetAllPhoto(
-    debouncedSearchValue,
+    searchQuery,
     accessToken,
     selectedCategories.length > 0 ? selectedCategories.join(',') : undefined
   );
-
-  const toggleLikeMutation = useToggleLike();
 
   useEffect(() => {
     const currentUserId = user?._id || null;
@@ -62,9 +56,7 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
       queryClient.invalidateQueries({ queryKey: ['likes'] });
       queryClient.invalidateQueries({ queryKey: ['photos'] });
       queryClient.invalidateQueries({ queryKey: ['likedPhotos'] });
-
-      queryClient.removeQueries({ queryKey: ['likes'] });
-      queryClient.removeQueries({ queryKey: ['likedPhotos'] });
+      queryClient.invalidateQueries({ queryKey: ['ratings'] });
 
       setPreviousUserId(currentUserId);
     }
@@ -82,11 +74,6 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearchValue(searchValue), 500);
-    return () => clearTimeout(handler);
-  }, [searchValue]);
-
   const photos = allPhotos?.pages.flatMap((page: any) => page.data) ?? [];
 
   useEffect(() => {
@@ -95,32 +82,18 @@ export const PhotosProvider = ({ children }: PhotosProviderProps) => {
     }
   }, [user, refetch, allPhotos, isLoading, error]);
 
-  const toggleLike = useCallback(
-    (photoId: string) => {
-      toggleLikeMutation.mutate({
-        photoId,
-        accessToken,
-        searchQuery: debouncedSearchValue,
-        hasToken: !!accessToken,
-        categories: selectedCategories.join(',') || undefined,
-      });
-    },
-    [accessToken, toggleLikeMutation, debouncedSearchValue, selectedCategories]
-  );
-
   const value: PhotosContextType = {
     photos,
     isLoading,
     error,
-    toggleLike,
     refetch,
     selectedCategories,
     setSelectedCategories,
     fetchNextPage,
     hasNextPage: !!hasNextPage,
     isFetchingNextPage,
-    searchValue,
-    setSearchValue,
+    searchQuery,
+    setSearchQuery,
   };
 
   return <PhotosContext.Provider value={value}>{children}</PhotosContext.Provider>;

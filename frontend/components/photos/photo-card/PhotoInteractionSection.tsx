@@ -1,27 +1,34 @@
 'use client';
+
 import { useRef, useState, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { usePhotos } from '@/context/PhotoContext';
+import { useGetLikes } from '@/hooks/api/useLikeApi';
 import { useOutsideClick } from '@/hooks/ui/useOutsideClick';
 import PhotoLikeButton from './PhotoLikeButton';
 import LikedUsersModal from './LikedUsersModal';
 import RatingDisplay from './RatingDisplay';
+import { Photo } from 'types/photo';
 
 interface PhotoInteractionSectionProps {
   photoId: string;
+  photo: Photo;
 }
 
-function PhotoInteractionSection({ photoId }: PhotoInteractionSectionProps) {
+function PhotoInteractionSection({ photo, photoId }: PhotoInteractionSectionProps) {
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
   const likeButtonRef = useRef<HTMLButtonElement>(null);
 
   const { accessToken } = useAuth();
-  const { photos } = usePhotos();
+  const { searchQuery, selectedCategories } = usePhotos();
 
-  const photo = photos?.find((p) => p._id === photoId);
-  
-  const totalLikes = photo?.likeCount || 0;
-  const isLikedByMe = photo?.isLikedByMe || false;
+  const { data: likeData } = useGetLikes(photoId, accessToken, {
+    enabled: isLikesModalOpen,
+  });
+
+  const totalLikes = isLikesModalOpen && likeData ? likeData.likeCount : (photo?.likeCount ?? 0);
+
+  const isLikedByMe = isLikesModalOpen && likeData ? likeData.isLikedByMe : (photo?.isLikedByMe ?? false);
 
   const averageRating = photo?.averageRating || 0;
   const totalVotes = photo?.totalVotes || 0;
@@ -43,7 +50,8 @@ function PhotoInteractionSection({ photoId }: PhotoInteractionSectionProps) {
           totalLikes={totalLikes}
           isLikedByMe={isLikedByMe}
           onOpenModal={openLikesModal}
-          useContext={true}
+          searchQuery={searchQuery}
+          categories={selectedCategories.join(',') || undefined}
           ref={likeButtonRef}
         />
 

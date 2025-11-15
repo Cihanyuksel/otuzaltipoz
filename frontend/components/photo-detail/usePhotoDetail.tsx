@@ -16,7 +16,9 @@ export const usePhotoDetail = () => {
 
   const { data: photo, isLoading, isError } = useGetPhoto(photoId, { enabled: !isDeleting });
   const { data: likeData } = useGetLikes(photoId, accessToken, { enabled: !!photoId && !isDeleting });
-  const { data: ratingsData } = useGetRatings(photoId, accessToken, { enabled: !!photoId && !isDeleting && !!accessToken });
+  const { data: ratingsData } = useGetRatings(photoId, accessToken, {
+    enabled: !!photoId && !isDeleting && !!accessToken,
+  });
   const { mutate: deletePhoto, isPending, error } = useDeletePhoto();
 
   const handleModalToggle = (modal: keyof typeof modalStates, isOpen: boolean) => {

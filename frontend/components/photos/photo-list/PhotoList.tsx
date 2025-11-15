@@ -13,7 +13,7 @@ interface PhotoListProps {
   isFetchingNextPage?: boolean;
 }
 
-export default function PhotoList({ photos, isLoading, error, isFetchingNextPage }: PhotoListProps) {
+export default function PhotoList({ photos, error, isFetchingNextPage }: PhotoListProps) {
   const { currentIndex, openModal, closeModal, navigatePhotos } = usePhotoModal(photos.length);
 
   if (error) {
@@ -37,6 +37,7 @@ export default function PhotoList({ photos, isLoading, error, isFetchingNextPage
           onPhotoClick={() => openModal(index)}
           uploaderId={photo.user?._id}
           index={index}
+          photo={photo}
         />
       ))}
 
