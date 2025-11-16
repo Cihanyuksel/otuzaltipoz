@@ -133,3 +133,15 @@ export const useGetPopularPhotos = (timeRange: TimeRange) => {
   });
 };
 //---------------------------------------------------------------------------------------------------------
+export const useGetRandomPhotos = (limit: number) => {
+  return useQuery<ApiResponse<Photo[]>, Error>({
+    queryKey: ['randomPhotos', limit],
+
+    queryFn: () => photoService.getRandomPhoto(limit),
+    staleTime: 1000 * 60 * 15,
+    gcTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+};
+//---------------------------------------------------------------------------------------------------------

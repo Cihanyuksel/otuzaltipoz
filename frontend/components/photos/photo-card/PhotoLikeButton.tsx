@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '@/context/AuthContext';
 import { useToggleLike } from '@/hooks/api/useLikeApi';
 
-interface LikeButtonProps {
+interface ILikeButton {
   photoId: string;
   totalLikes: number;
   isLikedByMe: boolean;
@@ -38,7 +38,7 @@ const outlineHeartVariants: Variants = {
 };
 
 const PhotoLikeButton = memo(
-  forwardRef<HTMLButtonElement, LikeButtonProps>(
+  forwardRef<HTMLButtonElement, ILikeButton>(
     ({ photoId, totalLikes, isLikedByMe, onOpenModal, onLoginRequired, searchQuery, categories }, ref) => {
       const { accessToken } = useAuth();
       const { mutate: toggleLike, isPending } = useToggleLike();
@@ -82,11 +82,11 @@ const PhotoLikeButton = memo(
       };
 
       return (
-        <div className="flex gap-2 border border-gray-200 p-2 rounded-md hover:bg-gray-50 transition-colors">
+        <div className="flex lg:gap-2 border border-gray-200 p-2 rounded-md hover:bg-gray-50 transition-colors">
           <motion.button
             onClick={handleToggle}
             disabled={isPending}
-            className="flex items-center justify-center gap-1 text-sm cursor-pointer disabled:cursor-not-allowed"
+            className="flex items-center justify-center mr-2 lg:mr-0 text-sm cursor-pointer disabled:cursor-not-allowed"
             ref={ref}
             aria-label={isLikedByMe ? 'Beğeniyi kaldır' : 'Beğen'}
             whileTap={{ scale: 0.9 }}
@@ -94,7 +94,7 @@ const PhotoLikeButton = memo(
             <AnimatePresence mode="wait">
               {isLikedByMe ? (
                 <motion.div key="filled" variants={filledHeartVariants} initial="hidden" animate="visible" exit="exit">
-                  <HeartFilledIcon className="text-[#ef7464]" size={14} />
+                  <HeartFilledIcon className="text-[#ef7464] text-[12px] sm:text-[14px]" />{' '}
                 </motion.div>
               ) : (
                 <motion.div
@@ -113,7 +113,7 @@ const PhotoLikeButton = memo(
           {totalLikes > 0 && onOpenModal ? (
             <button
               onClick={handleModalOpen}
-              className="text-sm font-semibold cursor-pointer text-gray-700 hover:underline"
+              className="text-xs lg:text-sm font-semibold cursor-pointer text-gray-700 hover:underline"
             >
               {totalLikes} Beğeni
             </button>

@@ -1,59 +1,56 @@
-'use client'
+'use client';
 import { useAuth } from '@/context/AuthContext';
 import { motion, Variants } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { photoService } from 'services/photoService';
+import { useEffect, useMemo, useState } from 'react';
+import { useGetRandomPhotos } from '@/hooks/api/usePhotoApi';
+import { Photo } from 'types/photo';
+
+const TOTAL_PHOTOS_TO_FETCH = 10;
+const PHOTO_CHANGE_INTERVAL_MS = 6000;
 
 function HeroSection() {
-  const [randomPhoto, setRandomPhoto] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const { user } = useAuth();
-
   const MotionImage = motion.create(Image);
-  const PHOTO_CHANGE_INTERVAL_MS = 6000;
 
-  const fetchRandomPhoto = async () => {
-    setLoading(true);
+  const { data: photosResponse, isLoading } = useGetRandomPhotos(TOTAL_PHOTOS_TO_FETCH);
 
-    try {
-      const response = await photoService.getRandomPhoto(1);
-      const { data: photos } = response;
-      if (photos && photos.length > 0) {
-        setRandomPhoto(photos[0].photo_url);
-      } else {
-        setRandomPhoto('/image-not-found.png');
-      }
-    } catch (error) {
-      console.error(error);
-      setRandomPhoto('/image-not-found.png');
-    } finally {
-      setLoading(false);
+  const photoUrlList = useMemo(() => {
+    if (photosResponse && photosResponse.data.length > 0) {
+      return photosResponse.data.map((photo: Photo) => photo.photo_url);
     }
-  };
+    return ['/image-not-found.png'];
+  }, [photosResponse]);
 
   useEffect(() => {
-    fetchRandomPhoto();
-    const interval = setInterval(fetchRandomPhoto, PHOTO_CHANGE_INTERVAL_MS);
+    if (photoUrlList.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % photoUrlList.length);
+    }, PHOTO_CHANGE_INTERVAL_MS);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [photoUrlList]);
 
   const imageVariants: Variants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.7, ease: 'easeInOut' } },
   };
 
+  const currentPhoto = photoUrlList[currentIndex];
+
   return (
     <>
       <section className="relative w-full h-[85vh] bg-cover bg-center text-white flex items-center justify-center">
-        {loading || !randomPhoto ? (
+        {isLoading || !currentPhoto ? (
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
         ) : (
-          randomPhoto && (
+          currentPhoto && (
             <MotionImage
-              key={randomPhoto}
-              src={randomPhoto}
+              key={currentPhoto}
+              src={currentPhoto}
               alt="Günün Fotoğrafı"
               fill
               className="absolute inset-0 -z-10 object-cover"
