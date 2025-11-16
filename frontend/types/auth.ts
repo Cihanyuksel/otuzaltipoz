@@ -47,3 +47,10 @@ export interface ContactData {
   phone?: string;
   message: string;
 }
+
+export interface ILikedByUser {
+  _id: string;
+  username: string;
+  role?: string;
+  profile_img_url?: string;
+}

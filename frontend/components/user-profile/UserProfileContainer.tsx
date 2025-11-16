@@ -7,11 +7,11 @@ import { useGetUser } from '@/hooks/api/useAuthApi';
 import Loader from '@/components/common/loader';
 import UserProfile from './UserProfile';
 
-interface IUserProfileContainerProps {
+interface IUserProfileContainer {
   userId?: string;
 }
 
-const UserProfileContainer = ({ userId: userIdFromServer }: IUserProfileContainerProps) => {
+const UserProfileContainer = ({ userId: userIdFromServer }: IUserProfileContainer) => {
   const { user: currentUser } = useAuth();
   const params = useParams();
   const userIdFromParams = params?.id as string | undefined;
@@ -48,7 +48,7 @@ const UserProfileContainer = ({ userId: userIdFromServer }: IUserProfileContaine
   const isError = isUserError || (activeTab === 'uploaded' ? isUploadedError : isLikedError);
   const imageUrl = profileOwner?.profile_img_url || '/no_profile.png';
   const photosToShow = activeTab === 'uploaded' ? uploadedData?.data || [] : likedData?.data || [];
-  
+
   if (isLoading) return <Loader />;
 
   if (isError || !profileOwner) {

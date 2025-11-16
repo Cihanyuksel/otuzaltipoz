@@ -10,6 +10,5 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default async function UserProfilePage() {
-  
   return <UserProfileContainer />;
 }

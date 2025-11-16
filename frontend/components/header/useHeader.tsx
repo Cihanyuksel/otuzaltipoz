@@ -7,7 +7,7 @@ const useHeader = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const { user, logout, loading, setAuth } = useAuth();
+  const { user, logout, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const isLogoutPending = logout.isPending;
@@ -20,11 +20,8 @@ const useHeader = () => {
 
   const handleLogout = () => {
     setDropdownOpen(false);
-
+    router.push('/');
     logout.mutate(undefined, {
-      onSuccess: () => {
-        setAuth(null);
-      },
       onError: () => {
         router.back();
       },

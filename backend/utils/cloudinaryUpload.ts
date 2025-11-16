@@ -1,14 +1,29 @@
 import { Readable } from "stream";
-import cloudinary from "../config/cloudinary";
+import cloudinary, { UploadApiOptions, UploadApiResponse } from "cloudinary";
 import { config } from "../config/config";
 
-export const streamUpload = (buffer: Buffer, typeFolder: string) => {
-  return new Promise<{ secure_url: string }>((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: `${config.cloudinary.folder}/${typeFolder}` },
+type CloudinaryUploadOptions = UploadApiOptions;
+
+export const streamUpload = (
+  buffer: Buffer,
+  options: CloudinaryUploadOptions
+): Promise<UploadApiResponse> => {
+  return new Promise((resolve, reject) => {
+    const uploadOptions: CloudinaryUploadOptions = {
+      ...options,
+      folder: `${config.cloudinary.folder}/${options.folder || "general"}`,
+    };
+
+    const uploadStream = cloudinary.v2.uploader.upload_stream(
+      uploadOptions,
       (error, result) => {
-        if (error) return reject(error);
-        resolve(result as { secure_url: string });
+        if (error) {
+          return reject(error);
+        }
+        if (result) {
+          return resolve(result);
+        }
+        reject(new Error("Cloudinary'den bir yanıt alınamadı."));
       }
     );
 

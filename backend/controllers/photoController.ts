@@ -289,7 +289,13 @@ const createPhoto = async (
     const categoriesArray = parseCategories(req.body.categories);
     validateCategories(categoriesArray);
     const tags = parseTags(req.body.tags);
-    const uploadResult = await streamUpload(req.file.buffer, "photos_app");
+    const uploadResult = await streamUpload(req.file.buffer, {
+      folder: `photos/${req.user!.id}`,
+      transformation: [
+        { width: 1920, crop: "limit" },
+        { quality: "auto", format: "webp" },
+      ],
+    });
 
     const photo = await Photo.create({
       user_id: req.user!.id,
@@ -537,21 +543,26 @@ const getPopularPhotos = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const limit: number = parseInt(req.query.limit as string) || 10;
+    const maxLimit = 50;
+    let limit: number = parseInt(req.query.limit as string) || 10;
+    limit = limit > maxLimit ? maxLimit : limit;
+    limit = limit <= 0 ? 10 : limit;
     const timeframe: string | undefined = req.query.timeframe as string;
 
     let dateFilter: IPhotoQueryFilter = {};
     if (timeframe === "day") {
       const dayAgo = new Date();
-      dayAgo.setHours(0, 0, 0, 0);
+      dayAgo.setUTCHours(0, 0, 0, 0);
       dateFilter = { created_at: { $gte: dayAgo } };
     } else if (timeframe === "week") {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
+      weekAgo.setUTCHours(0, 0, 0, 0);
       dateFilter = { created_at: { $gte: weekAgo } };
     } else if (timeframe === "month") {
       const monthAgo = new Date();
       monthAgo.setMonth(monthAgo.getMonth() - 1);
+      monthAgo.setUTCHours(0, 0, 0, 0);
       dateFilter = { created_at: { $gte: monthAgo } };
     }
 
@@ -612,9 +623,8 @@ const getPopularPhotos = async (
     let isLikedMap = new Set<string>();
 
     if (loggedInUserId && popularPhotos.length > 0) {
-      const photoIds: Types.ObjectId[] = popularPhotos.map((photo) =>
-        Types.ObjectId.createFromHexString(photo._id.toString())
-      );
+      const photoIds = popularPhotos.map((photo) => photo._id);
+
       const userLikes = await Like.find({
         photo_id: { $in: photoIds },
         user_id: new mongoose.Types.ObjectId(loggedInUserId),

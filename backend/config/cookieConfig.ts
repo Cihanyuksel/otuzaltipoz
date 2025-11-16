@@ -23,4 +23,5 @@ export const clearRefreshTokenCookieConfig: CookieOptions = {
   secure: isProduction,
   sameSite: isProduction ? "strict" : "lax",
   path: "/",
+  maxAge: 0,
 };

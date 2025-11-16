@@ -13,9 +13,9 @@ import {
 import { AppError } from "../utils/AppError";
 //third-party
 import jwt from "jsonwebtoken";
-import cloudinary from "../config/cloudinary";
 import { randomBytes } from "crypto";
 import { config } from "../config/config";
+import { streamUpload } from "../utils/cloudinaryUpload";
 
 interface JwtPayload {
   userId: string;
@@ -71,27 +71,17 @@ const signup = async (
 
     let profile_img_url: string | undefined;
 
-    // Handle profile image upload
     if (req.file?.buffer) {
       try {
-        const uploadResult: any = await new Promise((resolve, reject) => {
-          const stream = cloudinary.uploader.upload_stream(
-            {
-              folder: "photos_app/profiles",
-              transformation: [
-                { width: 300, height: 300, crop: "fill", gravity: "face" },
-                { quality: "auto", format: "webp" },
-              ],
-            },
-            (error, result) => {
-              if (error) reject(error);
-              else resolve(result);
-            }
-          );
-          stream.end(req.file!.buffer);
+        const uploadResult = await streamUpload(req.file.buffer, {
+          folder: "profiles",
+          transformation: [
+            { width: 300, height: 300, crop: "fill", gravity: "face" },
+            { quality: "auto", format: "webp" },
+          ],
         });
         profile_img_url = uploadResult.secure_url;
-      } catch (cloudErr: any) {
+      } catch (cloudErr: unknown) {
         console.error("Cloudinary upload error:", cloudErr);
         return next(
           new AppError("Profil resmi yüklenirken bir hata oluştu.", 500)
@@ -237,7 +227,7 @@ const verifyEmail = async (
 };
 
 const login = async (
-req: Request,
+  req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {

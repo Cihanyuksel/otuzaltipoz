@@ -14,8 +14,10 @@ const PhotoGallery = memo(({ photosToShow, isOwner, activeTab }: IPhotoGallery) 
   const getEmptyMessage = () => {
     if (activeTab === 'liked') {
       return {
-        title: 'Henüz fotoğraf beğenmediniz.',
-        subtitle: 'Beğendiğiniz fotoğraflar burada görünecektir.',
+        title: isOwner ? 'Henüz fotoğraf beğenmediniz' : 'Henüz fotoğraf beğenilmedi',
+        subtitle: isOwner
+          ? 'Beğendiğiniz fotoğraflar burada görünecektir'
+          : 'Beğenilen fotoğraflar burada görünecektir',
       };
     }
 

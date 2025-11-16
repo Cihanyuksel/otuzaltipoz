@@ -142,7 +142,7 @@ router.post(
   validateFile({
     required: false,
     allowedTypes: ["image/jpeg", "image/png", "image/webp", "image/jpg"],
-    maxSize: 5 * 1024 * 1024,
+    maxSize: 1 * 1024 * 1024,
   }),
   validate({ body: signupSchema }),
   signup
