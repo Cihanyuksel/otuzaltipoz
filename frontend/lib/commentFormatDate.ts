@@ -4,26 +4,40 @@ export const commentFormatDate = (dateString: string): string => {
 
   const diffInMs = now.getTime() - date.getTime();
   const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
 
-  // less than 1 minute
+  // < 1 dakika
   if (diffInMinutes < 1) {
     return 'Şimdi';
   }
 
-  // less than 60 minutes: "X minutes ago"
+  // < 60 dakika
   if (diffInMinutes < 60) {
     return `${diffInMinutes} dakika önce`;
   }
 
-  // less than 24 hours: "X hours ago"
-  const diffInHours = Math.floor(diffInMinutes / 60);
+  // < 24 saat
   if (diffInHours < 24) {
     return `${diffInHours} saat önce`;
   }
 
-  // more than 1 day has passed: full date and time
-  const formattedDate = date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
-  const formattedTime = date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+  // < 7 gün → X gün önce
+  if (diffInDays < 7) {
+    return `${diffInDays} gün önce`;
+  }
 
-  return `${formattedDate} - ${formattedTime}`;
+  // tam 7 gün → 1 hafta önce
+  if (diffInDays === 7) {
+    return '1 hafta önce';
+  }
+
+  // > 7 gün → tam tarih 
+  const formattedDate = date.toLocaleDateString('tr-TR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
+  return formattedDate;
 };

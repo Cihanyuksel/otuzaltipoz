@@ -82,7 +82,7 @@ const PhotoLikeButton = memo(
       };
 
       return (
-        <div className="flex lg:gap-2 border border-gray-200 p-2 rounded-md hover:bg-gray-50 transition-colors">
+        <div className="flex lg:gap-2 w-full md:w-auto text-center border border-gray-200 p-2 rounded-md hover:bg-gray-50 transition-colors">
           <motion.button
             onClick={handleToggle}
             disabled={isPending}

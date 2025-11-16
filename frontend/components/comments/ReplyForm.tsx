@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import Button from '../common/button';
+import TextArea from '../common/text-area';
 
 interface IReplyForm {
   userPhoto?: string;
@@ -32,14 +33,13 @@ export default function ReplyForm({ userPhoto, onSubmit, onCancel, isSubmitting,
         className="h-8 w-8 object-cover flex-shrink-0 rounded-full"
       />
       <div className="w-full">
-        <textarea
-          className="form-textarea w-full p-2 rounded-md border-gray-300 bg-gray-50 text-xs focus:border-blue-500 focus:ring-blue-500"
-          placeholder={`${replyingTo ? '@' + replyingTo + ' kullanıcısına yanıt ver...' : 'Yanıt yaz...'}`}
-          rows={2}
+        <TextArea
           value={text}
           onChange={(e) => setText(e.target.value)}
+          placeholder={replyingTo ? `@${replyingTo} kullanıcısına yanıt ver...` : 'Yanıt yaz...'}
           autoFocus
         />
+
         <div className="flex gap-2 mt-1">
           <Button type="submit" variant="primary" size="small" disabled={isSubmitting || !text.trim()}>
             {isSubmitting ? 'Gönderiliyor...' : 'Gönder'}

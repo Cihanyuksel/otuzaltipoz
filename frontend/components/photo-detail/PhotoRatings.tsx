@@ -70,15 +70,17 @@ export default function PhotoRatings({
     );
   };
 
+  const iconClasses = "w-4 h-4 sm:w-6 sm:h-6 transition-all duration-150";
+
   return (
-    <div className="flex flex-col gap-3 w-full md:items-end">
+    <div className="flex flex-col w-full md:items-end">
       <div className="flex items-baseline gap-2">
         <span className="text-md md:text-2xl font-bold text-gray-900">{averageRating.toFixed(2)}</span>
         <span className="text-sm text-gray-500">/ 5</span>
       </div>
       <p className="hidden md:block text-sm text-gray-500">{totalVotes} kişi oy verdi</p>
 
-      <div ref={starRef} className="mt-2 flex flex-row-reverse items-center justify-end mr-10 flex-shrink-0">
+      <div ref={starRef} className="mt-2 flex flex-row-reverse items-center justify-end flex-shrink-0">
         <div className="relative flex items-center">
           {rating > 0 && (
             <motion.button
@@ -155,13 +157,16 @@ export default function PhotoRatings({
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   className={isPending ? 'opacity-50' : ''}
                 >
-                  {n <= rating ? <StarFilledIcon color="gold" size={30} /> : <StarOutlineIcon color="gray" size={30} />}
-                </motion.div>
+<div>
+      {n <= rating 
+        ? <StarFilledIcon color="gold" className={iconClasses} /> 
+        : <StarOutlineIcon color="gray" className={iconClasses} />}
+    </div>                </motion.div>
               </label>
             ))}
           </div>
         </div>
-        <p className="mr-4 flex-shrink-0 text-md font-medium text-gray-600">Fotoğrafı Oyla</p>
+        <p className="mr-4 flex-shrink-0 lg:text-md text-xs font-medium text-gray-600">Fotoğrafı Oyla</p>
       </div>
 
       {errorMessage && (

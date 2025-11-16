@@ -103,10 +103,17 @@ export default function CommentItem({
   const truncatedCommentText = truncateText(comment.text, MAX_COMMENT_LENGTH);
   const canDelete = canManageComment(currentUser?.role, isOwnComment);
 
+  const deleteConfirmText = (
+    <>
+      <strong>{truncatedCommentText}</strong> isimli yorumunuzu silmek istediğinizden emin misiniz? Bu işlem geri
+      alınamaz.
+    </>
+  );
+
   return (
     <div
       style={{ paddingLeft }}
-      className={`flex items-start gap-4 mb-6 transition-all duration-300 transform relative ${
+      className={`flex items-start gap-4 mb-3 transition-all duration-300 transform relative ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
       }`}
     >
@@ -120,13 +127,16 @@ export default function CommentItem({
       <div className="flex-1">
         <div className="bg-gray-100 rounded-lg p-3">
           <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col lg:justify-center lg:items-center lg:flex-row gap-1 lg:gap-2">
               <span className="font-semibold text-sm">{comment.user?.username}</span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-400">
                 • {commentFormatDate(comment.created_at)}
                 {comment.is_edited && (
-                  <span className="ml-1 text-gray-400" title={`Düzenlendi: ${commentFormatDate(comment.updated_at)}`}>
-                    (düzenlendi)
+                  <span
+                    className="text-xs ml-1 text-gray-400"
+                    title={`Düzenlendi: ${commentFormatDate(comment.updated_at)}`}
+                  >
+                    (günc.)
                   </span>
                 )}
               </span>
@@ -142,16 +152,30 @@ export default function CommentItem({
               </button>
             )}
           </div>
-          {!showEditForm ? (
+          <div
+            className={`
+          transition-all duration-300 ease-in-out overflow-hidden
+          ${!showEditForm ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} 
+        `}
+          >
             <p className="text-sm text-gray-700">{comment.text}</p>
-          ) : (
-            <EditCommentForm
-              initialText={comment.text}
-              onSubmit={handleEditSubmit}
-              isSubmitting={isEditing}
-              onCancel={() => setShowEditForm(false)}
-            />
-          )}
+          </div>
+
+          <div
+            className={`
+          transition-all duration-300 ease-in-out overflow-hidden
+          ${showEditForm ? 'max-h-screen opacity-100 mt-2' : 'max-h-0 opacity-0'}
+        `}
+          >
+            {showEditForm && (
+              <EditCommentForm
+                initialText={comment.text}
+                onSubmit={handleEditSubmit}
+                isSubmitting={isEditing}
+                onCancel={() => setShowEditForm(false)}
+              />
+            )}
+          </div>
         </div>
 
         {!showEditForm && (
@@ -230,12 +254,7 @@ export default function CommentItem({
         isOpen={deleteModal}
         onClose={handleCloseDeleteModal}
         title="Yorumu Sil"
-        message={
-          <>
-            <strong>{truncatedCommentText}</strong> isimli yorumunuzu silmek istediğinizden emin misiniz? Bu işlem geri
-            alınamaz.
-          </>
-        }
+        message={deleteConfirmText}
         onConfirm={() => onDelete(comment._id)}
         confirmButtonText="Sil"
         isConfirming={isDeleting}

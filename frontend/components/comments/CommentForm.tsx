@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { FaRegComments as CommentIcon } from 'react-icons/fa';
 import { useState } from 'react';
 import Button from '../common/button';
+import TextArea from '../common/text-area';
 
 interface ICommentForm {
   userPhoto?: string;
@@ -29,6 +30,11 @@ export default function CommentForm({ userPhoto, onSubmit, isSubmitting, placeho
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
+    if (error) setError('');
+  };
+
   const isLoggedIn = !!token;
 
   return (
@@ -41,19 +47,8 @@ export default function CommentForm({ userPhoto, onSubmit, isSubmitting, placeho
         className="h-10 w-10 object-cover flex-shrink-0 rounded-full"
       />
       <div className="w-full">
-        <textarea
-          className="w-full p-2 rounded-md bg-gray-100 text-sm
-             border border-gray-300 outline-none
-              focus:ring-1 focus:ring-[#ef7464]
-             focus:!border-[#ef7464]"
-          placeholder={placeholder || 'Yorum ekle...'}
-          rows={3}
-          value={text}
-          onChange={(e) => {
-            setText(e.target.value);
-            if (error) setError('');
-          }}
-        />
+        <TextArea value={text} onChange={handleChange} placeholder={placeholder || 'Yorum ekle...'} />
+
         {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
 
         <Button
