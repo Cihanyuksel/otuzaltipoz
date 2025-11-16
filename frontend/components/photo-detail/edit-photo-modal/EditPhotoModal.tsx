@@ -5,9 +5,10 @@ import { useUpdatePhoto } from '@/hooks/api/usePhotoApi';
 import { Photo } from 'types/photo';
 import { PhotoEditFormValues, photoEditSchema } from 'lib/schemas';
 import { transformFormData } from './utils';
-import { ModalOverlay } from '../../common/modal-overlay';
 import { ModalHeader } from './ModalHeader';
 import { EditPhotoForm } from './EditPhotoForm';
+import { useEffect } from 'react';
+import { ModalOverlay } from '@/components/common/modal-overlay';
 
 interface EditPhotoModalProps {
   isOpen: boolean;
@@ -15,18 +16,23 @@ interface EditPhotoModalProps {
   photo: Photo;
 }
 
-const EditPhotoModal = ({ onClose, photo }: EditPhotoModalProps) => {
+const EditPhotoModal = ({ onClose, photo, isOpen }: EditPhotoModalProps) => {
   const form = useForm<PhotoEditFormValues>({
     resolver: zodResolver(photoEditSchema),
-    defaultValues: {
-      title: photo.title,
-      description: photo.description || '',
-      tags: photo.tags?.join(', ') || '',
-    },
     mode: 'onChange',
   });
 
   const { mutate, isPending, error } = useUpdatePhoto();
+
+  useEffect(() => {
+    if (isOpen) {
+      form.reset({
+        title: photo.title,
+        description: photo.description || '',
+        tags: photo.tags?.join(', ') || '',
+      });
+    }
+  }, [isOpen, photo, form]);
 
   const handleClose = () => {
     form.reset();
@@ -35,7 +41,6 @@ const EditPhotoModal = ({ onClose, photo }: EditPhotoModalProps) => {
 
   const onSubmit = (data: PhotoEditFormValues) => {
     const transformedData = transformFormData(data);
-
     mutate(
       { id: photo._id, updatedData: transformedData },
       {
@@ -49,11 +54,14 @@ const EditPhotoModal = ({ onClose, photo }: EditPhotoModalProps) => {
 
   const isLoading = form.formState.isSubmitting || isPending;
 
+  if (!isOpen) {
+    return null;
+  }
+
   return (
     <ModalOverlay onClose={handleClose} isLoading={isLoading}>
       <div className="w-full max-w-lg bg-white rounded-lg shadow-xl transform transition-all">
         <ModalHeader onClose={handleClose} isLoading={isLoading} />
-
         <EditPhotoForm
           form={form}
           onSubmit={onSubmit}

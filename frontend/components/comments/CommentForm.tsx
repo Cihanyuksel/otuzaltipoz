@@ -42,15 +42,16 @@ export default function CommentForm({ userPhoto, onSubmit, isSubmitting, placeho
       />
       <div className="w-full">
         <textarea
-          className="form-textarea w-full p-2 rounded-md border-gray-300 bg-gray-100 text-sm focus:border-blue-500 focus:ring-blue-500"
+          className="w-full p-2 rounded-md bg-gray-100 text-sm
+             border border-gray-300 outline-none
+              focus:ring-1 focus:ring-[#ef7464]
+             focus:!border-[#ef7464]"
           placeholder={placeholder || 'Yorum ekle...'}
           rows={3}
           value={text}
           onChange={(e) => {
             setText(e.target.value);
-            if (error) {
-              setError('');
-            }
+            if (error) setError('');
           }}
         />
         {error && <p className="text-red-500 text-sm mt-1">{error}</p>}

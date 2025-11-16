@@ -10,16 +10,15 @@ import { User } from 'types/auth';
 interface IEditProfileTab {
   isPending: boolean;
   handleClose: () => void;
-  user: User;
+  profileOwner: User;
   form: UseFormReturn<ProfileUpdateFormValues> & {
     onSubmit: (data: ProfileUpdateFormValues) => void;
     isSubmitting: boolean;
   };
 }
 
-const EditProfileTab: React.FC<IEditProfileTab> = ({ isPending, handleClose, user, form }) => {
-  const [previewImage, setPreviewImage] = useState<string | null>(user.profile_img_url || null);
-  console.log(user, 'profile tab');
+const EditProfileTab: React.FC<IEditProfileTab> = ({ isPending, handleClose, profileOwner, form }) => {
+  const [previewImage, setPreviewImage] = useState<string | null>(profileOwner.profile_img_url || null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 

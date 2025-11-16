@@ -1,9 +1,11 @@
+import { memo } from 'react';
+
 interface IProfileTabs {
   activeTab: 'uploaded' | 'liked';
   handleTabChange: (tab: 'uploaded' | 'liked') => void;
 }
 
-const ProfileTabs = ({ activeTab, handleTabChange }: IProfileTabs) => {
+const ProfileTabs = memo(({ activeTab, handleTabChange }: IProfileTabs) => {
   return (
     <div className="border-b border-[#d3deda]">
       <nav className="-mb-px flex space-x-8">
@@ -30,6 +32,6 @@ const ProfileTabs = ({ activeTab, handleTabChange }: IProfileTabs) => {
       </nav>
     </div>
   );
-};
+});
 
 export default ProfileTabs;

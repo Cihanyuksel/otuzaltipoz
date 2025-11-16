@@ -43,10 +43,7 @@ export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null
   });
 };
 //---------------------------------------------------------------------------------------------------------
-export const useGetPhoto = (
-  id: string,
-  options?: Omit<UseQueryOptions<Photo | null, Error>, 'queryKey' | 'queryFn'>
-) =>
+export const useGetPhoto = (id: string, options?: Omit<UseQueryOptions<Photo | null, Error>, 'queryKey' | 'queryFn'>) =>
   useQuery<Photo | null, Error>({
     queryKey: ['photos', id],
     queryFn: () => photoService.getPhoto(id),
@@ -117,6 +114,22 @@ export const useDeletePhoto = () => {
     onError: (error, id) => {
       console.error(`Fotoğraf (${id}) silinirken hata oluştu:`, error);
     },
+  });
+};
+//---------------------------------------------------------------------------------------------------------
+type TimeRange = 'all' | 'month' | 'week' | 'day';
+export const useGetPopularPhotos = (timeRange: TimeRange) => {
+  return useQuery({
+    queryKey: ['popularPhotos', timeRange],
+
+    queryFn: async () => {
+      const response = await photoService.getPopularPhotos(10, timeRange);
+      return response.data || [];
+    },
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
 //---------------------------------------------------------------------------------------------------------

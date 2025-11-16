@@ -1,20 +1,16 @@
+'use client';
 import Loader from '@/common/loader';
+import { usePhotos } from '@/context/PhotoContext';
 
 interface ILoadMoreIndicator {
   loadMoreRef: React.RefObject<HTMLDivElement | null>;
-  isFetchingNextPage: boolean;
   isCategoriesLoading: boolean;
-  hasNextPage: boolean;
   showNoResults: boolean;
 }
 
-const LoadMoreIndicator = ({
-  loadMoreRef,
-  isFetchingNextPage,
-  isCategoriesLoading,
-  hasNextPage,
-  showNoResults,
-}: ILoadMoreIndicator) => {
+const LoadMoreIndicator = ({ loadMoreRef, isCategoriesLoading, showNoResults }: ILoadMoreIndicator) => {
+  const { isFetchingNextPage, hasNextPage } = usePhotos();
+
   return (
     <div
       data-testid="load-more"

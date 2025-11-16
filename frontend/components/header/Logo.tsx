@@ -6,21 +6,18 @@ interface LogoProps {
 }
 
 export default function Logo({ isScrolled }: LogoProps) {
-  const logoWidth = isScrolled ? 100 : 150;
-  const logoHeight = isScrolled ? 100 : 150;
+  const scrolledClasses = isScrolled ? 'sm:w-24 md:w-24 lg:w-28' : 'sm:w-28 md:w-32 lg:w-36';
 
   return (
-    <>
-      <Link href="/" className="font-bold text-[#ef7464]">
-        <Image
-          src={'/logo.png'}
-          alt="Otuzaltıpoz Logo"
-          priority
-          width={logoWidth}
-          height={logoHeight}
-          className="transition-all duration-300"
-        />
-      </Link>
-    </>
+    <Link href="/" className="font-bold text-[#ef7464] block">
+      <Image
+        src="/logo.png"
+        alt="Otuzaltıpoz Logo"
+        priority
+        width={200}
+        height={200}
+        className={`transition-all duration-300 w-24 ${scrolledClasses} h-auto object-contain block`}
+      />
+    </Link>
   );
 }

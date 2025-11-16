@@ -10,7 +10,6 @@ interface IPhotoCard {
   imageUrl: string;
   uploader: string;
   profileImgUrl?: string;
-  averageRating: number;
   tags: string[];
   initialLikes?: number;
   isLikedByMe?: boolean;

@@ -23,9 +23,14 @@ const useRatePhoto = () => {
       return { previousRatings };
     },
 
-    onSuccess: (_data, { photoId, searchQuery, hasToken, categories }) => {
-      queryClient.invalidateQueries({ queryKey: ['ratings', photoId] });
-      queryClient.invalidateQueries({ queryKey: ['photo', photoId] });
+    onSuccess: (data, { photoId, searchQuery, hasToken, categories }) => {
+      queryClient.setQueryData(['ratings', photoId], {
+        averageRating: data.averageRating,
+        totalVotes: data.totalVotes,
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['photos', photoId] });
+
       const queryKey = ['photos', { searchQuery, hasToken, categories }];
       queryClient.invalidateQueries({ queryKey });
     },
@@ -58,9 +63,6 @@ const useGetRatings = (
     enabled: !!photoId && !!accessToken,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60 * 24,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
     retry: false,
     retryOnMount: false,
     ...options,

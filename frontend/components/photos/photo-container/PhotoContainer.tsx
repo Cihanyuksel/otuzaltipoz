@@ -15,14 +15,13 @@ const PhotoContainer = () => {
 
   const {
     photos,
-    isLoading: isPhotosLoading,
-    error: photosError,
     selectedCategories,
     setSelectedCategories,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     searchQuery,
+    isLoading: isPhotosLoading,
   } = usePhotos();
 
   const {
@@ -46,12 +45,11 @@ const PhotoContainer = () => {
     isPhotosLoading,
   });
 
-  // 3. Efekt: Infinite scroll tetikleyicisi (Aynen kaldı)
+  // Infinite scroll
   useEffect(() => {
     if (!hasNextPage || isFetchingNextPage || !loadMoreRef.current) {
       return;
     }
-
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -60,10 +58,8 @@ const PhotoContainer = () => {
       },
       { root: null, rootMargin: '0px 0px 200px 0px', threshold: 0.1 }
     );
-
     const currentRef = loadMoreRef.current;
     observer.observe(currentRef);
-
     return () => {
       if (currentRef) observer.unobserve(currentRef);
     };
@@ -108,12 +104,8 @@ const PhotoContainer = () => {
           isPhotosLoading={isPhotosLoading}
           isDebouncing={isDebouncing}
           showNoResults={showNoResults}
-          photos={photos}
-          isFetchingNextPage={isFetchingNextPage}
           isCategoriesLoading={isCategoriesLoading}
-          hasNextPage={hasNextPage}
           loadMoreRef={loadMoreRef}
-          photosError={photosError}
         />
       }
     />

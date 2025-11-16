@@ -1,19 +1,49 @@
-//next.js and react
+// next.js and react
 import Link from 'next/link';
 import { Dispatch, SetStateAction } from 'react';
 import { usePathname } from 'next/navigation';
 import { User } from 'types/auth';
-//third-party
+
+// third-party
 import { IoCloseOutline as MenuCloseIcon } from 'react-icons/io5';
 import { RxHamburgerMenu as MenuOpenIcon } from 'react-icons/rx';
+import { AnimatePresence, motion, Variants } from 'framer-motion';
 
 interface IMobileMenu {
   setMenuOpen: Dispatch<SetStateAction<boolean>>;
   menuOpen: boolean;
   user: User | null;
   loading: boolean;
-  handleLogout: () => void;
 }
+
+const menuVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    transition: {
+      duration: 0.2,
+      ease: 'easeInOut',
+    },
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.3,
+      ease: 'easeInOut',
+    },
+  },
+};
+
+const navLinkVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.05 + 0.2,
+      ease: 'easeOut',
+    },
+  }),
+};
 
 export default function MobileMenu({ menuOpen, setMenuOpen, loading, user }: IMobileMenu) {
   const pathname = usePathname();
@@ -28,62 +58,80 @@ export default function MobileMenu({ menuOpen, setMenuOpen, loading, user }: IMo
   return (
     <>
       <button
-        className="lg:hidden text-gray-800 focus:outline-none relative w-8 h-8"
+        className="lg:hidden text-gray-800 focus:outline-none relative z-50 w-8 h-8"
         onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Menüyü aç/kapat"
       >
-        <MenuOpenIcon
-          className={`absolute inset-0 m-auto text-2xl transition-all duration-300 ease-in-out ${
-            menuOpen ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0'
-          }`}
-        />
-        <MenuCloseIcon
-          className={`absolute inset-0 m-auto text-2xl transition-all duration-300 ease-in-out ${
-            menuOpen ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90'
-          }`}
-        />
+        <AnimatePresence initial={false} mode="wait">
+          <motion.div
+            key={menuOpen ? 'close' : 'open'}
+            initial={{ opacity: 0, rotate: 90 }}
+            animate={{ opacity: 1, rotate: 0 }}
+            exit={{ opacity: 0, rotate: -90 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 m-auto"
+          >
+            {menuOpen ? <MenuCloseIcon size={28} /> : <MenuOpenIcon size={26} />}
+          </motion.div>
+        </AnimatePresence>
       </button>
 
-      <div
-        className={`fixed top-22 left-0 w-full lg:hidden transform transition-all duration-300 ease-in-out z-40 ${
-          menuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-5 pointer-events-none'
-        }`}
-      >
-        <ul className="bg-[#f5f1ea] flex flex-col items-center py-4 space-y-4 shadow-lg">
-          {navLinks.map((link) => (
-            <li key={link.name} className="w-full px-4">
-              <Link
-                href={link.href}
-                className="w-full flex justify-center font-semibold items-center border border-gray-300 p-2"
-                onClick={() => setMenuOpen(false)}
-              >
-                {link.name}
-              </Link>
-            </li>
-          ))}
-          {!loading && !user && (
-            <>
-              <li className="w-full px-4">
-                <Link
-                  href="/login"
-                  onClick={() => setMenuOpen(false)}
-                  className="w-full flex justify-center items-center px-4 py-1 border border-[#ef7464] rounded hover:bg-[#ef7464] hover:text-white transition cursor-pointer"
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            variants={menuVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="fixed inset-0 z-40 h-screen w-screen bg-white/50 backdrop-blur-md lg:hidden"
+          >
+            <nav className="flex h-full w-full flex-col items-center justify-center">
+              <ul className="flex flex-col items-center gap-8">
+                {navLinks.map((link, i) => {
+                  const isActive = pathname === link.href;
+                  return (
+                    <motion.li key={link.name} custom={i} variants={navLinkVariants} initial="hidden" animate="visible">
+                      <Link
+                        href={link.href}
+                        className={`text-3xl font-semibold transition-colors duration-200 ${
+                          isActive ? 'text-[#ef7464]' : 'text-gray-800 hover:text-[#ef7464]'
+                        }`}
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        {link.name}
+                      </Link>
+                    </motion.li>
+                  );
+                })}
+              </ul>
+
+              {!loading && !user && (
+                <motion.div
+                  className="mt-16 flex w-full max-w-[280px] flex-col gap-4 px-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, ease: 'easeOut' }}
                 >
-                  Giriş Yap
-                </Link>
-              </li>
-              <li className="w-full px-4">
-                <Link
-                  href="/register"
-                  onClick={() => setMenuOpen(false)}
-                  className="w-full flex justify-center items-center px-4 py-1 border list-none border-[#ef7464] rounded hover:bg-[#ef7464] hover:text-white transition cursor-pointer"
-                >
-                  Kayıt Ol
-                </Link>
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
+                  <Link
+                    href="/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex w-full justify-center rounded-full border border-gray-400 py-3 font-medium text-gray-700 transition-colors hover:border-gray-900 hover:text-gray-900"
+                  >
+                    Giriş Yap
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex w-full justify-center rounded-full bg-[#ef7464] py-3 font-semibold text-white transition-transform hover:scale-105"
+                  >
+                    Kayıt Ol
+                  </Link>
+                </motion.div>
+              )}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

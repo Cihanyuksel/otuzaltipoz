@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
-export const useHeader = () => {
+const useHeader = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -19,14 +19,16 @@ export const useHeader = () => {
   }, []);
 
   const handleLogout = () => {
+    setDropdownOpen(false);
+
     logout.mutate(undefined, {
       onSuccess: () => {
         setAuth(null);
-        router.push('/login');
       },
-      onError: () => router.back(),
+      onError: () => {
+        router.back();
+      },
     });
-    setDropdownOpen(false);
   };
 
   const handleDropdown = () => setDropdownOpen(!dropdownOpen);
@@ -45,3 +47,5 @@ export const useHeader = () => {
     pathname,
   };
 };
+
+export default useHeader;

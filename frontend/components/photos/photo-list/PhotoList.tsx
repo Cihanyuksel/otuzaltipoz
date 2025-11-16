@@ -3,26 +3,20 @@ import PhotoModal from '@/components/photos/photo-modal/PhotoModal';
 import PhotoCard from '../photo-card/PhotoCard';
 import { Photo } from 'types/photo';
 import { usePhotoModal } from './hooks/usePhotoModal';
-import { PhotoListSkeleton } from './PhotoListSkeleton';
+import { usePhotos } from '@/context/PhotoContext';
 
-interface PhotoListProps {
-  photos: Photo[];
-  isLoading?: boolean;
-  isError?: boolean;
-  error?: any;
-  isFetchingNextPage?: boolean;
-}
+export default function PhotoList() {
+  const { photos, error: photosError } = usePhotos();
+  const photoArray = photos || [];
+  const { currentIndex, openModal, closeModal, navigatePhotos } = usePhotoModal(photoArray.length);
 
-export default function PhotoList({ photos, error, isFetchingNextPage }: PhotoListProps) {
-  const { currentIndex, openModal, closeModal, navigatePhotos } = usePhotoModal(photos.length);
-
-  if (error) {
-    return <div className="col-span-full text-center py-8 text-red-500">Hata: {error?.message}</div>;
+  if (photosError) {
+    return <div className="col-span-full text-center py-8 text-red-500">Hata: {photosError?.message}</div>;
   }
 
   return (
     <>
-      {photos.map((photo: Photo, index: number) => (
+      {photoArray.map((photo: Photo, index: number) => (
         <PhotoCard
           key={photo._id}
           photoId={photo._id}
@@ -32,7 +26,6 @@ export default function PhotoList({ photos, error, isFetchingNextPage }: PhotoLi
           uploader={photo.user?.username}
           profileImgUrl={photo.user?.profile_img_url}
           created_at={photo.created_at}
-          averageRating={5}
           tags={photo.tags || []}
           onPhotoClick={() => openModal(index)}
           uploaderId={photo.user?._id}
@@ -41,9 +34,7 @@ export default function PhotoList({ photos, error, isFetchingNextPage }: PhotoLi
         />
       ))}
 
-      {isFetchingNextPage && <PhotoListSkeleton />}
-
-      <PhotoModal photos={photos} currentIndex={currentIndex} onClose={closeModal} onNavigate={navigatePhotos} />
+      <PhotoModal photos={photoArray} currentIndex={currentIndex} onClose={closeModal} onNavigate={navigatePhotos} />
     </>
   );
 }

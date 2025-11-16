@@ -14,6 +14,7 @@ import { FiLogIn as LoginIcon, FiUserPlus as RegisterIcon } from 'react-icons/fi
 //project files
 import { useOutsideClick } from '@/hooks/ui/useOutsideClick';
 import { User } from 'types/auth';
+import Image from 'next/image';
 
 interface IUserSection {
   setDropdownOpen: Dispatch<SetStateAction<boolean>>;
@@ -112,13 +113,16 @@ function UserSection({
   };
 
   return (
-    <div ref={dropdownRef} className="relative flex items-center gap-4 flex-shrink-0">
+    <div ref={dropdownRef} className="relative flex items-center lg:gap-2 flex-shrink-0">
       <div className="flex items-center gap-4">
-        <img
+        <Image
           src={user?.profile_img_url || '/no_profile.png'}
           alt={`${user?.username || 'User'} profile picture`}
-          className="w-12 h-12 rounded-full object-cover"
+          width={120}
+          height={120}
+          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
         />
+
         <div className="hidden xl:flex flex-col text-sm">
           <span className="font-bold text-gray-800 text-base">{user?.username}</span>
           <span className="text-xs text-gray-500">{roleLabels[user?.role || ''] || 'Unknown'}</span>

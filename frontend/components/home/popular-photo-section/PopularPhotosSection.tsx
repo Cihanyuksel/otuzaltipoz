@@ -1,53 +1,23 @@
 'use client';
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FaHeart as HeartIcon, FaRegCommentDots as CommentIcon } from 'react-icons/fa';
-import { photoService } from 'services/photoService';
 import { PopularPhoto } from 'types/photo';
 import Image from 'next/image';
-import Loader from '../common/loader';
-
-type TimeRange = 'all' | 'month' | 'week' | 'day';
+import Loader from '../../common/loader';
+import { usePopularPhotosLogic } from './usePopularPhotosLogic';
 
 const PopularPhotosSection = () => {
-  const [activeTab, setActiveTab] = useState<TimeRange>('all');
-  const [photos, setPhotos] = useState<PopularPhoto[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { tabs, activeTab, photos, isLoading, isError, handleTabChange, formatCount } = usePopularPhotosLogic();
 
-  const tabs = [
-    { id: 'all' as TimeRange, label: 'Tüm Zamanlar' },
-    { id: 'month' as TimeRange, label: 'Bu Ay' },
-    { id: 'week' as TimeRange, label: 'Bu Hafta' },
-    { id: 'day' as TimeRange, label: 'Bugün' },
-  ];
-
-  const fetchPhotos = async (timeRange: TimeRange) => {
-    setLoading(true);
-    try {
-      const response = await photoService.getPopularPhotos(10, timeRange);
-      setPhotos(response.data || []);
-    } catch (err) {
-      console.error('Popular photos fetch error:', err);
-      setPhotos([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPhotos('all');
-  }, []);
-
-  const handleTabChange = (timeRange: TimeRange) => {
-    if (timeRange === activeTab) return;
-    setActiveTab(timeRange);
-    fetchPhotos(timeRange);
-  };
-
-  const formatCount = (count: number): string => {
-    if (count >= 1000) return `${(count / 1000).toFixed(1)}k`;
-    return count.toString();
-  };
+  if (isError) {
+    return (
+      <section className="py-16 sm:py-24 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-red-600">Popüler fotoğraflar yüklenirken bir hata oluştu.</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 sm:py-24 bg-gray-50">
@@ -64,7 +34,7 @@ const PopularPhotosSection = () => {
               <button
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
-                disabled={loading}
+                disabled={isLoading}
                 className={`
                   px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200
                   disabled:opacity-50 disabled:cursor-not-allowed
@@ -81,24 +51,21 @@ const PopularPhotosSection = () => {
           </div>
         </div>
 
-        {/* LOADING */}
-        {loading && <Loader />}
-
-        {/* FOTOĞRAFLAR VEYA HATA MESAJI */}
-        {!loading && photos.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-lg text-gray-600">
-              {activeTab === 'day' && 'Bugün popüler fotoğraf bulunmuyor.'}
-              {activeTab === 'week' && 'Bu hafta popüler fotoğraf bulunmuyor.'}
-              {activeTab === 'month' && 'Bu ay popüler fotoğraf bulunmuyor.'}
-              {activeTab === 'all' && 'Henüz popüler fotoğraf bulunmuyor.'}
-            </p>
-          </div>
-        )}
-
-        {!loading && photos.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {photos.map((photo) => (
+        {/* FOTOĞRAFLAR, LOADER VEYA HATA MESAJI */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          {isLoading ? (
+            <Loader className="col-span-full py-12" />
+          ) : photos.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-lg text-gray-600">
+                {activeTab === 'day' && 'Bugün popüler fotoğraf bulunmuyor.'}
+                {activeTab === 'week' && 'Bu hafta popüler fotoğraf bulunmuyor.'}
+                {activeTab === 'month' && 'Bu ay popüler fotoğraf bulunmuyor.'}
+                {activeTab === 'all' && 'Henüz popüler fotoğraf bulunmuyor.'}
+              </p>
+            </div>
+          ) : (
+            photos.map((photo: PopularPhoto) => (
               <Link
                 key={photo._id}
                 href={`/photos/${photo._id}`}
@@ -143,9 +110,9 @@ const PopularPhotosSection = () => {
                   </div>
                 </div>
               </Link>
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
       </div>
     </section>
   );

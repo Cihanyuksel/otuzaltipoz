@@ -2,7 +2,7 @@ import HomeUserSection from './HomeUserSection';
 import HeroSection from './HeroSection';
 import DiscoverSection from './DiscoverSection';
 import AnimatedSection from '../common/animated-section';
-import PopularPhotosSection from './PopularPhotosSection';
+import PopularPhotosSection from './popular-photo-section/PopularPhotosSection';
 
 export default function Home() {
   const sections = [

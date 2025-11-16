@@ -13,20 +13,20 @@ interface IPhotoRatings {
   onLoginRequired: () => void;
 }
 
-export default function PhotoRatings({ 
-  photoId, 
-  accessToken, 
+export default function PhotoRatings({
+  photoId,
+  accessToken,
   averageRating = 0,
   totalVotes = 0,
-  onLoginRequired 
+  onLoginRequired,
 }: IPhotoRatings) {
   const [rating, setRating] = useState(0);
   const [showMessage, setShowMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  
+
   const starRef = useRef<HTMLDivElement>(null);
-  const ratePhotoMutation = useRatePhoto();
-  
+  const { mutate: ratePhoto, isPending } = useRatePhoto();
+
   const IsLoggedIn = !!accessToken;
   const ratingOptions = [5, 4, 3, 2, 1];
 
@@ -44,13 +44,13 @@ export default function PhotoRatings({
   const handleSubmit = () => {
     if (rating === 0) return;
     setErrorMessage(null);
-    
+
     if (!IsLoggedIn) {
       onLoginRequired();
       return;
     }
-    
-    ratePhotoMutation.mutate(
+
+    ratePhoto(
       { photoId, rating },
       {
         onSuccess: () => {
@@ -73,21 +73,17 @@ export default function PhotoRatings({
   return (
     <div className="flex flex-col gap-3 w-full md:items-end">
       <div className="flex items-baseline gap-2">
-        <span className="text-md md:text-2xl font-bold text-gray-900">
-          {averageRating.toFixed(2)}
-        </span>
+        <span className="text-md md:text-2xl font-bold text-gray-900">{averageRating.toFixed(2)}</span>
         <span className="text-sm text-gray-500">/ 5</span>
       </div>
-      <p className="hidden md:block text-sm text-gray-500">
-        {totalVotes} kişi oy verdi
-      </p>
+      <p className="hidden md:block text-sm text-gray-500">{totalVotes} kişi oy verdi</p>
 
       <div ref={starRef} className="mt-2 flex flex-row-reverse items-center justify-end mr-10 flex-shrink-0">
         <div className="relative flex items-center">
           {rating > 0 && (
             <motion.button
               onClick={handleSubmit}
-              disabled={ratePhotoMutation.isPending}
+              disabled={isPending}
               whileTap={{ scale: 0.95, backgroundColor: '#e9f5e9' }}
               whileHover={{ scale: 1.05 }}
               initial={{ opacity: 0, y: 10 }}
@@ -95,10 +91,10 @@ export default function PhotoRatings({
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
               className={`relative ml-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white text-green-500 overflow-hidden group shadow-sm transition-all duration-300 ${
-                ratePhotoMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''
+                isPending ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
-              {ratePhotoMutation.isPending ? (
+              {isPending ? (
                 <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-gray-500"></div>
               ) : (
                 <motion.div
@@ -149,29 +145,23 @@ export default function PhotoRatings({
                     setErrorMessage(null);
                   }}
                   className="hidden"
-                  disabled={ratePhotoMutation.isPending}
+                  disabled={isPending}
                 />
 
                 <motion.div
-                  whileHover={{ scale: ratePhotoMutation.isPending ? 1 : 1.15 }}
-                  whileTap={{ scale: ratePhotoMutation.isPending ? 1 : 0.85 }}
+                  whileHover={{ scale: isPending ? 1 : 1.15 }}
+                  whileTap={{ scale: isPending ? 1 : 0.85 }}
                   animate={{ scale: n === rating ? 1.2 : 1 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                  className={ratePhotoMutation.isPending ? 'opacity-50' : ''}
+                  className={isPending ? 'opacity-50' : ''}
                 >
-                  {n <= rating ? (
-                    <StarFilledIcon color="gold" size={30} />
-                  ) : (
-                    <StarOutlineIcon color="gray" size={30} />
-                  )}
+                  {n <= rating ? <StarFilledIcon color="gold" size={30} /> : <StarOutlineIcon color="gray" size={30} />}
                 </motion.div>
               </label>
             ))}
           </div>
         </div>
-        <p className="mr-4 flex-shrink-0 text-md font-medium text-gray-600">
-          Fotoğrafı Oyla
-        </p>
+        <p className="mr-4 flex-shrink-0 text-md font-medium text-gray-600">Fotoğrafı Oyla</p>
       </div>
 
       {errorMessage && (

@@ -1,9 +1,8 @@
-// PhotoGallery.tsx
-
 import Link from 'next/link';
 import { FaHeart as HeartIcon } from 'react-icons/fa6';
 import { FaRegCommentDots as CommentIcon } from 'react-icons/fa';
 import { Photo } from 'types/photo';
+import { memo } from 'react';
 
 interface IPhotoGallery {
   photosToShow: Photo[];
@@ -11,7 +10,7 @@ interface IPhotoGallery {
   activeTab: 'uploaded' | 'liked' | string;
 }
 
-const PhotoGallery = ({ photosToShow, isOwner, activeTab }: IPhotoGallery) => {
+const PhotoGallery = memo(({ photosToShow, isOwner, activeTab }: IPhotoGallery) => {
   const getEmptyMessage = () => {
     if (activeTab === 'liked') {
       return {
@@ -19,12 +18,10 @@ const PhotoGallery = ({ photosToShow, isOwner, activeTab }: IPhotoGallery) => {
         subtitle: 'Beğendiğiniz fotoğraflar burada görünecektir.',
       };
     }
-    
+
     return {
       title: 'Henüz fotoğraf yok.',
-      subtitle: isOwner
-        ? 'İlk fotoğrafını şimdi yükleyerek profilini canlandır.'
-        : 'Kullanıcının henüz fotoğrafı yok.',
+      subtitle: isOwner ? 'İlk fotoğrafını şimdi yükleyerek profilini canlandır.' : 'Kullanıcının henüz fotoğrafı yok.',
     };
   };
 
@@ -56,7 +53,7 @@ const PhotoGallery = ({ photosToShow, isOwner, activeTab }: IPhotoGallery) => {
       ) : (
         <div className="flex flex-col items-center justify-center col-span-2 sm:col-span-3 md:col-span-4 p-8 text-center bg-gray-50 rounded-lg shadow-sm">
           <p className="text-lg font-semibold text-gray-700">{title}</p>
-          
+
           {isOwner && activeTab === 'uploaded' ? (
             <>
               <p className="mt-2 text-sm text-gray-500">{subtitle}</p>
@@ -68,12 +65,12 @@ const PhotoGallery = ({ photosToShow, isOwner, activeTab }: IPhotoGallery) => {
               </Link>
             </>
           ) : (
-             <p className="mt-2 text-sm text-gray-500">{subtitle}</p>
+            <p className="mt-2 text-sm text-gray-500">{subtitle}</p>
           )}
         </div>
       )}
     </div>
   );
-};
+});
 
 export default PhotoGallery;

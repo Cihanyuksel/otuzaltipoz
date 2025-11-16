@@ -1,6 +1,7 @@
 'use client';
 
 import { forwardRef, memo } from 'react';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { FaHeart as HeartFilledIcon, FaRegHeart as HeartOutlineIcon } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/context/AuthContext';
@@ -15,6 +16,26 @@ interface LikeButtonProps {
   searchQuery?: string;
   categories?: string;
 }
+
+const filledHeartVariants: Variants = {
+  hidden: { scale: 0.5, opacity: 0 },
+  visible: {
+    scale: [1, 1.3, 1.1],
+    rotate: [0, -10, 10, 0],
+    opacity: 1,
+    transition: {
+      duration: 0.4,
+      ease: 'easeOut',
+    },
+  },
+  exit: { scale: 0.8, opacity: 0 },
+};
+
+const outlineHeartVariants: Variants = {
+  hidden: { scale: 0.8, opacity: 0 },
+  visible: { scale: 1, opacity: 1, transition: { duration: 0.2 } },
+  exit: { scale: 0.8, opacity: 0, transition: { duration: 0.2 } },
+};
 
 const PhotoLikeButton = memo(
   forwardRef<HTMLButtonElement, LikeButtonProps>(
@@ -60,25 +81,35 @@ const PhotoLikeButton = memo(
         }
       };
 
-      const heartIcon = isPending ? (
-        <div className="w-4 h-4 bg-gray-200 animate-pulse rounded" />
-      ) : isLikedByMe ? (
-        <HeartFilledIcon className="text-[#ef7464]" />
-      ) : (
-        <HeartOutlineIcon className="text-gray-400" />
-      );
-
       return (
         <div className="flex gap-2 border border-gray-200 p-2 rounded-md hover:bg-gray-50 transition-colors">
-          <button
+          <motion.button
             onClick={handleToggle}
             disabled={isPending}
-            className="flex items-center justify-center gap-1 text-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center justify-center gap-1 text-sm cursor-pointer disabled:cursor-not-allowed"
             ref={ref}
             aria-label={isLikedByMe ? 'Beğeniyi kaldır' : 'Beğen'}
+            whileTap={{ scale: 0.9 }}
           >
-            {heartIcon}
-          </button>
+            <AnimatePresence mode="wait">
+              {isLikedByMe ? (
+                <motion.div key="filled" variants={filledHeartVariants} initial="hidden" animate="visible" exit="exit">
+                  <HeartFilledIcon className="text-[#ef7464]" size={14} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="outline"
+                  variants={outlineHeartVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <HeartOutlineIcon className="text-gray-400" size={14} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.button>
+
           {totalLikes > 0 && onOpenModal ? (
             <button
               onClick={handleModalOpen}

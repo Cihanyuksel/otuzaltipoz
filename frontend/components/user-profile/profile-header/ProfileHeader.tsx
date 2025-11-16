@@ -1,6 +1,7 @@
-//third-party
+// third-party
+import { memo } from 'react';
 import { HiOutlineDotsVertical as VerticalTreeDots } from 'react-icons/hi';
-//project files
+// project files
 import Button from '@/common/button';
 import UserDeleteSuccessModal from '@/common/success-modal';
 import UserDeleteConfirmModal from '@/common/confirm-modal';
@@ -12,19 +13,19 @@ import { canManage } from 'lib/permission';
 import { useAuth } from '@/context/AuthContext';
 
 interface IProfileHeader {
-  user: User;
+  profileOwner: User;
   imageUrl: string;
   isOwner: boolean;
-  onEditProfileClick?: () => void;
+  onEditClick?: () => void;
   onAdminSettingsClick?: () => void;
 }
 
-const ProfileHeader = ({ user, imageUrl, isOwner, onEditProfileClick, onAdminSettingsClick }: IProfileHeader) => {
+const ProfileHeader = memo(({ profileOwner, imageUrl, isOwner, onEditClick, onAdminSettingsClick }: IProfileHeader) => {
   const { actionItems, dropdownRef, showDropdown, setShowDropdown, isPending, error, confirmModal, successModal } =
     useProfileActions({
-      user,
+      profileOwner,
       isOwner,
-      onEditProfileClick,
+      onEditClick,
       onAdminSettingsClick,
     });
   const { user: currentUser } = useAuth();
@@ -34,7 +35,7 @@ const ProfileHeader = ({ user, imageUrl, isOwner, onEditProfileClick, onAdminSet
   return (
     <>
       <div className="relative flex flex-col items-center mb-10 gap-6 md:flex-row md:gap-12">
-        <ProfileInfo user={user} imageUrl={imageUrl} />
+        <ProfileInfo profileOwner={profileOwner} imageUrl={imageUrl} />
 
         <div className="absolute top-0 right-0" ref={dropdownRef}>
           {canManageProfile && (
@@ -76,6 +77,7 @@ const ProfileHeader = ({ user, imageUrl, isOwner, onEditProfileClick, onAdminSet
       />
     </>
   );
-};
+});
 
+ProfileHeader.displayName = 'ProfileHeader';
 export default ProfileHeader;

@@ -14,16 +14,16 @@ import {
 } from 'lib/schemas';
 
 interface IUseProfileModalForms {
-  user: User;
-  onClose: () => void;
+  profileOwner: User;
+  onEditClose: () => void;
 }
 
-export const useProfileModalForms = ({ user, onClose }: IUseProfileModalForms) => {
+export const useProfileModalForms = ({ profileOwner, onEditClose }: IUseProfileModalForms) => {
   const profileForm = useForm<ProfileUpdateFormValues>({
     resolver: zodResolver(profileUpdateSchema),
     defaultValues: {
-      full_name: user.full_name || '',
-      bio: user.bio || '',
+      full_name: profileOwner.full_name || '',
+      bio: profileOwner.bio || '',
       removeProfileImg: false,
     },
     mode: 'onChange',
@@ -45,7 +45,10 @@ export const useProfileModalForms = ({ user, onClose }: IUseProfileModalForms) =
   const updateUsernameMutation = useUpdateUsername();
   const updatePasswordMutation = useUpdatePassword();
 
-  const canChangeUsername = useMemo(() => (user.username_change_count || 0) < 1, [user.username_change_count]);
+  const canChangeUsername = useMemo(
+    () => (profileOwner.username_change_count || 0) < 1,
+    [profileOwner.username_change_count]
+  );
 
   const isPending = useMemo(
     () => updateUserMutation.isPending || updateUsernameMutation.isPending || updatePasswordMutation.isPending,
@@ -56,8 +59,8 @@ export const useProfileModalForms = ({ user, onClose }: IUseProfileModalForms) =
     profileForm.reset();
     usernameForm.reset();
     passwordForm.reset();
-    onClose();
-  }, [onClose, profileForm, usernameForm, passwordForm]);
+    onEditClose();
+  }, [onEditClose, profileForm, usernameForm, passwordForm]);
 
   const onProfileSubmit = useCallback(
     (data: ProfileUpdateFormValues) => {
@@ -76,7 +79,7 @@ export const useProfileModalForms = ({ user, onClose }: IUseProfileModalForms) =
       }
 
       updateUserMutation.mutate(
-        { userId: user._id, data: formData },
+        { userId: profileOwner._id, data: formData },
         {
           onSuccess: () => {
             toast.success('Profil başarıyla güncellendi!', { position: 'top-right', autoClose: 3000 });
@@ -89,13 +92,13 @@ export const useProfileModalForms = ({ user, onClose }: IUseProfileModalForms) =
         }
       );
     },
-    [updateUserMutation, user._id, profileForm, handleCloseAndReset]
+    [updateUserMutation, profileOwner._id, profileForm, handleCloseAndReset]
   );
 
   const onUsernameSubmit = useCallback(
     (data: UsernameUpdateFormValues) => {
       updateUsernameMutation.mutate(
-        { userId: user._id, username: data.username },
+        { userId: profileOwner._id, username: data.username },
         {
           onSuccess: () => {
             toast.success('✅ Kullanıcı adı başarıyla güncellendi! Bu işlemi bir daha yapamazsınız.', {
@@ -111,14 +114,14 @@ export const useProfileModalForms = ({ user, onClose }: IUseProfileModalForms) =
         }
       );
     },
-    [updateUsernameMutation, user._id, usernameForm, handleCloseAndReset]
+    [updateUsernameMutation, profileOwner._id, usernameForm, handleCloseAndReset]
   );
 
   const onPasswordSubmit = useCallback(
     (data: PasswordUpdateFormValues) => {
       updatePasswordMutation.mutate(
         {
-          userId: user._id,
+          userId: profileOwner._id,
           currentPassword: data.currentPassword,
           newPassword: data.newPassword,
           confirmPassword: data.confirmPassword,
@@ -144,7 +147,7 @@ export const useProfileModalForms = ({ user, onClose }: IUseProfileModalForms) =
         }
       );
     },
-    [updatePasswordMutation, user._id, passwordForm, handleCloseAndReset]
+    [updatePasswordMutation, profileOwner._id, passwordForm, handleCloseAndReset]
   );
 
   return {

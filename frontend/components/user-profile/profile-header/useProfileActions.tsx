@@ -20,19 +20,14 @@ export type ActionItem =
       disabled?: boolean;
     };
 
-interface UseProfileActionsProps {
-  user: User;
+interface IUseProfileActions {
+  profileOwner: User;
   isOwner: boolean;
-  onEditProfileClick?: () => void;
+  onEditClick?: () => void;
   onAdminSettingsClick?: () => void;
 }
 
-export const useProfileActions = ({
-  user,
-  isOwner,
-  onEditProfileClick,
-  onAdminSettingsClick,
-}: UseProfileActionsProps) => {
+export const useProfileActions = ({ profileOwner, isOwner, onEditClick, onAdminSettingsClick }: IUseProfileActions) => {
   const { user: currentUser, setAuth } = useAuth();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -44,9 +39,8 @@ export const useProfileActions = ({
 
   useOutsideClick(dropdownRef, () => setShowDropdown(false), showDropdown);
 
-  // Memoized
-  const canDeleteAccount = useMemo(() => canManageUser(currentUser?.role, isOwner), [currentUser?.role, isOwner]);
-  const isAdminValue = useMemo(() => isAdmin(currentUser ?? undefined), [currentUser]);
+  const canDeleteAccount = canManageUser(currentUser?.role, isOwner);
+  const isAdminValue = isAdmin(currentUser ?? undefined);
 
   //----------Handler Functions-----------------
   const handleSignOut = useCallback(() => {
@@ -56,11 +50,11 @@ export const useProfileActions = ({
   }, [setAuth, router]);
 
   const handleEditProfile = useCallback(() => {
-    if (onEditProfileClick) {
-      onEditProfileClick();
+    if (onEditClick) {
+      onEditClick();
     }
     setShowDropdown(false);
-  }, [onEditProfileClick]);
+  }, [onEditClick]);
 
   const handleAdminSettings = useCallback(() => {
     if (onAdminSettingsClick) {
@@ -75,8 +69,8 @@ export const useProfileActions = ({
   }, []);
 
   const handleConfirmDelete = useCallback(() => {
-    deleteUser({ userId: user._id });
-  }, [deleteUser, user._id]);
+    deleteUser({ userId: profileOwner._id });
+  }, [deleteUser, profileOwner._id]);
 
   const handleCloseConfirmModal = useCallback(() => {
     if (!isPending) setShowConfirmModal(false);
@@ -102,7 +96,7 @@ export const useProfileActions = ({
         name: 'Admin Ayarları',
         handler: handleAdminSettings,
         type: 'default' as const,
-        disabled: true, // 🔒 admin ayarları pasif
+        disabled: true,
       },
       isOwner && {
         name: 'Çıkış Yap',
@@ -152,13 +146,13 @@ export const useProfileActions = ({
   const deleteMessage = (
     <div>
       <p className="mb-2">
-        <strong>@{user.username}</strong> hesabını silmek istediğinizden emin misiniz?
+        <strong>@{profileOwner.username}</strong> hesabını silmek istediğinizden emin misiniz?
       </p>
       <p className="text-red-600 font-medium">Bu işlem geri alınamaz ve tüm veriler kalıcı olarak silinecektir.</p>
     </div>
   );
 
-  const successMessage = `@${user.username} hesabı ve tüm verileri başarıyla silindi.${
+  const successMessage = `@${profileOwner.username} hesabı ve tüm verileri başarıyla silindi.${
     isOwner ? ' 2 saniye sonra ana sayfaya yönlendirileceksiniz.' : ''
   }`;
 

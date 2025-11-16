@@ -8,18 +8,18 @@ import { ModalOverlay } from '@/components/common/modal-overlay';
 
 interface IEditProfileModal {
   isOpen: boolean;
-  onClose: () => void;
-  user: User;
+  onEditClose: () => void;
+  profileOwner: User;
 }
 
 type TabType = 'profile' | 'username' | 'password';
 
-const EditProfileModal = ({ isOpen, onClose, user }: IEditProfileModal) => {
+const EditProfileModal = ({ isOpen, onEditClose, profileOwner }: IEditProfileModal) => {
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const modalRef = useRef<HTMLDivElement>(null);
 
   const { isPending, canChangeUsername, handleCloseAndReset, profileForm, usernameForm, passwordForm } =
-    useProfileModalForms({ user, onClose });
+    useProfileModalForms({ profileOwner, onEditClose });
 
   useOutsideClick(modalRef, handleCloseAndReset, isOpen && !isPending);
 
@@ -39,14 +39,14 @@ const EditProfileModal = ({ isOpen, onClose, user }: IEditProfileModal) => {
 
         <div className="p-6">
           {activeTab === 'profile' && (
-            <ProfileTab user={user} form={profileForm} isPending={isPending} handleClose={handleCloseAndReset} />
+            <ProfileTab profileOwner={profileOwner} form={profileForm} isPending={isPending} handleClose={handleCloseAndReset} />
           )}
           {activeTab === 'username' && (
             <UsernameTab
               form={usernameForm}
               isPending={isPending}
               canChangeUsername={canChangeUsername}
-              userUsername={user.username}
+              userUsername={profileOwner.username}
               handleClose={handleCloseAndReset}
             />
           )}

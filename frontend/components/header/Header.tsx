@@ -1,6 +1,5 @@
 'use client';
-import { Logo, UserSection, MobileMenu, NavMenu } from '@/components/header';
-import { useHeader } from './useHeader';
+import { Logo, UserSection, MobileMenu, NavMenu, useHeader } from '@/components/header';
 
 export default function Header() {
   const {
@@ -35,8 +34,8 @@ export default function Header() {
     user,
   };
 
-  const headerClasses = `fixed top-0 2xl:text-3xl w-full text-gray-800 flex justify-between items-center z-50 shadow-sm transition-all duration-300 ease-in-out bg-[#f5f1ea]
-    ${isScrolled ? 'h-16 px-4 2xl:h-32 ' : 'h-25 px-8 2xl:h-44'}`;
+  const headerClasses = `fixed top-0 2xl:text-3xl w-full text-gray-800 px-4 flex justify-between items-center z-50 shadow-sm transition-all duration-300 ease-in-out bg-[#f5f1ea]
+    ${isScrolled ? 'h-16 2xl:h-32' : 'h-25 2xl:h-44'}`;
 
   return (
     <header className={headerClasses}>
