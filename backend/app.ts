@@ -27,26 +27,12 @@ import basicAuth from "express-basic-auth";
 import { swaggerOptions } from "./api-docs/swagger.config";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
+import { corsOptions } from "./config/corsOption";
 
 const app: Application = express();
 
-// BASIC MIDDLEWARE'LER
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "http://localhost:4001"],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Accept",
-      "X-Requested-With",
-    ],
-    exposedHeaders: ["Content-Range", "X-Content-Range"],
-    maxAge: 600,
-  })
-);
-
+//BASE MIDDLEWARE
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

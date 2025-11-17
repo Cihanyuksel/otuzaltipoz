@@ -32,15 +32,19 @@ export const config = {
   },
   client: {
     url: process.env.CLIENT_URL,
+    swagger: process.env.SWAGGER_URL
   },
   cloudinary: {
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
-    folder: process.env.CLOUDINARY_FOLDER
+    folder: process.env.CLOUDINARY_FOLDER,
   },
   swagger: {
     swagger_user: process.env.SWAGGER_USER,
-    swagger_password: process.env.SWAGGER_PASSWORD
-  }
+    swagger_password: process.env.SWAGGER_PASSWORD,
+  },
+  mongodb: {
+    uri: process.env.MONGODB_URI,
+  },
 } as const;

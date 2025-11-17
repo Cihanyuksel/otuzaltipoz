@@ -11,17 +11,16 @@ if (env === "production") {
   envPath = path.resolve(__dirname, `./.env.dev`);
 }
 dotenv.config({ path: envPath });
-
 console.log("Server URL:", process.env.SERVER_URL);
 
-import app from "./app";
 import { config } from "./config/config";
+import app from "./app";
 import { connectDB } from "./config/db";
 import { setupTransporter } from "./utils/globalTransporter";
 
 const PORT = config.server.port || 4000;
 console.log(`✅ Yüklenen Konfigürasyon: .env.${env}`);
-console.log(`✅ Bağlantı Adresi: ${process.env.MONGODB_URI}`);
+console.log(`✅ Bağlantı Adresi: ${config.mongodb.uri}`);
 
 const initializeApp = async () => {
   try {

@@ -1,12 +1,7 @@
-// db.ts dosyanızın yeni hali
 import mongoose from "mongoose";
+import { config } from "./config";
 
-// dotenv, path, env ve override kodlarını BURADAN KALDIRIYORUZ!
-// Çünkü bu işi ana başlatma dosyasında yapacağız.
-
-const MONGO_URI = process.env.MONGODB_URI || "";
-// console.log(MONGO_URI, "MONGO URL"); // Testiniz bitince bu satırı da kaldırın
-
+const MONGO_URI = config.mongodb.uri || "";
 
 export const connectDB = async () => {
   mongoose
