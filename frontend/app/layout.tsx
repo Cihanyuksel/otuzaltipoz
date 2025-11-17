@@ -18,13 +18,8 @@ export const metadata: Metadata = {
     image: '/og-home.jpg',
   }),
   icons: {
-    icon: [
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
-    ],
-    shortcut: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
-  }
+    icon: [{ url: '/logo.png', type: 'image/svg+xml' }],
+  },
 };
 
 export default function RootLayout({
@@ -37,7 +32,7 @@ export default function RootLayout({
       <body className={`${plusJakarta.variable} ${notoSans.variable} antialiased`}>
         <Providers>
           <Header />
-          <main className="mt-25">{children}</main>
+          <main className="mt-24">{children}</main>
           <ToastContainer position="top-right" autoClose={3000} aria-label="notification" />
         </Providers>
       </body>

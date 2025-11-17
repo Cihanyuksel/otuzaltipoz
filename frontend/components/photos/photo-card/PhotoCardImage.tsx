@@ -4,7 +4,7 @@ interface IPhotoCardImage {
   title: string;
   imageUrl: string;
   onPhotoClick: () => void;
-  index: number
+  index: number;
 }
 
 function PhotoCardImage({ imageUrl, onPhotoClick, title, index }: IPhotoCardImage) {
@@ -15,9 +15,13 @@ function PhotoCardImage({ imageUrl, onPhotoClick, title, index }: IPhotoCardImag
           src={imageUrl}
           alt={title}
           fill
+          sizes="(max-width: 640px) 100vw, 
+          (max-width: 1280px) 50vw,
+          (max-width: 1536px) 33vw,
+          25vw"
           className="object-contain bg-gray-100"
           loading={index < 10 ? 'eager' : 'lazy'}
-          priority={index < 10} 
+          priority={index < 10}
         />
       </div>
     </div>
