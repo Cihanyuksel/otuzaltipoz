@@ -21,11 +21,32 @@ const addComment = async (
       return next(new AppError("Photo not found", 404));
     }
 
+    let finalParentComment = null;
+
+    if (parentComment) {
+      const parent = await Comment.findById(parentComment);
+
+      if (!parent) {
+        return next(new AppError("Parent comment not found", 404));
+      }
+
+      if (parent.parentComment) {
+        return next(
+          new AppError(
+            "Replies to replies are not allowed (Sadece 1 seviye yoruma izin verilir)",
+            400
+          )
+        );
+      }
+
+      finalParentComment = parent._id;
+    }
+
     const comment = await Comment.create({
       photo: photoId,
       user: req.user?.id,
       text,
-      parentComment: parentComment || null,
+      parentComment: finalParentComment,
     });
 
     res.status(201).json({
@@ -34,6 +55,9 @@ const addComment = async (
       data: comment,
     });
   } catch (err: any) {
+    if (err.name === "CastError") {
+      return next(new AppError("Invalid ID format", 400));
+    }
     next(new AppError(err.message || "Error adding comment", 500));
   }
 };
