@@ -1,15 +1,23 @@
 import { config } from "./config";
 
-const prodOrigins = [config.client.url, config.client.swagger];
-const devOrigins = ["http://localhost:3000", "http://localhost:4001"];
+// Production address
+const prodOrigins = [
+  config.client.url,
+  "https://www.otuzaltipoz.com",
+  "https://api.otuzaltipoz.com",
+];
 
-const allowedOrigins =
-  config.node_env === "production"
-    ? prodOrigins
-    : [...prodOrigins, ...devOrigins];
+// Local address
+const devOrigins = [
+  "http://localhost:3000",
+  "http://localhost:4001",
+  "http://localhost:5173",
+];
 
-console.log("PROD: ", prodOrigins);
-console.log("DEV: ", devOrigins);
+const allowedOrigins = [...prodOrigins, ...devOrigins];
+
+console.log("✅ Aktif CORS Listesi:", allowedOrigins);
+
 export const corsOptions = {
   origin: (
     origin: string | undefined,
@@ -19,12 +27,14 @@ export const corsOptions = {
       return callback(null, true);
     }
 
-    if (origin && allowedOrigins.includes(origin)) {
+    if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
+    console.error(`⛔ CORS BLOKLANDI! Gelen Origin: '${origin}'`);
+
     return callback(
-      new Error("CORS Hatası: Bu kaynağa (origin) izin verilmiyor.")
+      new Error(`CORS Hatası: '${origin}' adresine izin verilmiyor.`)
     );
   },
   credentials: true,
@@ -34,7 +44,8 @@ export const corsOptions = {
     "Authorization",
     "Accept",
     "X-Requested-With",
+    "Origin",
   ],
-  exposedHeaders: ["Content-Range", "X-Content-Range"],
-  maxAge: 600,
+  exposedHeaders: ["Set-Cookie", "Content-Range", "X-Content-Range"],
+  maxAge: 3600,
 };

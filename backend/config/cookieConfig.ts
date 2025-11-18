@@ -13,7 +13,7 @@ if (!config.jwt.accessToken.secret || !config.jwt.refreshToken.secret) {
 export const refreshTokenCookieConfig: CookieOptions = {
   httpOnly: true,
   secure: isProduction,
-  sameSite: isProduction ? "strict" : "lax",
+  sameSite: isProduction ? "none" : "lax",
   maxAge: sevenDaysInMilliseconds,
   path: "/",
 };
@@ -21,7 +21,7 @@ export const refreshTokenCookieConfig: CookieOptions = {
 export const clearRefreshTokenCookieConfig: CookieOptions = {
   httpOnly: true,
   secure: isProduction,
-  sameSite: isProduction ? "strict" : "lax",
+  sameSite: isProduction ? "none" : "lax",
   path: "/",
   maxAge: 0,
 };
