@@ -30,6 +30,7 @@ import swaggerUI from "swagger-ui-express";
 import { corsOptions } from "./config/corsOption";
 
 const app: Application = express();
+app.set('trust proxy', 1);
 
 //BASE MIDDLEWARE
 app.use(cors(corsOptions));
