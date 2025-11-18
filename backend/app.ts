@@ -38,6 +38,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "success",
+    message: "Welcome to Otuzaltıpoz API. We are alive and running!",
+  });
+});
+
 // RATE LIMITER
 if (config.node_env === "production") {
   app.use("/api/v1/auth/refresh", maxRefreshTokenRotations);
@@ -85,6 +92,13 @@ app.use(
     customSiteTitle: "Otuzaltıpoz API Dokümantasyonu",
   })
 );
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "success",
+    message: "Welcome to Otuzaltıpoz API. We are alive and running!",
+  });
+});
 
 // API ROUTES
 app.use("/api/v1/users", userRouter);
