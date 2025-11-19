@@ -16,8 +16,8 @@ export const config = {
         username: process.env.SMTP_USER,
         password: process.env.SMTP_PASS,
       },
+      from: process.env.MAIL_FROM,
     },
-    from: process.env.MAIL_FROM,
   },
   jwt: {
     accessToken: {

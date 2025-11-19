@@ -5,16 +5,12 @@ import { config } from "./config";
 export const initializeTransporter = async (): Promise<Transporter | null> => {
   if (config.node_env === "production") {
     return nodemailer.createTransport({
-      host: config.email.smtp.host,
-      port: Number(config.email.smtp.port) || 587,
-      secure: false,
-
+      host: "smtp.resend.com",
+      port: 465,
+      secure: true,
       auth: {
         user: config.email.smtp.auth.username,
         pass: config.email.smtp.auth.password,
-      },
-      tls: {
-        ciphers: "SSLv3",
       },
     } as SMTPTransport.Options);
   } else {

@@ -280,11 +280,11 @@ const login = async (
 
     // Generate tokens
     const accessToken = generateAccessToken({
-      _id: user._id as string,
+      _id: user._id.toString(),
       role: user.role,
     });
 
-    const refreshToken = generateRefreshToken({ _id: user._id as string });
+    const refreshToken = generateRefreshToken({ _id: user._id.toString() });
     const deviceId = generateDeviceId(req);
 
     // Save/update refresh token
@@ -377,8 +377,8 @@ const refresh = async (
       return;
     }
 
-    const newAccessToken = generateAccessToken({ _id: user._id as string });
-    const newRefreshToken = generateRefreshToken({ _id: user._id as string });
+    const newAccessToken = generateAccessToken({ _id: user._id.toString() });
+    const newRefreshToken = generateRefreshToken({ _id: user._id.toString() });
 
     storedToken.token = newRefreshToken;
     storedToken.lastUsedAt = new Date();
