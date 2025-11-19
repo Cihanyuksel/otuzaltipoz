@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { sendResetEmail } from "../utils/sendMail";
 import { AppError } from "../utils/AppError";
 import { randomBytes } from "crypto";
+import RefreshToken from "../models/refreshToken";
 
 export const forgotPassword = async (
   req: Request,
@@ -112,7 +113,6 @@ export const resetPassword = async (
     // delete token
     await Token.deleteOne({ _id: tokenDoc._id });
 
-    const RefreshToken = (await import("../models/refreshToken")).default;
     await RefreshToken.deleteMany({ userId: user._id });
 
     res.status(200).json({

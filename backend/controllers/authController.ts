@@ -89,7 +89,7 @@ const signup = async (
       }
     }
 
-    // Create user
+    // Create user (is_verified her zaman false başlıyor)
     const newUser = await User.create({
       username: username.toLowerCase(),
       email: email.toLowerCase(),
@@ -112,32 +112,20 @@ const signup = async (
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 saat
     });
 
-    // test/dev env otomatic verify
-    let autoVerified = false;
-    if (config.node_env !== "production") {
-      newUser.is_verified = true;
-      await newUser.save();
-      autoVerified = true;
-    } else {
-      try {
-        await sendVerifyEmail(
-          newUser.email,
-          newUser.username,
-          verificationToken
-        );
-      } catch (emailError: any) {
-        console.error("Email sending failed:", emailError);
-        await Promise.all([
-          User.findByIdAndDelete(newUser._id),
-          Token.deleteOne({ userId: newUser._id, type: "emailVerification" }),
-        ]);
-        return next(
-          new AppError(
-            "E-posta gönderilirken bir hata oluştu. Lütfen tekrar deneyin.",
-            500
-          )
-        );
-      }
+    try {
+      await sendVerifyEmail(newUser.email, newUser.username, verificationToken);
+    } catch (emailError: any) {
+      console.error("Email sending failed:", emailError);
+      await Promise.all([
+        User.findByIdAndDelete(newUser._id),
+        Token.deleteOne({ userId: newUser._id, type: "emailVerification" }),
+      ]);
+      return next(
+        new AppError(
+          "E-posta gönderilirken bir hata oluştu. Lütfen tekrar deneyin.",
+          500
+        )
+      );
     }
 
     // Response
@@ -155,10 +143,6 @@ const signup = async (
         is_active: newUser.is_active,
         is_verified: newUser.is_verified,
       },
-      ...(autoVerified && {
-        auto_verified: true,
-        verification_token: verificationToken,
-      }),
     });
   } catch (err: any) {
     console.error("Signup error:", err);
