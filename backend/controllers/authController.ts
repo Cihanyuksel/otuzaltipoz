@@ -31,6 +31,25 @@ export interface IGetUserAuthInfoRequest extends Request {
   };
 }
 
+const clearAllRefreshTokenCookies = (res: Response) => {
+  // Tüm varyantları temizle
+  const cookieOptions = [
+    { domain: ".otuzaltipoz.com" },
+    { domain: "api.otuzaltipoz.com" },
+    { domain: undefined },
+  ];
+
+  cookieOptions.forEach((opts) => {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      ...opts,
+    });
+  });
+};
+
 const signup = async (
   req: Request,
   res: Response,
@@ -218,11 +237,9 @@ const login = async (
   try {
     const { email, password } = req.body;
 
-    // Input validation
     if (!email || !password)
       return next(new AppError("Email ve şifre gereklidir.", 400));
 
-    // Find user with password field
     const user = await User.findOne({ email: email.toLowerCase() }).select(
       "+password"
     );
@@ -232,7 +249,6 @@ const login = async (
         new AppError("Email veya şifre hatalı. Lütfen tekrar deneyin.", 401)
       );
 
-    // Check if account is activated
     if (!user.is_verified) {
       return next(
         new AppError(
@@ -262,29 +278,32 @@ const login = async (
       is_active: user.is_active,
     };
 
-    // Generate tokens
+    clearAllRefreshTokenCookies(res);
+
+    const deviceId = generateDeviceId(req);
+
+    await RefreshToken.deleteMany({
+      userId: user._id,
+      deviceId,
+    });
+
     const accessToken = generateAccessToken({
       _id: user._id.toString(),
       role: user.role,
     });
 
     const refreshToken = generateRefreshToken({ _id: user._id.toString() });
-    const deviceId = generateDeviceId(req);
 
-    // Save/update refresh token
-    await RefreshToken.findOneAndUpdate(
-      { userId: user._id, deviceId },
-      {
-        token: refreshToken,
-        device: req.headers["user-agent"] || "unknown",
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        createdAt: new Date(),
-        lastUsedAt: new Date(),
-      },
-      { upsert: true, new: true }
-    );
+    await RefreshToken.create({
+      userId: user._id,
+      deviceId,
+      token: refreshToken,
+      device: req.headers["user-agent"] || "unknown",
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      createdAt: new Date(),
+      lastUsedAt: new Date(),
+    });
 
-    // Set refresh token cookie
     res.cookie("refreshToken", refreshToken, refreshTokenCookieConfig);
 
     res.json({
@@ -308,7 +327,15 @@ const refresh = async (
 ): Promise<void> => {
   const refreshToken = req.cookies.refreshToken;
 
+  console.log("🔄 Refresh attempt:", {
+    hasToken: !!refreshToken,
+    cookies: req.cookies,
+    headers: req.headers.cookie,
+    timestamp: new Date().toISOString(),
+  });
+
   if (!refreshToken) {
+    clearAllRefreshTokenCookies(res);
     return next(
       new AppError("Oturum süresi dolmuş. Lütfen tekrar giriş yapın.", 401)
     );
@@ -316,6 +343,7 @@ const refresh = async (
 
   const deviceId = generateDeviceId(req);
   if (!deviceId) {
+    clearAllRefreshTokenCookies(res);
     res.status(401).json({
       success: false,
       message: "Device ID is missing",
@@ -335,7 +363,9 @@ const refresh = async (
     });
 
     if (!storedToken) {
+      clearAllRefreshTokenCookies(res);
       await RefreshToken.deleteMany({ userId: payload.userId });
+
       res.status(401).json({
         success: false,
         message: "Invalid refresh token or session revoked",
@@ -345,6 +375,8 @@ const refresh = async (
 
     if (storedToken.expiresAt < new Date()) {
       await storedToken.deleteOne();
+      clearAllRefreshTokenCookies(res);
+
       res.status(401).json({
         success: false,
         message: "Token expired",
@@ -354,6 +386,7 @@ const refresh = async (
 
     const user = await User.findById(payload.userId);
     if (!user) {
+      clearAllRefreshTokenCookies(res);
       res.status(404).json({
         success: false,
         message: "User not found",
@@ -361,9 +394,15 @@ const refresh = async (
       return;
     }
 
-    const newAccessToken = generateAccessToken({ _id: user._id.toString() });
+    clearAllRefreshTokenCookies(res);
+
+    const newAccessToken = generateAccessToken({
+      _id: user._id.toString(),
+      role: user.role,
+    });
     const newRefreshToken = generateRefreshToken({ _id: user._id.toString() });
 
+    // DB güncelle
     storedToken.token = newRefreshToken;
     storedToken.lastUsedAt = new Date();
     storedToken.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
@@ -373,9 +412,11 @@ const refresh = async (
 
     res.cookie("refreshToken", newRefreshToken, refreshTokenCookieConfig);
 
+    console.log("✅ Token refreshed successfully");
+
     res.json({
       success: true,
-      messsage: "Access token yenilendi",
+      message: "Access token yenilendi",
       accessToken: newAccessToken,
       user: {
         _id: user._id,
@@ -388,6 +429,8 @@ const refresh = async (
       },
     });
   } catch (err: any) {
+    console.error("❌ Refresh error:", err);
+    clearAllRefreshTokenCookies(res);
     res.status(403).json({
       success: false,
       message: "Token expired or invalid",
@@ -403,22 +446,20 @@ const logout = async (
 ): Promise<void> => {
   try {
     const refreshToken = req.cookies?.refreshToken;
-    if (!refreshToken) {
-      return next(new AppError("No refresh token provided", 400));
-    }
 
-    const storedToken = await RefreshToken.findOne({ token: refreshToken });
-    if (storedToken) {
-      const user = await User.findById(storedToken.userId);
-      if (user) {
-        user.is_active = false;
-        await user.save();
+    if (refreshToken) {
+      const storedToken = await RefreshToken.findOne({ token: refreshToken });
+      if (storedToken) {
+        const user = await User.findById(storedToken.userId);
+        if (user) {
+          user.is_active = false;
+          await user.save();
+        }
+        await RefreshToken.deleteOne({ token: refreshToken });
       }
-
-      await RefreshToken.deleteOne({ token: refreshToken });
     }
 
-    res.clearCookie("refreshToken", clearRefreshTokenCookieConfig);
+    clearAllRefreshTokenCookies(res);
 
     res.json({ success: true, message: "Logged out successfully" });
   } catch (error: any) {

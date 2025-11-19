@@ -13,7 +13,7 @@ if (!config.jwt.accessToken.secret || !config.jwt.refreshToken.secret) {
 export const refreshTokenCookieConfig: CookieOptions = {
   httpOnly: true,
   secure: isProduction,
-  sameSite: isProduction ? "lax" : "lax",
+  sameSite: isProduction ? "none" : "lax",
   maxAge: sevenDaysInMilliseconds,
   path: "/",
   domain: isProduction ? ".otuzaltipoz.com" : undefined,
@@ -22,7 +22,7 @@ export const refreshTokenCookieConfig: CookieOptions = {
 export const clearRefreshTokenCookieConfig: CookieOptions = {
   httpOnly: true,
   secure: isProduction,
-  sameSite: isProduction ? "lax" : "lax",
+  sameSite: isProduction ? "none" : "lax",
   path: "/",
   maxAge: 0,
   domain: isProduction ? ".otuzaltipoz.com" : undefined,
