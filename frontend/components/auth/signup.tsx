@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 //third-party
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FaEye as ShowIcon, FaEyeSlash as HideIcon, FaCheck as CheckIcon, FaUserPlus } from 'react-icons/fa';
+import { FaEye as ShowIcon, FaEyeSlash as HideIcon, FaCheck as CheckIcon, FaUserPlus, FaSpinner } from 'react-icons/fa';
 //project files
 import Button from '@/common/button';
 import Input from '@/common/input';
@@ -111,7 +111,7 @@ export default function SignupForm() {
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-[#ef7464] text-sm"
+              className="absolute right-3 top-11 -translate-y-5 cursor-pointer text-gray-500 hover:text-[#ef7464] text-sm"
             >
               {showPassword ? <ShowIcon className="w-4 h-4" /> : <HideIcon className="w-4 h-4" />}
             </button>
@@ -161,9 +161,10 @@ export default function SignupForm() {
         <Button
           type="submit"
           variant="primary"
-          className="mt-3 py-2.5 text-base bg-[#ef7464] hover:bg-[#ef7464db] transition duration-200"
+          disabled={signup.isPending}
+          className="mt-3 py-2.5 text-base bg-[#ef7464] hover:bg-[#ef7464db] transition duration-200 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
         >
-          Hemen Kayıt Ol
+          {signup.isPending ? <FaSpinner className="animate-spin text-xl" /> : 'Kayıt Ol'}
         </Button>
       </form>
     </div>
