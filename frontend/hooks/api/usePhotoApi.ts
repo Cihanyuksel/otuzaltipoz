@@ -36,7 +36,7 @@ export const useGetAllPhoto = (searchQuery?: string, accessToken?: string | null
       return allPages.length * 10;
     },
     initialPageParam: 0,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 3,
     gcTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,

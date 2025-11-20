@@ -4,6 +4,7 @@ import { useGetLikes } from '@/hooks/api/useLikeApi';
 import { useGetRatings } from '@/hooks/api/useRatingApi';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, useParams } from 'next/navigation';
+import { queryClient } from 'lib/queryClient';
 
 export const usePhotoDetail = () => {
   const { user, accessToken } = useAuth();
@@ -28,8 +29,11 @@ export const usePhotoDetail = () => {
   const handleDelete = () => {
     if (!photo) return;
     setIsDeleting(true);
+
     deletePhoto(photo._id, {
-      onSuccess: () => {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: ['photos'] });
+
         handleModalToggle('delete', false);
         router.push('/photos');
       },
