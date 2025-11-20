@@ -1,6 +1,10 @@
-import { IoCheckmarkCircleSharp } from 'react-icons/io5';
+'use client';
+import React from 'react';
+import { IoCheckmarkCircleSharp as SuccessIcon } from 'react-icons/io5';
+import ModalOverlay from '@/components/common/modal-overlay';
+import ModalContent from '@/components/common/modal-content';
 
-interface SuccessModalProps {
+interface ISuccessModal {
   isOpen: boolean;
   onClose: () => void;
   title: string;
@@ -8,22 +12,17 @@ interface SuccessModalProps {
   buttonText?: string;
 }
 
-const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose, title, message, buttonText = 'Kapat' }) => {
-  if (!isOpen) return null;
-
+const SuccessModal = ({ isOpen, onClose, title, message }: ISuccessModal) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#f5f1ea]/50  backdrop-blur-sm" onClick={onClose}>
-      <div
-        className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm transform transition-all duration-300 scale-100 opacity-100"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <ModalOverlay isModalVisible={isOpen} onClose={onClose} isLoading={false}>
+      <ModalContent isOpen={isOpen} className="w-full max-w-sm bg-white rounded-xl p-6 text-center">
         <div className="flex justify-center mb-4">
-          <IoCheckmarkCircleSharp className="w-12 h-12 text-green-500" />
+          <SuccessIcon className="w-14 h-14 text-green-500" />
         </div>
-        <h3 className="text-xl font-bold text-center text-gray-900 mb-2">{title}</h3>
-        <p className="text-sm text-center text-gray-600 mb-6">{message}</p>
-      </div>
-    </div>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
+        <p className="text-gray-600 mb-6">{message}</p>
+      </ModalContent>
+    </ModalOverlay>
   );
 };
 

@@ -4,7 +4,7 @@ import { ErrorMessage } from './ErrorMessage';
 import { FormFields } from './FormFields';
 import { FormFooter } from './FormFooter';
 
-interface EditPhotoFormProps {
+interface IEditPhotoForm {
   form: UseFormReturn<PhotoEditFormValues>;
   onSubmit: (data: PhotoEditFormValues) => void;
   onClose: () => void;
@@ -13,7 +13,7 @@ interface EditPhotoFormProps {
   error: Error | null;
 }
 
-export const EditPhotoForm = ({ form, onSubmit, onClose, isLoading, isPending, error }: EditPhotoFormProps) => {
+const EditPhotoForm = ({ form, onSubmit, onClose, isLoading, isPending, error }: IEditPhotoForm) => {
   return (
     <div className="p-6">
       <ErrorMessage error={error} />
@@ -25,3 +25,5 @@ export const EditPhotoForm = ({ form, onSubmit, onClose, isLoading, isPending, e
     </div>
   );
 };
+
+export default EditPhotoForm;

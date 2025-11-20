@@ -1,10 +1,11 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { User } from 'types/auth';
-import { useOutsideClick } from '@/hooks/ui/useOutsideClick';
-import { Header, TabButton, UsernameTab, PasswordTab, ProfileTab } from './index';
+import { TabButton, UsernameTab, PasswordTab, ProfileTab } from './index';
 import { useProfileModalForms } from './useProfileModalForms';
-import { ModalOverlay } from '@/components/common/modal-overlay';
+import ModalOverlay from '@/components/common/modal-overlay';
+import ModalHeader from '@/components/common/modal-header';
+import ModalContent from '@/components/common/modal-content';
 
 interface IEditProfileModal {
   isOpen: boolean;
@@ -16,14 +17,9 @@ type TabType = 'profile' | 'username' | 'password';
 
 const EditProfileModal = ({ isOpen, onEditClose, profileOwner }: IEditProfileModal) => {
   const [activeTab, setActiveTab] = useState<TabType>('profile');
-  const modalRef = useRef<HTMLDivElement>(null);
 
   const { isPending, canChangeUsername, handleCloseAndReset, profileForm, usernameForm, passwordForm } =
     useProfileModalForms({ profileOwner, onEditClose });
-
-  useOutsideClick(modalRef, handleCloseAndReset, isOpen && !isPending);
-
-  if (!isOpen) return null;
 
   const tabs: { key: TabType; label: string }[] = [
     { key: 'profile', label: 'Profil' },
@@ -32,14 +28,18 @@ const EditProfileModal = ({ isOpen, onEditClose, profileOwner }: IEditProfileMod
   ];
 
   return (
-    <ModalOverlay onClose={handleCloseAndReset} isLoading={isPending}>
-      <div ref={modalRef} className="w-full max-w-lg bg-white rounded-lg shadow-xl transform transition-all">
-        <Header handleCloseAndReset={handleCloseAndReset} isPending={isPending} />
+    <ModalOverlay isModalVisible={isOpen} onClose={handleCloseAndReset} isLoading={isPending}>
+      <ModalContent isOpen={isOpen} className="bg-white rounded-lg">
+        <ModalHeader onClose={handleCloseAndReset} isLoading={isPending} title="Profili Düzenle" />
         <TabButton tabs={tabs} setActiveTab={setActiveTab} activeTab={activeTab} isPending={isPending} />
-
         <div className="p-6">
           {activeTab === 'profile' && (
-            <ProfileTab profileOwner={profileOwner} form={profileForm} isPending={isPending} handleClose={handleCloseAndReset} />
+            <ProfileTab
+              profileOwner={profileOwner}
+              form={profileForm}
+              isPending={isPending}
+              handleClose={handleCloseAndReset}
+            />
           )}
           {activeTab === 'username' && (
             <UsernameTab
@@ -54,7 +54,7 @@ const EditProfileModal = ({ isOpen, onEditClose, profileOwner }: IEditProfileMod
             <PasswordTab form={passwordForm} isPending={isPending} handleClose={handleCloseAndReset} />
           )}
         </div>
-      </div>
+      </ModalContent>
     </ModalOverlay>
   );
 };

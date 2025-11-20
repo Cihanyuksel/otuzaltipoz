@@ -24,10 +24,9 @@ export default function PhotoImage({ photoUrl, title }: IPhotoImage) {
   return (
     <div className="relative w-full 2xl:max-w-7xl mx-auto">
       <div
-        className="relative w-full"
+        className="relative w-full max-h-[100vh] md:max-h-[80vh]"
         style={{
           aspectRatio: dimensions ? `${dimensions.width} / ${dimensions.height}` : '16 / 9',
-          maxHeight: '80vh',
         }}
       >
         <Image
@@ -38,7 +37,7 @@ export default function PhotoImage({ photoUrl, title }: IPhotoImage) {
           priority
           onError={() => setSrc(PHOTO_NOT_FOUND)}
           onLoad={handleImageLoad}
-          sizes="(max-width: 767px) 100vw, (max-width: 822px) min(100%, 774px), (max-height: 756px) min(100%, 774px), (min-aspect-ratio: 4000/3000) calc(calc(100vh - 175px) * 1.3333333333333333), calc(100vw - 48px)"
+          sizes="(max-width: 767px) 100vw, (max-width: 1200px) 80vw, 1200px"
         />
       </div>
     </div>

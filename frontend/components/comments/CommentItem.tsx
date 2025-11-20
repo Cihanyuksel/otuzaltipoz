@@ -6,11 +6,9 @@ import { useRouter } from 'next/navigation';
 //third-party
 import { RiDeleteBin6Line as DeleteIcon } from 'react-icons/ri';
 //project files
-import DeleteConfirmCommentModal from '../common/confirm-modal';
 import EditCommentForm from './EditCommentForm';
 import ReplyForm from './ReplyForm';
 import { commentFormatDate } from 'lib/commentFormatDate';
-import { truncateText } from 'lib/truncateText';
 import { canManage as canManageComment, isAdminOrModerator } from 'lib/permission';
 import { IComment } from 'types/comment';
 import { User } from 'types/auth';
@@ -48,7 +46,7 @@ export default function CommentItem({
   const [showEditForm, setShowEditForm] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(false);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -58,15 +56,11 @@ export default function CommentItem({
     return () => clearTimeout(timer);
   }, []);
 
-  const handleCloseDeleteModal = () => setDeleteModal(false);
-  const handleOpenDeleteModel = () => setDeleteModal(true);
-
   const actualDepth = depth > 0 ? 1 : 0;
   const paddingLeft = actualDepth > 0 ? '20px' : '0px';
 
   const isOwnComment = !!(currentUser && comment.user.username === currentUser.username);
   const isLoggedIn = !!accessToken;
-  const hasReplies = comment.replies && comment.replies.length > 0;
 
   const canEdit = isOwnComment && comment.edit_count < 1;
   const isAdmin = currentUser ? isAdminOrModerator(currentUser) : false;
@@ -99,16 +93,7 @@ export default function CommentItem({
     setShowReplyForm(false);
   };
 
-  const MAX_COMMENT_LENGTH = 50;
-  const truncatedCommentText = truncateText(comment.text, MAX_COMMENT_LENGTH);
   const canDelete = canManageComment(currentUser?.role, isOwnComment);
-
-  const deleteConfirmText = (
-    <>
-      <strong>{truncatedCommentText}</strong> isimli yorumunuzu silmek istediğinizden emin misiniz? Bu işlem geri
-      alınamaz.
-    </>
-  );
 
   return (
     <div
@@ -143,7 +128,7 @@ export default function CommentItem({
             </div>
             {canDelete && (
               <button
-                onClick={handleOpenDeleteModel}
+                onClick={() => onDelete(comment._id)}
                 className="flex items-center gap-1 text-red-500 transition-all duration-200 hover:text-red-700 hover:scale-105 text-xs p-1 disabled:opacity-50 cursor-pointer"
                 title="Yorumu sil"
                 aria-label="Yorumu Sil"
@@ -249,17 +234,6 @@ export default function CommentItem({
           </div>
         )}
       </div>
-
-      <DeleteConfirmCommentModal
-        isOpen={deleteModal}
-        onClose={handleCloseDeleteModal}
-        title="Yorumu Sil"
-        message={deleteConfirmText}
-        onConfirm={() => onDelete(comment._id)}
-        confirmButtonText="Sil"
-        isConfirming={isDeleting}
-        modalType="delete-comment"
-      />
     </div>
   );
 }
