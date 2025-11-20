@@ -58,7 +58,7 @@ function CategoryDropdown({ selectedCategories, onCategoryToggle, onError }: ICa
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <label className="block pb-2 text-sm font-medium text-[#1b140e]">Kategoriler (1-3 adet)</label>
+      <label className="block pb-1 text-sm font-medium text-[#1b140e]">Kategoriler (1-3 adet)</label>
       <button
         type="button"
         onClick={handleDropdownToggle}

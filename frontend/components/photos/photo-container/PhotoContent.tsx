@@ -45,7 +45,7 @@ const PhotoContent = ({
   const shouldShowLoader = isPhotosLoading || isDebouncing;
 
   return (
-    <section className="flex-1 overflow-y-auto p-4 bg-gray-100" id="scroll-container" aria-label="Fotoğraf Listesi">
+    <>
       <div className="mb-6 w-full lg:w-3/4 xl:w-1/2">
         <SearchBar value={liveSearchValue} onChange={setLiveSearchValue} />
       </div>
@@ -71,7 +71,7 @@ const PhotoContent = ({
           showNoResults={showNoResults}
         />
       </div>
-    </section>
+    </>
   );
 };
 

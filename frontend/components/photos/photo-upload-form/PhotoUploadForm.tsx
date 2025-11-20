@@ -79,19 +79,21 @@ function PhotoUploadForm() {
   };
 
   return (
-    <div className="flex flex-1 justify-center py-10 px-4 bg-cover bg-center bg-[#f5f1ea]">
-      <div className="flex w-full max-w-lg flex-col items-center rounded-xl bg-[#d3deda] p-8 shadow-lg">
+    <div className="flex flex-1 flex-col items-center justify-center gap-6 bg-cover bg-center bg-[#f5f1ea]">
+      <h3 className="text-xl font-bold text-[#1b140e]">Vizöründen Yansıyanlar</h3>
+
+      <div className="flex w-full max-w-lg flex-col items-center rounded-xl bg-[#d3deda] p-5 shadow-lg">
         <div className="mb-6 text-center">
           <h1 className="text-4xl font-bold tracking-tight text-[#1b140e]">Fotoğraf Yükle</h1>
           <p className="mt-2 text-base text-gray-600">Güzel anlarınızı dünyayla paylaşın</p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-3">
           {successMessage && <div className="p-4 rounded-md bg-green-100 text-green-700">{successMessage}</div>}
           {errorMessage && <div className="p-4 rounded-md bg-red-100 text-red-700">{errorMessage}</div>}
 
           <div>
-            <label className="block pb-2 text-sm font-medium text-[#1b140e]" htmlFor="title">
+            <label className="block pb-1 text-sm font-medium text-[#1b140e]" htmlFor="title">
               Başlık
             </label>
             <input
@@ -105,7 +107,7 @@ function PhotoUploadForm() {
           </div>
 
           <div>
-            <label className="block pb-2 text-sm font-medium text-[#1b140e]" htmlFor="description">
+            <label className="block pb-1 text-sm font-medium text-[#1b140e]" htmlFor="description">
               Açıklama
             </label>
             <textarea
@@ -124,7 +126,7 @@ function PhotoUploadForm() {
           />
 
           <div>
-            <label className="block pb-2 text-sm font-medium text-[#1b140e]" htmlFor="tags">
+            <label className="block pb-1 text-sm font-medium text-[#1b140e]" htmlFor="tags">
               Etiketler
             </label>
             <input
