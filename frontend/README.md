@@ -11,6 +11,7 @@ Bu klasör, Otuzaltıpoz projesinin kullanıcı arayüzü kodlarını içerir. N
 - **State Yönetimi & Data Fetching:** React Query (TanStack Query)
 - **İkonlar:** React Icons
 - **Form Yönetimi:** React Hook Form
+- **Analitik & Performans:** Vercel Analytics, Vercel Speed Insights
 
 ## ⚙️ Kurulum
 
