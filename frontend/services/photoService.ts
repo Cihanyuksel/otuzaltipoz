@@ -1,6 +1,6 @@
 import { axiosInstance } from 'lib/axiosInstance';
 import { PHOTO_PATHS } from 'lib/config';
-import { ApiResponse, Photo, PopularPhoto } from 'types/photo';
+import { AiAnalysisResult, ApiResponse, Photo, PopularPhoto } from 'types/photo';
 
 type Timeframe = 'all' | 'month' | 'week' | 'day';
 
@@ -74,10 +74,19 @@ export const photoService = {
     return response.data;
   },
 
-  //Popular Photos
+  //POPULAR PHOTOS
   getPopularPhotos: async (limit: number, timeframe: Timeframe): Promise<ApiResponse<PopularPhoto[]>> => {
     const path = PHOTO_PATHS.POPULAR_PHOTOS(limit, timeframe);
     const response = await axiosInstance.get<ApiResponse<PopularPhoto[]>>(path);
+    return response.data;
+  },
+
+  // AI ANALYZE
+  analyzePhoto: async (imageUrl: string, aiprompt: string): Promise<ApiResponse<AiAnalysisResult>> => {
+    const response = await axiosInstance.post<ApiResponse<AiAnalysisResult>>(PHOTO_PATHS.AI_ANALYZE, {
+      imageUrl,
+      prompt: aiprompt,
+    });
     return response.data;
   },
 };

@@ -1,17 +1,14 @@
-import { Category } from "@/hooks/api/useCategories";
-import { User } from "./auth";
+import { Category } from '@/hooks/api/useCategories';
+import { User } from './auth';
 
 export interface ApiResponse<T> {
-  data: T; 
+  data: T;
   status: boolean;
   total: number;
-  totalRecords: number
+  totalRecords: number;
 }
 
-export type OmittedUser = Omit<
-  User,
-  'id' | 'fullname' | 'role' | 'is_active'
-> & {
+export type OmittedUser = Omit<User, 'id' | 'fullname' | 'role' | 'is_active'> & {
   _id: string;
   created_at: string;
 };
@@ -28,9 +25,9 @@ export interface Photo {
   user: User;
   likeCount: number;
   isLikedByMe: boolean;
-  averageRating: number;    
-  totalVotes: number; 
-  commentCount?: number;      
+  averageRating: number;
+  totalVotes: number;
+  commentCount?: number;
 }
 
 export interface PopularPhoto {
@@ -45,4 +42,9 @@ export interface PopularPhoto {
     full_name: string;
     profile_img_url?: string;
   };
+}
+
+export interface AiAnalysisResult {
+  analysis: string;
+  remaining_credits: number;
 }

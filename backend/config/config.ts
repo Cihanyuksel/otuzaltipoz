@@ -3,6 +3,9 @@ import { SignOptions } from "jsonwebtoken";
 type JwtExpireType = SignOptions["expiresIn"];
 
 export const config = {
+  gemini: {
+    apiKey: process.env.GEMINI_API_KEY
+  },
   node_env: process.env.NODE_ENV,
   server: {
     url: process.env.SERVER_URL,

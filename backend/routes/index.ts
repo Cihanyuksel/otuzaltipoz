@@ -5,6 +5,7 @@ import commentRouter from "./commentRoutes";
 import likeRouter from "./likeRoutes";
 import ratingRouter from "./ratingRoutes";
 import categoryRouter from "./categoryRoutes";
+import aiRouter from './aiRoutes'
 
 export {
   userRouter,
@@ -14,4 +15,5 @@ export {
   likeRouter,
   ratingRouter,
   categoryRouter,
+  aiRouter
 };

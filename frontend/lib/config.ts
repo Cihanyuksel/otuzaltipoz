@@ -32,6 +32,7 @@ interface PhotosPaths {
   GET_LIKED_PHOTOS: (id: number | string) => string;
   GET_RANDOM_PHOTOS: (limit: number) => string;
   POPULAR_PHOTOS: (limit: number, timeframe: 'all' | 'week' | 'month' | 'day') => string;
+  AI_ANALYZE: string;
 }
 
 interface CommentPaths {
@@ -83,6 +84,7 @@ export const PHOTO_PATHS: PhotosPaths = {
   GET_LIKED_PHOTOS: (id) => `/photos/liked/${id}`,
   GET_RANDOM_PHOTOS: (limit) => `/photos?sort=random&limit=${limit}`,
   POPULAR_PHOTOS: (limit, timeframe) => `/photos/popular?limit=${limit}&timeframe=${timeframe}`,
+  AI_ANALYZE: '/ai/analyze-image',
 };
 
 export const COMMENTS_PATH: CommentPaths = {

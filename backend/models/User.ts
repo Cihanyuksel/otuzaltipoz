@@ -18,6 +18,9 @@ export interface IUser extends Document {
   profile_img_url?: string;
   bio?: string;
   username_change_count: number;
+  last_ai_usage_date?: Date;
+  daily_ai_usage_count: number;
+
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -43,6 +46,8 @@ const UserSchema: Schema<IUser> = new Schema(
     bio: { type: String, default: "" },
     is_verified: { type: Boolean, default: false },
     username_change_count: { type: Number, default: 0 },
+    last_ai_usage_date: { type: Date },
+    daily_ai_usage_count: { type: Number, default: 0 },
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },

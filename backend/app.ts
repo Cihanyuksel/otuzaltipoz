@@ -9,6 +9,7 @@ import {
   maxForgetPasswordRotations,
   maxLoginRotations,
   maxContactRotations,
+  aiAnalysisLimiter,
 } from "./middleware/authLimiter";
 import {
   authRouter,
@@ -18,6 +19,7 @@ import {
   photoRouter,
   ratingRouter,
   userRouter,
+  aiRouter,
 } from "./routes";
 //middleware and config
 import { globalErrorHandler } from "./middleware/errorHandler";
@@ -30,7 +32,7 @@ import swaggerUI from "swagger-ui-express";
 import { corsOptions } from "./config/corsOption";
 
 const app: Application = express();
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 
 //BASE MIDDLEWARE
 app.use(cors(corsOptions));
@@ -52,6 +54,7 @@ if (config.node_env === "production") {
   app.use("/api/v1/auth/login", maxLoginRotations);
   app.use("/api/v1/auth/forgot-password", maxForgetPasswordRotations);
   app.use("/api/v1/auth/contact", maxContactRotations);
+  app.use("/api/v1/ai", aiAnalysisLimiter);
 }
 
 // SWAGGER SETTINGS
@@ -109,6 +112,7 @@ app.use("/api/v1/photos", commentRouter);
 app.use("/api/v1/photos", likeRouter);
 app.use("/api/v1/photos", ratingRouter);
 app.use("/api/v1/categories", categoryRouter);
+app.use("/api/v1/ai", aiRouter);
 
 // GLOBAL ERROR HANDLER
 app.use(globalErrorHandler);

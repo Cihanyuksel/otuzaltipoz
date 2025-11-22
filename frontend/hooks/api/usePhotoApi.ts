@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { photoService } from '../../services/photoService';
-import { Photo, ApiResponse } from 'types/photo';
+import { Photo, ApiResponse, AiAnalysisResult } from 'types/photo';
 
 type PhotoResponse = {
   success: boolean;
@@ -145,3 +145,8 @@ export const useGetRandomPhotos = (limit: number) => {
   });
 };
 //---------------------------------------------------------------------------------------------------------
+export const useAnalyzePhoto = () => {
+  return useMutation<ApiResponse<AiAnalysisResult>, Error, { imageUrl: string; aiprompt: string }>({
+    mutationFn: ({ imageUrl, aiprompt }) => photoService.analyzePhoto(imageUrl, aiprompt),
+  });
+};
